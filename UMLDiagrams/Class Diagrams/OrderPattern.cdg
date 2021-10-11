@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ClassDiagram name="OrderPattern">
+  <ClassDiagramComponents>
+    <Class name="Order" package="" visibility="public" xPosition="305.0" yPosition="503.0">
+      <Fields>
+        <Field name="href" type="String" visibility="private"/>
+        <Field name="uuid" type="String" visibility="private"/>
+        <Field name="id" type="Long" visibility="private"/>
+        <Field name="name" type="String" visibility="private"/>
+        <Field name="subOrders" type="List&lt;order&gt;" visibility="private"/>
+        <Field name="description" type="String" visibility="private"/>
+        <Field name="orderDate" type="Date" visibility="private"/>
+        <Field name="startDate" type="Date" visibility="private"/>
+        <Field name="endDate" type="Date" visibility="private"/>
+        <Field name="orderOwner" type="Party" visibility="private"/>
+        <Field name="changeRequests" type="List&lt;OrderChangeRequests&gt;" visibility="private"/>
+        <Field name="parentOrder" type="Order" visibility="private"/>
+        <Field name="resourceOrService" type="List&lt;ResourceOrService&gt;" visibility="private"/>
+        <Field name="status" type="OrderStatus" visibility="private"/>
+        <Field name="orderType" type="ResourceType" visibility="private"/>
+      </Fields>
+      <Constructors/>
+      <Methods/>
+    </Class>
+    <Class name="ResourceOrService" package="" visibility="public" xPosition="1050.0" yPosition="492.0">
+      <Fields>
+        <Field name="href" type="String" visibility="private"/>
+        <Field name="uuid" type="String" visibility="private"/>
+        <Field name="name" type="String" visibility="private"/>
+        <Field name="characteristics" type="List&lt;Charicteristic&gt;" visibility="private"/>
+        <Field name="resourceOwner" type="Party" visibility="private"/>
+        <Field name="resourceType" type="ResourceType" visibility="private"/>
+      </Fields>
+      <Constructors/>
+      <Methods/>
+    </Class>
+    <Class name="OrderChangeRequests" package="" visibility="public" xPosition="806.0" yPosition="612.0">
+      <Fields>
+        <Field name="changeRequest" type="Order" visibility="private"/>
+        <Field name="requestDate" type="Date" visibility="private"/>
+        <Field name="approvedDate" type="Date" visibility="private"/>
+        <Field name="status" type="ChangeStatus" visibility="private"/>
+        <Field name="changeReason" type="String" visibility="private"/>
+        <Field name="changeRequestor" type="Party" visibility="private"/>
+        <Field name="note" type="String" visibility="private"/>
+        <Field name="id" type="Long" visibility="private"/>
+        <Field name="uuid" type="String" visibility="private"/>
+      </Fields>
+      <Constructors/>
+      <Methods/>
+    </Class>
+    <Class name="Charicteristic" package="" visibility="public" xPosition="1096.0" yPosition="828.0">
+      <Fields>
+        <Field name="name" type="String" visibility="private"/>
+        <Field name="value" type="String" visibility="private"/>
+      </Fields>
+      <Constructors/>
+      <Methods/>
+    </Class>
+    <Enum name="ResourceType" package="" visibility="public" xPosition="103.0" yPosition="731.0">
+      <Literals>
+        <Literal name="EXTERNAL"/>
+        <Literal name="INTERNAL"/>
+      </Literals>
+    </Enum>
+    <Enum name="ChangeStatus" package="" visibility="public" xPosition="818.0" yPosition="905.0">
+      <Literals>
+        <Literal name="REQUESTED"/>
+        <Literal name="APPROVED"/>
+        <Literal name="DENIED"/>
+      </Literals>
+    </Enum>
+    <Enum name="OrderStatus" package="" visibility="public" xPosition="101.0" yPosition="522.0">
+      <Literals>
+        <Literal name="IN_PROGRESS"/>
+        <Literal name="CANCELLED"/>
+        <Literal name="CHANGE_REQUESTED"/>
+        <Literal name="CONFIRMED"/>
+        <Literal name="ACKNOWLEGED"/>
+      </Literals>
+    </Enum>
+    <Interface name="OrderDAO" package="" visibility="public" xPosition="358.0" yPosition="342.0">
+      <Methods/>
+    </Interface>
+    <Interface name="changeRequestDAO" package="" visibility="public" xPosition="789.0" yPosition="342.0">
+      <Methods/>
+    </Interface>
+    <Interface name="ResourceOrServiceDAO" package="" visibility="public" xPosition="1058.0" yPosition="345.0">
+      <Methods/>
+    </Interface>
+    <Interface name="OrderService" package="" visibility="public" xPosition="419.0" yPosition="121.0">
+      <Methods>
+        <Method name="orderRequest" returnType="OrderChangeRequest" visibility="public">
+          <Argument type="OrderChangeRequest" name="orderChangeRequest"/>
+        </Method>
+        <Method name="getOrder" returnType="Order" visibility="public">
+          <Argument type="String" name="uuid"/>
+        </Method>
+        <Method name="getChangeRequests" returnType="List&lt;OrderChangeRequests&gt;" visibility="public">
+          <Argument type="String" name="orderUuid"/>
+        </Method>
+        <Method name="getRequest" returnType="OrderChangeRequest" visibility="public">
+          <Argument type="String" name="requestUuid"/>
+        </Method>
+      </Methods>
+    </Interface>
+  </ClassDiagramComponents>
+  <ClassDiagramRelations>
+    <HasRelation name="resourceHasChacteristics" source="ResourceOrService" target="Charicteristic" type="Default" sourceCardinality="0..1" targetCardinality="0..*" collectionType="List"/>
+    <UseRelation name="changeRequestHasStatus" source="OrderChangeRequests" target="ChangeStatus" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="orderHasSubOrders" source="Order" target="Order" type="Aggregation" sourceCardinality="0..1" targetCardinality="0..*" collectionType="List"/>
+    <UseRelation name="OrderHasResources" source="Order" target="ResourceOrService" sourceCardinality="1..*" targetCardinality="1..1"/>
+    <UseRelation name="orderHasStatus" source="Order" target="OrderStatus" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation name="hasChangeRequests" source="Order" target="OrderChangeRequests" sourceCardinality="1..1" targetCardinality="0..*"/>
+  </ClassDiagramRelations>
+</ClassDiagram>
