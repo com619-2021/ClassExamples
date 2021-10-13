@@ -7,10 +7,12 @@ I have done some investigation and the following may help
 
 1. Running docker image
 
-A Docker Compose file is provided and also a docker image on docker.io but this doesn't work out of the box.
-You need to modify the database.properties to use MySQL within the docker-compose container
+You can run the program without compiling it using [docker-desktop](https://www.docker.com/products/docker-desktop) on windows or just docker-compose installed on a linux box.
 
-I have provided a modified version of the docker-compose.yml here which maps a modified application.properties  using
+The original project provides a Docker Compose file and also a docker image on docker.io but this doesn't work out of the box.
+You need to modify the database.properties to use MySQL within the docker-compose container.
+
+I have provided a modified version of the docker-compose.yml in this folder which maps a modified application.properties  using
 ```
 ./compose/application.properties:/app/resources/application.properties
 ```
@@ -28,6 +30,17 @@ docker-compose up
 or
 docker-compose up -d
 ```
+
+THe application comes up at http://localhost:8080/login
+
+and you can use the following logins
+
+| Account type | Username | Password 
+| --- | --- | --- |
+| `admin` | admin | qwerty123 |
+| `provider` | provider |qwerty123 |
+| `corporate customer` | customer_c |qwerty123 |
+| `retail customer` | customer_r |qwerty123 |
 
 2. Database investigations
 The docker-compose file automatically creates a MySQL database by running the /src/main/resources/appointmentscheduler.sql  DDL file
