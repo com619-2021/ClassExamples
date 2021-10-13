@@ -5,7 +5,7 @@ I pointed to https://github.com/slabiak/AppointmentScheduler as perhaps a good b
 
 I have done some investigation and the following may help
 
-1. Running docker image
+## Running docker image
 
 You can run the program without compiling it using [docker-desktop](https://www.docker.com/products/docker-desktop) on windows or just docker-compose installed on a linux box.
 
@@ -31,7 +31,7 @@ or
 docker-compose up -d
 ```
 
-THe application comes up at http://localhost:8080/login
+The application comes up at http://localhost:8080/login
 
 and you can use the following logins
 
@@ -42,7 +42,7 @@ and you can use the following logins
 | `corporate customer` | customer_c |qwerty123 |
 | `retail customer` | customer_r |qwerty123 |
 
-2. Database investigations
+## Database investigations
 The docker-compose file automatically creates a MySQL database by running the /src/main/resources/appointmentscheduler.sql  DDL file
 This file creates the database and also populates with initial data.
 
@@ -59,7 +59,7 @@ My suggestion if you add additional jpa code for other tables would be to contin
 
 I have also investigated using an in memory database HSQLDB instead of MySQL
 ```
-#in memory only  - using mysql systax
+# in memory only  - using mysql systax
 spring.datasource.url=jdbc:hsqldb:mem:testdb;sql.syntax_mys=true;DB_CLOSE_DELAY=-1
 ```
 the 'sql.syntax_mys=true' clause is supposed to make hsqldb look like MySQL
@@ -69,7 +69,7 @@ Firstly, the code appears to use MYSQL json types which hsql does not support (h
 
 Secondly, you would still need to do the datafill - but explicitly as part of the program startup.
 
-3. usage
+## usage
 
 I initally found it difficult to create new users as the inputs are validated by the UserForm.java file
 
@@ -94,7 +94,8 @@ This might allow you to hack something quite quickly.
 Alternatively, understand how the appointment system works and see if you could recreate the calader in yor own code.
 
 
-4. Compiling
+## Compiling
+
 Code can be compiled without tests using
 ```
 mvn clean install -DskipTests
