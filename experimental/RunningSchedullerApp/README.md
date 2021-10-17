@@ -69,7 +69,7 @@ Firstly, the code appears to use MYSQL json types which hsql does not support (h
 
 Secondly, you would still need to do the datafill - but explicitly as part of the program startup.
 
-## usage
+## Usage
 
 I initally found it difficult to create new users as the inputs are validated by the UserForm.java file
 
@@ -86,7 +86,9 @@ The basic appointment scheduler seems to do most of what is neccessary and can a
 If this is a good starting point and you understand the code well, I would suggest the following changes
 
 a) allow  single admin user to be able to create all resources than needing to have seperate logins
+
 b) see if appointments and / or resources could be extended to reference external orders and resources
+
 a) create a ReST api matching the web UI
 
 This might allow you to hack something quite quickly.
@@ -100,4 +102,4 @@ Code can be compiled without tests using
 ```
 mvn clean install -DskipTests
 ```
-To also test the project, you will need a mysql database running - probably using the docker compose DB would work
+To also test the project, you will need a mysql database running - probably using the docker compose DB would work but you would need to have populated it with the initial user data.
