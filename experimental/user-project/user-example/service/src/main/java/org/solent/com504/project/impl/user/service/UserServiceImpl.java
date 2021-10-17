@@ -33,10 +33,10 @@ public class UserServiceImpl implements UserService {
     // @Autowired
     // private UserDAO userDAO;
     @Override
-    public void create(User user) {
+    public User create(User user) {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         user.setRoles(new HashSet<>(roleRepository.findByName(UserRoles.ROLE_USER.toString())));
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     @Override

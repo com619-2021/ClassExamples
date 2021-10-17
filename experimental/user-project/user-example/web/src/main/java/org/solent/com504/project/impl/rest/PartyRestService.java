@@ -51,74 +51,50 @@ import org.springframework.transaction.annotation.Transactional;
  * replyMessage.getAnimalList() int replyMessage.getCode() replyMessage.getDebugMessage(); * @author cgallen
  */
 @Component // component allows resource to be picked up
-@Path("/solent-api/user/v1/")
-public class UserRestService {
+@Path("/solent-api/party/v1/")
+public class PartyRestService {
 
     // SETS UP LOGGING 
     // note that log name will be org.solent.com504.project.impl.rest.RestService
-    final static Logger LOG = LogManager.getLogger(UserRestService.class);
+    final static Logger LOG = LogManager.getLogger(PartyRestService.class);
 
     @Autowired
     private UserService userService;
 
     @Autowired
     private PartyService partyService;
-    
-        /**
-     * this is a very simple rest test message which only returns a string
-     *
-     * http://localhost:8080/project-web/rest/solent-api/party/v1/party
-     *
-     * @return String simple message
-     */
-    // swagger annotations
-    @Operation(
-            tags = {"user management api"},
-            summary = "all this does is ask for a text 'hello world' response",
-            description = "Returns text hello world",
-            responses = {
-                @ApiResponse(description = "hello world message",
-                        content = @Content(mediaType = "text/plain"))
-            })
 
-    @GET
-    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
-    @Produces({MediaType.TEXT_PLAIN})
-    public String message() {
-        LOG.debug("project-web called");
-        return "Hello, rest!";
-    }
-
-    @Operation(summary = "Find list of users",
-            tags = {"user management api"},
+    @Operation(summary = "Find all parties",
+            tags = {"party management api"},
             responses = {
-                @ApiResponse(responseCode = "200", description = "successful operation returns user list with one entry", content = @Content(
+                @ApiResponse(responseCode = "200", description = "successful operation returns party list with one entry", content = @Content(
                         schema = @Schema(implementation = ReplyMessage.class))),
-                @ApiResponse(responseCode = "404", description = "not found"),
                 @ApiResponse(responseCode = "500", description = "internal server error")
             })
     @GET
-    @Path("/user")
+    @Path("/party")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Transactional(readOnly = true)
-    public Response getUsers(@Context UriInfo uriInfo) {
+    public Response getPartys(@Context UriInfo uriInfo) {
         try {
 
             ReplyMessage replyMessage = new ReplyMessage();
-            LOG.debug("/getUsers called");
+            LOG.debug("/getPartys called");
 
-            if (userService == null) {
-                throw new RuntimeException("userService==null and has not been initialised");
+            if (partyService == null) {
+                throw new RuntimeException("partyService==null and has not been initialised");
             }
 
-            List<User> userList = userService.findAll();
+            List<Party> partyList = partyService.findAll();
 
             String requestPath = uriInfo.getAbsolutePath().toASCIIString();
 
-            List<User> unboundList = unbindUserList(userList, requestPath);
+            // converting to set
+            Set<Party> unboundList = unbindPartyList(new LinkedHashSet(partyList), requestPath);
 
-            replyMessage.setUserList(unboundList);
+            // converting to list
+            replyMessage.setPartyList(new ArrayList(unboundList));
             replyMessage.setSize(unboundList.size());
 
             replyMessage.setCode(Response.Status.OK.getStatusCode());
@@ -126,100 +102,55 @@ public class UserRestService {
             return Response.status(Response.Status.OK).entity(replyMessage).build();
 
         } catch (Exception ex) {
-            LOG.error("error calling /user getUsers ", ex);
+            LOG.error("error calling /party getPartys ", ex);
             ReplyMessage replyMessage = new ReplyMessage();
             replyMessage.setCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
-            replyMessage.setDebugMessage("error calling /user getUsers " + ex.getMessage());
+            replyMessage.setDebugMessage("error calling /party getPartys " + ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(replyMessage).build();
         }
     }
-
-    @Operation(summary = "Find user by username",
-            tags = {"user management api"},
+    
+       // swagger annotations
+    @Operation(summary = "Find party by uuid",
+            tags = {"party/party"},
             responses = {
-                @ApiResponse(responseCode = "200", description = "successful operation returns user list with one entry", content = @Content(
+                @ApiResponse(responseCode = "200", description = "successful operation returns party list with one entry", content = @Content(
                         schema = @Schema(implementation = ReplyMessage.class))),
                 @ApiResponse(responseCode = "404", description = "not found"),
                 @ApiResponse(responseCode = "500", description = "internal server error")
             })
     @GET
-    @Path("/user/{username}")
+    @Path("/party/{uuid}")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public Response getUser(@PathParam("username") String username, @Context UriInfo uriInfo) {
+    @Transactional(readOnly = true)
+    public Response getParty(@PathParam("uuid") String uuid, @Context UriInfo uriInfo) {
         try {
-
             ReplyMessage replyMessage = new ReplyMessage();
-            LOG.debug("/getUser called username=" + username);
+            LOG.debug("/party  getParty  called  uuid=" + uuid);
 
-            if (userService == null) {
-                throw new RuntimeException("userService==null and has not been initialised");
+            if (partyService == null) {
+                throw new RuntimeException("partyService==null and has not been initialised");
             }
 
-            User user = userService.findByUsername(username);
-            if (user == null) {
+            Party party = partyService.findByUuid(uuid);
+            if (party == null) {
                 replyMessage.setCode(Response.Status.NOT_FOUND.getStatusCode());
-                replyMessage.setDebugMessage("username not found " + username);
-                replyMessage.setUserList(new ArrayList());
+                replyMessage.setDebugMessage("party uuid not found " + uuid);
+                replyMessage.setPartyList(new ArrayList());
                 return Response.status(Response.Status.NOT_FOUND).entity(replyMessage).build();
             }
 
             String requestPath = uriInfo.getAbsolutePath().toASCIIString();
 
-            List<User> unboundList = unbindUserList(Arrays.asList(user), requestPath);
-            replyMessage.setUserList(unboundList);
-
-            replyMessage.setCode(Response.Status.OK.getStatusCode());
-
-            return Response.status(Response.Status.OK).entity(replyMessage).build();
-
-        } catch (Exception ex) {
-            LOG.error("error calling /user/{username} getUser username=" + username, ex);
-            ReplyMessage replyMessage = new ReplyMessage();
-            replyMessage.setCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
-            replyMessage.setDebugMessage("error calling /user/{username} getUser username=" + username + " error:" + ex.getMessage());
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(replyMessage).build();
-        }
-    }
-    
-        @Operation(summary = "Create New User",
-            tags = {"user management api"},
-            responses = {
-                @ApiResponse(responseCode = "200", description = "successful operation returns user list with one entry", content = @Content(
-                        schema = @Schema(implementation = ReplyMessage.class))),
-                @ApiResponse(responseCode = "500", description = "internal server error")
-            })
-        
-    @POST
-    @Path("/user")
-    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    @Transactional
-    public Response createUser(@QueryParam("name") String name, 
-            @QueryParam("password") String password,
-            @Context UriInfo uriInfo) {
-        try {
-
-            ReplyMessage replyMessage = new ReplyMessage();
-            LOG.debug("/createUser called");
-
-            if (userService == null) {
-                throw new RuntimeException("userService==null and has not been initialised");
+            // converting to set
+            Set<Party> unboundList = new LinkedHashSet();
+            if (party != null) {
+                unboundList = unbindPartyList(new LinkedHashSet(Arrays.asList(party)), requestPath);
             }
-            User user = new User();
-            user.setUsername(name);
-            user.setFirstName(name);
-            user.setSecondName(name);
-            user.setPassword(password);
-            user = userService.create(user);
-            
-            List<User> userList = Arrays.asList(user);
 
-            String requestPath = uriInfo.getAbsolutePath().toASCIIString();
-
-            List<User> unboundList = unbindUserList(userList, requestPath);
-
-            replyMessage.setUserList(unboundList);
+            // converting to list
+            replyMessage.setPartyList(new ArrayList(unboundList));
             replyMessage.setSize(unboundList.size());
 
             replyMessage.setCode(Response.Status.OK.getStatusCode());
@@ -227,56 +158,106 @@ public class UserRestService {
             return Response.status(Response.Status.OK).entity(replyMessage).build();
 
         } catch (Exception ex) {
-            LOG.error("error calling /user create user ", ex);
+            LOG.error("error calling /party getParty uuid=" + uuid, ex);
             ReplyMessage replyMessage = new ReplyMessage();
             replyMessage.setCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
-            replyMessage.setDebugMessage("error calling /user create user " + ex.getMessage());
+            replyMessage.setDebugMessage("error calling /party getParty uuid=" + uuid + " " + ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(replyMessage).build();
         }
     }
 
- 
-    /**
-     * clones new uses and unbinds from entitymanager
-     *
-     * @param userList
-     * @return
-     */
-    public static List<User> unbindUserList(List<User> userList, String requestPath) {
-        List<User> unboundList = new ArrayList();
 
-        //decouples values from dao
-        for (User user : userList) {
-            User newUser = new User();
-            unboundList.add(newUser);
+    // swagger annotations
+    @Operation(summary = "Create new Party",
+            tags = {"party management api"},
+            responses = {
+                @ApiResponse(responseCode = "200", description = "successful operation returns party list with one entry", content = @Content(
+                        schema = @Schema(implementation = ReplyMessage.class))),
+                @ApiResponse(responseCode = "500", description = "internal server error")
+            })
+    @POST
+    @Path("/party/")
+    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Transactional
+    public Response createParty(@QueryParam("partyName") String partyName,
+            @Context UriInfo uriInfo) {
+        try {
+            ReplyMessage replyMessage = new ReplyMessage();
+            LOG.debug("/party  create party  called  partyName=" + partyName);
 
-            // add absolute path href for user
-            String userName = user.getUsername();
-
-            String href = requestPath.substring(0, requestPath.indexOf("/solent-api/")) + "/solent-api/user/v1/user" + "/" + userName;
-            LOG.debug("setting href for username:" + userName + " href=" + href);
-            newUser.setHref(href);
-
-            newUser.setAddress(user.getAddress());
-            newUser.setEnabled(user.getEnabled());
-            newUser.setFirstName(user.getFirstName());
-            newUser.setSecondName(user.getSecondName());
-            newUser.setUsername(userName);
-            newUser.setId(user.getId());
-            // password is not copied
-
-            Set<Party> newParties = PartyRestService.unbindPartyList(user.getParties(), requestPath);
-            newUser.setParties(newParties);
-            Set<Role> roles = new LinkedHashSet();
-            for (Role role : user.getRoles()) {
-                Role newRole = new Role();
-                newRole.setName(role.getName());
-                roles.add(newRole);
+            if (partyService == null) {
+                throw new RuntimeException("partyService==null and has not been initialised");
             }
-            newUser.setRoles(roles);
+
+            Party party = new Party();
+            party.setEnabled(Boolean.TRUE);
+            party.setFirstName(partyName);
+            party.setSecondName(partyName);
+
+            party = partyService.save(party);
+            
+            LOG.debug("/party  created party=" + party);
+
+            String requestPath = uriInfo.getAbsolutePath().toASCIIString();
+
+            // converting to set
+            Set<Party> unboundList = new LinkedHashSet();
+            if (party != null) {
+                unboundList = unbindPartyList(new LinkedHashSet(Arrays.asList(party)), requestPath);
+            }
+
+            // converting to list
+            replyMessage.setPartyList(new ArrayList(unboundList));
+            replyMessage.setSize(unboundList.size());
+
+            replyMessage.setCode(Response.Status.OK.getStatusCode());
+
+            return Response.status(Response.Status.OK).entity(replyMessage).build();
+
+        } catch (Exception ex) {
+            LOG.error("error calling /party create party name=" + partyName, ex);
+            ReplyMessage replyMessage = new ReplyMessage();
+            replyMessage.setCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+            replyMessage.setDebugMessage("error calling /party create party name=" + partyName + " " + ex.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(replyMessage).build();
         }
-        return unboundList;
     }
 
+    /**
+     * clones new partys and unbinds from entitymanager
+     *
+     * @param partyList
+     * @return
+     */
+    public static Set<Party> unbindPartyList(Set<Party> partyList, String requestPath) {
+        Set<Party> unboundParty = new LinkedHashSet();
+
+        //decouples values from dao
+        for (Party party : partyList) {
+            Party newParty = new Party();
+            
+
+            // add absolute path href for user
+            String uuid = party.getUuid();
+
+            String href = requestPath.substring(0, requestPath.indexOf("/solent-api/")) + "/solent-api/party/v1/party" + "/" + uuid;
+            LOG.debug("setting href for party uuid:" + uuid + " href=" + href);
+            newParty.setHref(href);
+
+            newParty.setUuid(uuid);
+            newParty.setAddress(party.getAddress());
+            newParty.setEnabled(party.getEnabled());
+            newParty.setFirstName(party.getFirstName());
+            newParty.setId(party.getId());
+            newParty.setSecondName(party.getSecondName());
+            newParty.setPartyRole(party.getPartyRole());
+            newParty.setPartyStatus(party.getPartyStatus());
+            newParty.setPartyRole(party.getPartyRole());
+            
+            unboundParty.add(newParty);
+        }
+        return unboundParty;
+    }
 
 }

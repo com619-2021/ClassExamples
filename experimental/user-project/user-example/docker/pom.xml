@@ -1,5 +1,5 @@
 <project>
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>solent.ac.uk.devops.traffic</groupId>
@@ -8,16 +8,16 @@
     </parent>
 
     <artifactId>user-example-docker</artifactId>
-    <name>user-example-web</name>
+    <name>user-example-docker</name>
     <packaging>pom</packaging>
 
     <properties>
-<!-- see https://dmp.fabric8.io/#image-name -->
-      <docker.name>solentdevops/${project.parent.artifactId}:%v</docker.name>
-     </properties>
+        <!-- see https://dmp.fabric8.io/#image-name -->
+        <docker.name>solentdevops/${project.parent.artifactId}:%v</docker.name>
+    </properties>
 
-  <build>
-    <plugins>
+    <build>
+        <plugins>
             <!-- this plugin downloads the web app war -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -47,28 +47,21 @@
             </plugin>
 
 
-      <plugin>
-        <groupId>io.fabric8</groupId>
-        <artifactId>docker-maven-plugin</artifactId>
-        <version>0.26.0</version>
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.26.0</version>
 
-        <executions>
-           <execution>
-                 <id>build</id>
-                 <phase>package</phase>
-                 <goals>
-                     <goal>build</goal>
-                 </goals>
-           </execution>
-         </executions>
-        <!--  <configuration>
-                 <images>
-                   <image>
-                       <name>solentdevops/${project.parent.artifactId}</name>
-                   </image>
-                 </images>
-                 </configuration> -->
-      </plugin>
-    </plugins>
-  </build>
+                <executions>
+                    <execution>
+                        <id>build</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

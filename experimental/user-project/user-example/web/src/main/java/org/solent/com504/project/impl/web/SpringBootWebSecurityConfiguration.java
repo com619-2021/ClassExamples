@@ -47,6 +47,7 @@ public class SpringBootWebSecurityConfiguration extends WebSecurityConfigurerAda
                 .and()
                 .logout()
                 .permitAll()
-                .logoutSuccessUrl("/login?logout");
+                .logoutSuccessUrl("/login?logout")
+                .and().csrf().ignoringAntMatchers("/rest/**"); // prevents csrf checking on rest api
     }
 }

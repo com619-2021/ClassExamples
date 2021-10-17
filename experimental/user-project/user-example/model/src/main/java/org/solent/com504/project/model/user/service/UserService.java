@@ -6,7 +6,7 @@ import org.solent.com504.project.model.user.dto.User;
 
 public interface UserService {
 
-    void create(User user);
+    User create(User user);
 
     User findByUsername(String username);
 
