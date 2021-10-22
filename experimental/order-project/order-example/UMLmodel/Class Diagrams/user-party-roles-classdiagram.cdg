@@ -31,7 +31,7 @@
       <Constructors/>
       <Methods/>
     </Class>
-    <Class name="Address" package="org.solent.com504.project.model.dto" visibility="public" xPosition="840.0" yPosition="858.0">
+    <Class name="Address" package="org.solent.com504.project.model.dto" visibility="public" xPosition="888.0" yPosition="877.0">
       <Fields>
         <Field name="number" type="String" visibility="private"/>
         <Field name="addressLine1" type="String" visibility="private"/>
@@ -43,6 +43,28 @@
         <Field name="longitude" type="double" visibility="private"/>
         <Field name="telephone" type="String" visibility="private"/>
         <Field name="mobile" type="String" visibility="private"/>
+      </Fields>
+      <Constructors/>
+      <Methods/>
+    </Class>
+    <Class name="User" package="org.solent.com504.project.model.user.dto" visibility="public" xPosition="1080.0" yPosition="854.0">
+      <Fields>
+        <Field name="username" type="String" visibility="private"/>
+        <Field name="password" type="String" visibility="private"/>
+        <Field name="passwordConfirm" type="String" visibility="private"/>
+        <Field name="firstName" type="String" visibility="private"/>
+        <Field name="secondName" type="String" visibility="private"/>
+        <Field name="id" type="Long" visibility="private"/>
+        <Field name="roles" type="Set&lt;Role&gt;" visibility="private"/>
+      </Fields>
+      <Constructors/>
+      <Methods/>
+    </Class>
+    <Class name="Role" package="org.solent.com504.project.model.user.dto" visibility="public" xPosition="1435.0" yPosition="843.0">
+      <Fields>
+        <Field name="id" type="Long" visibility="private"/>
+        <Field name="name" type="String" visibility="private"/>
+        <Field name="users" type="Set&lt;User&gt;" visibility="private"/>
       </Fields>
       <Constructors/>
       <Methods/>
@@ -91,51 +113,6 @@
     <Interface name="RestClient" package="org.solent.com504.project.model.rest" visibility="public" xPosition="-8.0" yPosition="332.0">
       <Methods/>
     </Interface>
-    <Enum name="PartyRole" package="org.solent.com504.project.model.dto" visibility="public" xPosition="375.0" yPosition="1002.0">
-      <Literals>
-        <Literal name="GLOBALADMIN"/>
-        <Literal name="USER"/>
-        <Literal name="ANONYMOUS"/>
-        <Literal name="GROUPADMIN"/>
-      </Literals>
-    </Enum>
-    <Enum name="PartyStatus" package="org.solent.com504.project.model.dto" visibility="public" xPosition="376.0" yPosition="858.0">
-      <Literals>
-        <Literal name="ACTIVE"/>
-        <Literal name="DISABLED"/>
-      </Literals>
-    </Enum>
-    <Enum name="UserRoles" package="org.solent.com504.project.model.user.dto" visibility="public" xPosition="1707.0" yPosition="843.0">
-      <Literals>
-        <Literal name="ROLE_USER"/>
-        <Literal name="ROLE_REST"/>
-        <Literal name="ROLE_ADMIN"/>
-        <Literal name="ROLE_GLOBAL_ADMIN"/>
-        <Literal name="ROLE_VIEWONLY"/>
-      </Literals>
-    </Enum>
-    <Class name="User" package="org.solent.com504.project.model.user.dto" visibility="public" xPosition="1080.0" yPosition="854.0">
-      <Fields>
-        <Field name="username" type="String" visibility="private"/>
-        <Field name="password" type="String" visibility="private"/>
-        <Field name="passwordConfirm" type="String" visibility="private"/>
-        <Field name="firstName" type="String" visibility="private"/>
-        <Field name="secondName" type="String" visibility="private"/>
-        <Field name="id" type="Long" visibility="private"/>
-        <Field name="roles" type="Set&lt;Role&gt;" visibility="private"/>
-      </Fields>
-      <Constructors/>
-      <Methods/>
-    </Class>
-    <Class name="Role" package="org.solent.com504.project.model.user.dto" visibility="public" xPosition="1435.0" yPosition="843.0">
-      <Fields>
-        <Field name="id" type="Long" visibility="private"/>
-        <Field name="name" type="String" visibility="private"/>
-        <Field name="users" type="Set&lt;User&gt;" visibility="private"/>
-      </Fields>
-      <Constructors/>
-      <Methods/>
-    </Class>
     <Interface name="UserDAO" package="" visibility="public" xPosition="957.0" yPosition="569.0">
       <Methods>
         <Method name="findById" returnType="User" visibility="public">
@@ -185,22 +162,45 @@
         </Method>
       </Methods>
     </Interface>
+    <Enum name="PartyRole" package="org.solent.com504.project.model.dto" visibility="public" xPosition="375.0" yPosition="1002.0">
+      <Literals>
+        <Literal name="GLOBALADMIN"/>
+        <Literal name="USER"/>
+        <Literal name="ANONYMOUS"/>
+        <Literal name="GROUPADMIN"/>
+      </Literals>
+    </Enum>
+    <Enum name="PartyStatus" package="org.solent.com504.project.model.dto" visibility="public" xPosition="376.0" yPosition="858.0">
+      <Literals>
+        <Literal name="ACTIVE"/>
+        <Literal name="DISABLED"/>
+      </Literals>
+    </Enum>
+    <Enum name="UserRoles" package="org.solent.com504.project.model.user.dto" visibility="public" xPosition="1707.0" yPosition="843.0">
+      <Literals>
+        <Literal name="ROLE_USER"/>
+        <Literal name="ROLE_REST"/>
+        <Literal name="ROLE_ADMIN"/>
+        <Literal name="ROLE_GLOBAL_ADMIN"/>
+        <Literal name="ROLE_VIEWONLY"/>
+      </Literals>
+    </Enum>
   </ClassDiagramComponents>
   <ClassDiagramRelations>
-    <UseRelation name="usesServiceFacade" source="org.solent.com504.project.model.web.ViewController" target="org.solent.com504.project.model.service.ServiceFacade" sourceCardinality="1..1" targetCardinality="1..1"/>
-    <UseRelation name="usesPartyDAO" source="org.solent.com504.project.model.service.ServiceFacade" target="org.solent.com504.project.model.dao.PartyDAO" sourceCardinality="1..1" targetCardinality="1..1"/>
-    <UseRelation name="usesUser" source="UserDAO" target="org.solent.com504.project.model.user.dto.User" sourceCardinality="1..1" targetCardinality="1..1"/>
-    <UseRelation name="restInteraceUsesReplyMessage" source="org.solent.com504.project.model.rest.RestService" target="org.solent.com504.project.model.dto.ReplyMessage" sourceCardinality="1..1" targetCardinality="1..1"/>
-    <UseRelation name="usesRole" source="RoleDAO" target="org.solent.com504.project.model.user.dto.Role" sourceCardinality="1..1" targetCardinality="1..1"/>
-    <UseRelation name="userHasRoles" source="org.solent.com504.project.model.user.dto.User" target="org.solent.com504.project.model.user.dto.Role" sourceCardinality="1..1" targetCardinality="1..*"/>
-    <HasRelation name="hasRole" source="org.solent.com504.project.model.dto.Party" target="org.solent.com504.project.model.dto.PartyRole" type="Default" sourceCardinality="0..1" targetCardinality="1..1"/>
     <HasRelation name="hasStatus" source="org.solent.com504.project.model.dto.Party" target="org.solent.com504.project.model.dto.PartyStatus" type="Default" sourceCardinality="0..1" targetCardinality="1..1"/>
-    <UseRelation name="ViewController" source="org.solent.com504.project.model.web.ViewController" target="org.solent.com504.project.model.web.JSP_Pages_do_not_generate" sourceCardinality="1..1" targetCardinality="1..1"/>
-    <UseRelation name="usesServiceFacade" source="org.solent.com504.project.model.rest.RestService" target="org.solent.com504.project.model.service.ServiceFacade" sourceCardinality="1..1" targetCardinality="1..1"/>
-    <UseRelation name="useUserRoles" source="org.solent.com504.project.model.user.dto.Role" target="org.solent.com504.project.model.user.dto.UserRoles" sourceCardinality="1..1" targetCardinality="1..1"/>
     <UseRelation name="usesParty" source="org.solent.com504.project.model.dao.PartyDAO" target="org.solent.com504.project.model.dto.Party" sourceCardinality="1..1" targetCardinality="1..1"/>
-    <HasRelation name="hasAddress" source="org.solent.com504.project.model.dto.Party" target="org.solent.com504.project.model.dto.Address" type="Default" sourceCardinality="0..1" targetCardinality="1..1"/>
+    <UseRelation name="restInteraceUsesReplyMessage" source="org.solent.com504.project.model.rest.RestService" target="org.solent.com504.project.model.dto.ReplyMessage" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation name="userHasRoles" source="org.solent.com504.project.model.user.dto.User" target="org.solent.com504.project.model.user.dto.Role" sourceCardinality="1..1" targetCardinality="1..*"/>
     <UseRelation name="uses" source="org.solent.com504.project.model.rest.RestClient" target="org.solent.com504.project.model.rest.RestService" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation name="usesRole" source="RoleDAO" target="org.solent.com504.project.model.user.dto.Role" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="hasRole" source="org.solent.com504.project.model.dto.Party" target="org.solent.com504.project.model.dto.PartyRole" type="Default" sourceCardinality="0..1" targetCardinality="1..1"/>
+    <HasRelation name="hasAddress" source="org.solent.com504.project.model.dto.Party" target="org.solent.com504.project.model.dto.Address" type="Default" sourceCardinality="0..1" targetCardinality="1..1"/>
+    <UseRelation name="usesPartyDAO" source="org.solent.com504.project.model.service.ServiceFacade" target="org.solent.com504.project.model.dao.PartyDAO" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation name="usesServiceFacade" source="org.solent.com504.project.model.web.ViewController" target="org.solent.com504.project.model.service.ServiceFacade" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation name="ViewController" source="org.solent.com504.project.model.web.ViewController" target="org.solent.com504.project.model.web.JSP_Pages_do_not_generate" sourceCardinality="1..1" targetCardinality="1..1"/>
     <UseRelation name="roleHasUsers" source="org.solent.com504.project.model.user.dto.Role" target="org.solent.com504.project.model.user.dto.User" sourceCardinality="1..1" targetCardinality="0..*"/>
+    <UseRelation name="usesUser" source="UserDAO" target="org.solent.com504.project.model.user.dto.User" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation name="useUserRoles" source="org.solent.com504.project.model.user.dto.Role" target="org.solent.com504.project.model.user.dto.UserRoles" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation name="usesServiceFacade" source="org.solent.com504.project.model.rest.RestService" target="org.solent.com504.project.model.service.ServiceFacade" sourceCardinality="1..1" targetCardinality="1..1"/>
   </ClassDiagramRelations>
 </ClassDiagram>
