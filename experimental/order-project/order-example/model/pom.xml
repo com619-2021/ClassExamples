@@ -11,11 +11,71 @@
     <artifactId>order-example-model</artifactId>
     <name>order-example-model</name>
     <packaging>jar</packaging>
+    
+    <properties>
+        <generated-sources-path>${project.build.directory}${file.separator}generated-sources</generated-sources-path>
+        <generated-sources-java-path>src${file.separator}main${file.separator}java</generated-sources-java-path>
+    </properties>
+
+    <build>
+        <plugins>
+
+            <!-- see mapstruct project https://mapstruct.org/ -->
+            <plugin>
+                <!-- adds mapstruct to compiler to construct mappers -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <fork>true</fork>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${mapstructVersion}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                    <compilerArgs>
+                        <compilerArg>
+                            -Amapstruct.suppressGeneratorTimestamp=true
+                        </compilerArg>
+                        <compilerArg>
+                            -Amapstruct.suppressGeneratorVersionInfoComment=true
+                        </compilerArg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>add-generated-source</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${generated-sources-path}${file.separator}${generated-sources-java-path}</source>
+
+                                <!-- must add annotations classpath for the compiler generated annotations to be included -->
+                                <source>${project.build.directory}${file.separator}generated-sources${file.separator}annotations${file.separator}</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
 
     
     <dependencies>
         
-       <!-- dependencies for jpa annotations -->
+        <!-- dependencies for jpa annotations -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -39,6 +99,12 @@
                     <artifactId>spring-boot-starter-logging</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-jdk8</artifactId>
+            <scope>compile</scope>
         </dependency>
         
         <!-- used to annotate model with swagger annotations -->
