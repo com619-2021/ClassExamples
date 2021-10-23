@@ -73,7 +73,7 @@ public class PartyRestService {
             })
     @GET
     @Path("/party")
-    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
+    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Transactional(readOnly = true)
     public Response getPartys(@Context UriInfo uriInfo) {
@@ -95,7 +95,7 @@ public class PartyRestService {
 
             // converting to list
             replyMessage.setPartyList(new ArrayList(unboundList));
-            replyMessage.setSize(unboundList.size());
+            replyMessage.setLimit(unboundList.size());
 
             replyMessage.setCode(Response.Status.OK.getStatusCode());
 
@@ -151,7 +151,7 @@ public class PartyRestService {
 
             // converting to list
             replyMessage.setPartyList(new ArrayList(unboundList));
-            replyMessage.setSize(unboundList.size());
+            replyMessage.setLimit(unboundList.size());
 
             replyMessage.setCode(Response.Status.OK.getStatusCode());
 
@@ -209,7 +209,7 @@ public class PartyRestService {
 
             // converting to list
             replyMessage.setPartyList(new ArrayList(unboundList));
-            replyMessage.setSize(unboundList.size());
+            replyMessage.setLimit(unboundList.size());
 
             replyMessage.setCode(Response.Status.OK.getStatusCode());
 

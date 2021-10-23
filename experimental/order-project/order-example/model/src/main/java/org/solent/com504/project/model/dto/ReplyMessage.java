@@ -18,11 +18,11 @@ public class ReplyMessage {
 
     private String debugMessage = null;
 
-    private Long totalRecords = null;
+    private Long totalCount = null;
 
-    private Integer page = null;
+    private Integer offset = null;
 
-    private Integer size = null;
+    private Integer limit = null;
 
     @XmlElementWrapper(name = "stringlist")
     @XmlElement(name = "string")
@@ -84,28 +84,28 @@ public class ReplyMessage {
     
 
 
-    public Long getTotalRecords() {
-        return totalRecords;
+    public Long getTotalCount() {
+        return totalCount;
     }
 
-    public void setTotalRecords(Long totalRecords) {
-        this.totalRecords = totalRecords;
+    public void setTotalCount(Long totalCount) {
+        this.totalCount = totalCount;
     }
 
-    public Integer getPage() {
-        return page;
+    public Integer getOffset() {
+        return offset;
     }
 
-    public void setPage(Integer page) {
-        this.page = page;
+    public void setOffset(Integer offset) {
+        this.offset = offset;
     }
 
-    public Integer getSize() {
-        return size;
+    public Integer getLimit() {
+        return limit;
     }
 
-    public void setSize(Integer size) {
-        this.size = size;
+    public void setLimit(Integer limit) {
+        this.limit = limit;
     }
 
     public List<Resource> getResourceList() {

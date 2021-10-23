@@ -119,7 +119,7 @@ public class UserRestService {
             List<User> unboundList = unbindUserList(userList, requestPath);
 
             replyMessage.setUserList(unboundList);
-            replyMessage.setSize(unboundList.size());
+            replyMessage.setLimit(unboundList.size());
 
             replyMessage.setCode(Response.Status.OK.getStatusCode());
 
@@ -220,7 +220,7 @@ public class UserRestService {
             List<User> unboundList = unbindUserList(userList, requestPath);
 
             replyMessage.setUserList(unboundList);
-            replyMessage.setSize(unboundList.size());
+            replyMessage.setLimit(unboundList.size());
 
             replyMessage.setCode(Response.Status.OK.getStatusCode());
 

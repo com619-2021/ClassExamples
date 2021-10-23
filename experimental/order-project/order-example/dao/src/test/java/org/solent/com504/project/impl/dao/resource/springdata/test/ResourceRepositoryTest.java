@@ -104,8 +104,8 @@ public class ResourceRepositoryTest {
 
         LOG.debug("end of resourceRepositoryTest");
     }
-    
-        @Transactional
+
+    @Transactional
     @Test
     public void catalogEntryCatalogRepositoryTest() {
         LOG.debug("start of catalogEntryRepositoryTest");
@@ -137,6 +137,5 @@ public class ResourceRepositoryTest {
 
         LOG.debug("end of catalogEntryRepositoryTest");
     }
-    
-    
+
 }

@@ -2,7 +2,7 @@
 
 <ClassDiagram name="OrderPattern">
   <ClassDiagramComponents>
-    <Class name="Order" package="org.solent.com504.project.model.order.dto" visibility="public" xPosition="305.0" yPosition="503.0">
+    <Class name="Order" package="org.solent.com504.project.model.order.dto" visibility="public" xPosition="383.0" yPosition="503.0">
       <Fields>
         <Field name="href" type="String" visibility="private"/>
         <Field name="uuid" type="String" visibility="private"/>
@@ -62,7 +62,7 @@
       <Constructors/>
       <Methods/>
     </Class>
-    <Interface name="OrderDAO" package="org.solent.com504.project.model.order.dao" visibility="public" xPosition="358.0" yPosition="342.0">
+    <Interface name="OrderDAO" package="org.solent.com504.project.model.order.dao" visibility="public" xPosition="470.0" yPosition="309.0">
       <Methods/>
     </Interface>
     <Interface name="OrderChangeRequestDAO" package="org.solent.com504.project.model.order.dao" visibility="public" xPosition="701.0" yPosition="342.0">
@@ -92,40 +92,40 @@
     </Interface>
     <Interface name="ResourceInventoryService" package="org.solent.com504.project.model.resource.service" visibility="public" xPosition="1203.0" yPosition="342.0">
       <Methods>
-        <Method name="getResourceByuuid" returnType="Resource" visibility="public">
+        <Method name="getResourceByuuid" returnType="ReplyMessage" visibility="public">
           <Argument type="String" name="uuid"/>
         </Method>
-        <Method name="deleteResourceByUuid" returnType="Resource" visibility="public">
+        <Method name="deleteResourceByUuid" returnType="ReplyMessage" visibility="public">
           <Argument type="String" name="uuid"/>
         </Method>
-        <Method name="postCreateResource" returnType="Resource" visibility="public">
+        <Method name="postCreateResource" returnType="ReplyMessage" visibility="public">
           <Argument type="Resource" name="resource"/>
           <Argument type="String" name="ownerPartyUUID"/>
         </Method>
-        <Method name="putUpdateResource" returnType="Resource" visibility="public">
+        <Method name="putUpdateResource" returnType="ReplyMessage" visibility="public">
           <Argument type="Resoure" name="resource"/>
         </Method>
-        <Method name="getResourceByTemplate" returnType="Resource" visibility="public">
+        <Method name="getResourceByTemplate" returnType="ReplyMessage" visibility="public">
           <Argument type="Resource" name="resourceSearchTemplate"/>
         </Method>
       </Methods>
     </Interface>
     <Interface name="ResourceCatalogueService" package="org.solent.com504.project.model.resource.service" visibility="public" xPosition="1725.0" yPosition="342.0">
       <Methods>
-        <Method name="getResourceByuuid" returnType="Resource" visibility="public">
+        <Method name="getResourceCatalogByuuid" returnType="ReplyMessage" visibility="public">
           <Argument type="String" name="uuid"/>
         </Method>
-        <Method name="deleteResourceByUuid" returnType="Resource" visibility="public">
+        <Method name="deleteResourceCatalogByUuid" returnType="ReplyMessage" visibility="public">
           <Argument type="String" name="uuid"/>
         </Method>
-        <Method name="postCreateResource" returnType="Resource" visibility="public">
+        <Method name="postCreateResourceCatalog" returnType="ReplyMessage" visibility="public">
           <Argument type="Resource" name="resource"/>
           <Argument type="String" name="ownerPartyUUID"/>
         </Method>
-        <Method name="putUpdateResource" returnType="Resoure" visibility="public">
+        <Method name="putUpdateResourceCatalog" returnType="ReplyMessage" visibility="public">
           <Argument type="Resoure" name="resource"/>
         </Method>
-        <Method name="getResourceByTemplate" returnType="Resource" visibility="public">
+        <Method name="getResourceCatalogByTemplate" returnType="ReplyMessage" visibility="public">
           <Argument type="Resource" name="resourceSearchTemplate"/>
         </Method>
       </Methods>
@@ -152,15 +152,29 @@
         <Literal name="ACKNOWLEGED"/>
       </Literals>
     </Enum>
+    <Class name="ReplyMessage" package="org.solent.com504.project.model.dto" visibility="public" xPosition="25.0" yPosition="280.0">
+      <Fields>
+        <Field name="orderList" type="List&lt;Order&gt;" visibility="private"/>
+        <Field name="code" type="Integer" visibility="private"/>
+        <Field name="debugMessage" type="String" visibility="private"/>
+        <Field name="resourceList" type="List&lt;Resource&gt;" visibility="private"/>
+        <Field name="orderChangeRequestList" type="List&lt;OrderChangeRequest&gt;" visibility="private"/>
+        <Field name="limit" type="Long" visibility="private"/>
+        <Field name="offset" type="Long" visibility="private"/>
+        <Field name="totalRecords" type="Long" visibility="private"/>
+      </Fields>
+      <Constructors/>
+      <Methods/>
+    </Class>
   </ClassDiagramComponents>
   <ClassDiagramRelations>
-    <UseRelation name="OrderHasResources" source="org.solent.com504.project.model.order.dto.Order" target="org.solent.com504.project.model.resource.dto.Resource" sourceCardinality="0..*" targetCardinality="0..*"/>
-    <UseRelation name="changeRequestHasStatus" source="org.solent.com504.project.model.order.dto.OrderChangeRequest" target="org.solent.com504.project.model.order.dto.ChangeStatus" sourceCardinality="1..1" targetCardinality="1..1"/>
-    <UseRelation name="uses resource" source="org.solent.com504.project.model.resource.dao.ResourceCatalogDAO" target="org.solent.com504.project.model.resource.dto.Resource" sourceCardinality="1..1" targetCardinality="0..*"/>
-    <UseRelation name="hasChangeRequests" source="org.solent.com504.project.model.order.dto.Order" target="org.solent.com504.project.model.order.dto.OrderChangeRequest" sourceCardinality="1..1" targetCardinality="0..*"/>
     <HasRelation name="orderHasSubOrders" source="org.solent.com504.project.model.order.dto.Order" target="org.solent.com504.project.model.order.dto.Order" type="Aggregation" sourceCardinality="0..1" targetCardinality="0..*" collectionType="List"/>
+    <UseRelation name="uses resource" source="org.solent.com504.project.model.resource.dao.ResourceCatalogDAO" target="org.solent.com504.project.model.resource.dto.Resource" sourceCardinality="1..1" targetCardinality="0..*"/>
+    <UseRelation name="usesResource" source="org.solent.com504.project.model.resource.dao.ResourceInventoryDAO" target="org.solent.com504.project.model.resource.dto.Resource" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation name="OrderHasResources" source="org.solent.com504.project.model.order.dto.Order" target="org.solent.com504.project.model.resource.dto.Resource" sourceCardinality="0..*" targetCardinality="0..*"/>
     <HasRelation name="resourceHasCharacteristics" source="org.solent.com504.project.model.resource.dto.Resource" target="org.solent.com504.project.model.resource.dto.Characteristic" type="Default" sourceCardinality="0..1" targetCardinality="0..*" collectionType="List"/>
     <UseRelation name="orderHasStatus" source="org.solent.com504.project.model.order.dto.Order" target="org.solent.com504.project.model.order.dto.OrderStatus" sourceCardinality="1..1" targetCardinality="1..1"/>
-    <UseRelation name="usesResource" source="org.solent.com504.project.model.resource.dao.ResourceInventoryDAO" target="org.solent.com504.project.model.resource.dto.Resource" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation name="hasChangeRequests" source="org.solent.com504.project.model.order.dto.Order" target="org.solent.com504.project.model.order.dto.OrderChangeRequest" sourceCardinality="1..1" targetCardinality="0..*"/>
+    <UseRelation name="changeRequestHasStatus" source="org.solent.com504.project.model.order.dto.OrderChangeRequest" target="org.solent.com504.project.model.order.dto.ChangeStatus" sourceCardinality="1..1" targetCardinality="1..1"/>
   </ClassDiagramRelations>
 </ClassDiagram>

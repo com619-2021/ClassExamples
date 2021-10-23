@@ -1,16 +1,18 @@
 package org.solent.com504.project.model.resource.service;
 
+import java.util.List;
+import org.solent.com504.project.model.dto.ReplyMessage;
 import org.solent.com504.project.model.resource.dto.Resource;
 
 public interface ResourceInventoryService {
 
-    public String getResourceByuuid(String uuid);
+    public ReplyMessage getResourceByuuid(String uuid);
 
-    public String deleteResourceByUuid(String uuid);
+    public ReplyMessage deleteResourceByUuid(String uuid);
 
-    public String postCreateResource(Resource resource, String ownerPartyUUID);
+    public ReplyMessage postCreateResource(Resource resource, String ownerPartyUUID);
 
-    public Resource putUpdateResource(Resource resource);
+    public ReplyMessage putUpdateResource(Resource resource);
 
-    public Resource getResourceByTemplate(Resource resourceSearchTemplate);
+    public ReplyMessage getResourceByTemplate(Resource resourceSearchTemplate,Integer offset, Integer Limit);
 }
