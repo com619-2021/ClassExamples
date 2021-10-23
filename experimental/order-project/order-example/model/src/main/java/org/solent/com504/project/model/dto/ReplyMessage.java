@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.solent.com504.project.model.party.dto.Party;
+import org.solent.com504.project.model.resource.dto.Resource;
 import org.solent.com504.project.model.user.dto.User;
 
 @XmlRootElement
@@ -34,6 +35,10 @@ public class ReplyMessage {
     @XmlElementWrapper(name = "userlist")
     @XmlElement(name = "user")
     private List<User> userList = null;
+    
+        @XmlElementWrapper(name = "resourceList")
+    @XmlElement(name = "resource")
+    private List<Resource> resourceList = null;
 
 
     public Integer getCode() {
@@ -101,6 +106,14 @@ public class ReplyMessage {
 
     public void setSize(Integer size) {
         this.size = size;
+    }
+
+    public List<Resource> getResourceList() {
+        return resourceList;
+    }
+
+    public void setResourceList(List<Resource> resourceList) {
+        this.resourceList = resourceList;
     }
     
     

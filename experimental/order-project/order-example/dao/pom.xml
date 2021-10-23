@@ -86,7 +86,17 @@
             <scope>compile</scope>
         </dependency>
         
-        
+        <!-- this library allows jaxb classes to be treated as json -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
+            <scope>compile</scope>
+        </dependency>
 
         <!-- SLF4J used to provide logging in classes -->
       

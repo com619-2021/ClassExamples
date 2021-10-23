@@ -32,6 +32,8 @@ import org.solent.com504.project.model.party.dto.Address;
 import org.solent.com504.project.model.dto.ReplyMessage;
 import org.solent.com504.project.model.party.dto.PartyRole;
 import org.solent.com504.project.model.party.dto.PartyStatus;
+import org.solent.com504.project.model.resource.dto.Characteristic;
+import org.solent.com504.project.model.resource.dto.Resource;
 import org.solent.com504.project.model.user.dto.Role;
 import org.solent.com504.project.model.user.dto.User;
 import org.solent.com504.project.model.user.dto.UserRoles;
@@ -50,7 +52,8 @@ public class ModelJaxbTest {
             jaxbContext = JAXBContext.newInstance(
                     "org.solent.com504.project.model.dto"
                     + ":org.solent.com504.project.model.user.dto"
-                    + ":org.solent.com504.project.model.party.dto");
+                    + ":org.solent.com504.project.model.party.dto"
+                    + ":org.solent.com504.project.model.resource.dto");
         } catch (JAXBException e) {
             throw new RuntimeException("problem creating jaxb context", e);
         }
@@ -143,6 +146,63 @@ public class ModelJaxbTest {
             throw new RuntimeException("problem testing jaxb marshalling", e);
         }
     }
-    
+
+    @Test
+    public void testResourceModelJaxb() {
+        try {
+            Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+            // output pretty printed
+            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+            // create objects to marshal
+            ReplyMessage replyMessage = new ReplyMessage();
+
+            Resource resource = new Resource();
+            List<Characteristic> characteristics = new ArrayList<Characteristic>();
+            Characteristic characteristic1 = new Characteristic("nameIsName", "valueIsValue", "description is descriptoion");
+            characteristics.add(characteristic1);
+
+            resource.setCharacteristics(characteristics);
+            resource.setDescription("the description");
+            resource.setHref("http://localhost/resource");
+            resource.setId(1L);
+            resource.setName("testResource");
+
+            Party party = new Party();
+            party.setPartyStatus(PartyStatus.ACTIVE);
+            party.setPartyRole(PartyRole.UNDEFINED);
+            Address address = new Address();
+            address.setAddressLine1("home for me");
+            party.setAddress(address);
+            party.setHref("http://localhost/party");
+
+            resource.setResourceOwner(party);
+
+            resource.setResourceTypeName("org.solent.ship");
+
+            resource.setUuid(UUID.randomUUID().toString());
+
+            List<Resource> resourceList = new ArrayList<Resource>();
+            resourceList.add(resource);
+            replyMessage.setResourceList(resourceList);
+
+            // string writer is used to compare received object
+            StringWriter sw1 = new StringWriter();
+            jaxbMarshaller.marshal(replyMessage, sw1);
+
+            LOG.debug("TestResource marshaled code" + sw1);
+
+            // having written the file we now read in the file for test
+            Unmarshaller jaxbUnMarshaller = jaxbContext.createUnmarshaller();
+            InputStream stream = new ByteArrayInputStream(sw1.toString().getBytes(StandardCharsets.UTF_8));
+
+            ReplyMessage receivedReplyMessage = (ReplyMessage) jaxbUnMarshaller.unmarshal(stream);
+            LOG.debug("TestResource receivedReplyMessage=" + receivedReplyMessage);
+
+        } catch (JAXBException e) {
+            throw new RuntimeException("problem testing jaxb marshalling", e);
+        }
+    }
 
 }

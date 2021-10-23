@@ -18,7 +18,7 @@ import org.solent.com504.project.model.utilities.ListToJsonConverter;
 @XmlAccessorType(XmlAccessType.FIELD)
 
 @Entity
-@Table(name = "resource")
-public class Resource extends AbstractResource{
-
+@Table(name = "resourcecatelog")
+public class ResourceCatalog extends AbstractResource{
+    
 }

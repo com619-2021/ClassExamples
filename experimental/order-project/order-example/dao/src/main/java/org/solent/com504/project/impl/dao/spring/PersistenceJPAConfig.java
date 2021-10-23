@@ -24,7 +24,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
     "org.solent.com504.project.impl.dao.user.spring"})
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackages = {"org.solent.com504.project.impl.dao.party.springdata",
-    "org.solent.com504.project.impl.dao.user.springdata"})
+    "org.solent.com504.project.impl.dao.user.springdata",
+    "org.solent.com504.project.impl.dao.resource.springdata"
+})
 // @PropertySource("classpath:persistence-test.properties") // set in calling configuration
 public class PersistenceJPAConfig {
 
@@ -37,7 +39,8 @@ public class PersistenceJPAConfig {
         final LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource());
         em.setPackagesToScan("org.solent.com504.project.model.party.dto",
-                "org.solent.com504.project.model.user.dto");
+                "org.solent.com504.project.model.user.dto",
+                "org.solent.com504.project.model.resource.dto");
 
         final JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
