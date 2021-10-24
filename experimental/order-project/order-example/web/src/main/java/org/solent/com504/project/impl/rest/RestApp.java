@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.info.License;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.servers.ServerVariable;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -18,21 +20,31 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 import org.glassfish.jersey.server.ResourceConfig;
 
+// see https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Annotations#server
+// see also https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#serverObject
 @OpenAPIDefinition(
-    tags = {
-            @Tag(name="widget", description="Widget operations."),
-            @Tag(name="gasket", description="Operations related to gaskets")
-    },
-    info = @Info(
-        title="Example API",
-        version = "1.0.1",
-        contact = @Contact(
-            name = "Example API Support",
-            url = "http://exampleurl.com/contact",
-            email = "techsupport@example.com"),
-        license = @License(
-            name = "Apache 2.0",
-            url = "https://www.apache.org/licenses/LICENSE-2.0.html"))
+        tags = { //   @Tag(name="widget", description="Widget operations."),
+        //   @Tag(name="gasket", description="Operations related to gaskets")
+        },
+        info = @Info(
+                title = "Smart Port API",
+                version = "v1",
+                description = "Solent university devops https://github.com/com619-2021",
+                contact = @Contact(
+                        name = "Dr Craig Gallen",
+                        email = "craig.gallen@solent.ac.uk"),
+                license = @License(
+                        name = "Apache 2.0",
+                        url = "https://www.apache.org/licenses/LICENSE-2.0.html")),
+        servers = {
+            @Server(
+                    description = "localhost",
+                    url = "{schema}://{host}:{port}/project-web",
+                    variables = {
+                        @ServerVariable(name = "schema", description = "url schema", defaultValue = "http", allowableValues = {"http", "https"}),
+                        @ServerVariable(name = "host", description = "dns hostname", defaultValue = "localhost", allowableValues = {"localhost", "org.example.com"}),
+                        @ServerVariable(name = "port", description = "html port", defaultValue = "8080", allowableValues = {"8080", "443"}),})
+        }
 )
 @ApplicationPath("/rest")
 public class RestApp extends ResourceConfig {
