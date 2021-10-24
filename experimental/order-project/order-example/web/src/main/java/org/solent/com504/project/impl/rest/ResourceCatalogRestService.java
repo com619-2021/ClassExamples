@@ -17,6 +17,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -87,7 +88,7 @@ public class ResourceCatalogRestService {
             })
     @DELETE
     @Path("/catalog/{uuid}")
-    public Response deleteResourceCatalogByUuid(String uuid, @Context UriInfo uriInfo) {
+    public Response deleteResourceCatalogByUuid(@PathParam("uuid") String uuid, @Context UriInfo uriInfo) {
         try {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 
@@ -112,7 +113,7 @@ public class ResourceCatalogRestService {
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Transactional
-    public Response postCreateResourceCatalog(Resource resource, String ownerPartyUUID, @Context UriInfo uriInfo) {
+    public Response postCreateResourceCatalog(Resource resource,  @Context UriInfo uriInfo) {
         try {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 
@@ -163,7 +164,7 @@ public class ResourceCatalogRestService {
     @Path("/catalog")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public Response getResourceCatalogByTemplate(Resource resourceSearchTemplate, Integer offset, Integer Limit, @Context UriInfo uriInfo) {
+    public Response getResourceCatalogByTemplate(Resource resourceSearchTemplate, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer Limit, @Context UriInfo uriInfo) {
         try {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 

@@ -65,7 +65,7 @@ public class PartyRestService {
     private PartyService partyService;
 
     @Operation(summary = "Find all parties",
-            tags = {"party management api"},
+            tags = {"User Party Management API"},
             responses = {
                 @ApiResponse(responseCode = "200", description = "successful operation returns party list with one entry", content = @Content(
                         schema = @Schema(implementation = ReplyMessage.class))),
@@ -112,7 +112,7 @@ public class PartyRestService {
     
        // swagger annotations
     @Operation(summary = "Find party by uuid",
-            tags = {"party/party"},
+            tags = {"User Party Management API"},
             responses = {
                 @ApiResponse(responseCode = "200", description = "successful operation returns party list with one entry", content = @Content(
                         schema = @Schema(implementation = ReplyMessage.class))),
@@ -169,7 +169,7 @@ public class PartyRestService {
 
     // swagger annotations
     @Operation(summary = "Create new Party",
-            tags = {"party management api"},
+            tags = {"User Party Management API"},
             responses = {
                 @ApiResponse(responseCode = "200", description = "successful operation returns party list with one entry", content = @Content(
                         schema = @Schema(implementation = ReplyMessage.class))),
