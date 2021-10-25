@@ -13,5 +13,5 @@ public interface ResourceCatalogService {
 
     public ReplyMessage putUpdateResourceCatalog(Resource resource);
 
-    public ReplyMessage getResourceCatalogByTemplate(Resource resourceSearchTemplate,Integer offset, Integer Limit);
+    public ReplyMessage getResourceCatalogByTemplate(Resource resourceSearchTemplate,Integer offset, Integer limit);
 }

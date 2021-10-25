@@ -14,5 +14,5 @@ public interface ResourceInventoryService {
 
     public ReplyMessage putUpdateResource(Resource resource);
 
-    public ReplyMessage getResourceByTemplate(Resource resourceSearchTemplate,Integer offset, Integer Limit);
+    public ReplyMessage getResourceByTemplate(Resource resourceSearchTemplate,Integer offset, Integer limit);
 }

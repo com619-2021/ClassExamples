@@ -44,13 +44,15 @@ public class ResourceInventoryRestService {
     final static Logger LOG = LogManager.getLogger(ResourceInventoryRestService.class);
 
     @Autowired
-    ResourceInventoryService resourceCatalogService = null;
+    ResourceCatalogService resourceCatalogService = null;
 
     @Autowired
     ResourceInventoryService resourceService = null;
 
     @Autowired
     private PartyService partyService;
+    
+    
 
     @Operation(summary = "Find catalog resource by uuid",
             tags = {"resource/inventory"},

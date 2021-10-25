@@ -58,6 +58,9 @@
                             <li <% if ("home".equals(request.getAttribute("selectedPage"))) {%> class="active"  <% } %> ><a href="${contextPath}/home">Home</a></li> 
                             <li <% if ("about".equals(request.getAttribute("selectedPage"))) {%>  class="active"  <% } %> ><a href="${contextPath}/about">About</a></li> 
                             <li <% if ("contact".equals(request.getAttribute("selectedPage"))) {%>  class="active"  <% }%> ><a href="${contextPath}/contact">Contact</a></li>                          
+                            <li <% if ("inventory".equals(request.getAttribute("selectedPage"))) {%> class="active"  <% } %> ><a href="${contextPath}/resources">Resource Inventory</a></li> 
+                            <li <% if ("catalog".equals(request.getAttribute("selectedPage"))) {%> class="active"  <% } %> ><a href="${contextPath}/catalog">Resource Catalog</a></li> 
+
                             <li><a href="${contextPath}/swagger-ui/index.html" target="_blank" >ReST API</a></li>                          
                             <sec:authorize access="hasRole('ROLE_GLOBAL_ADMIN')">
                                 <li class="dropdown" >

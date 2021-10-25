@@ -7,6 +7,7 @@ package org.solent.com504.project.impl.dao.resource.springdata.test;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import org.solent.com504.project.impl.dao.party.springdata.test.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,9 +38,9 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 @RunWith(SpringJUnit4ClassRunner.class)
 // ApplicationContext will be loaded from the DAOTestConfiguration class
 @ContextConfiguration(classes = DAOTestConfiguration.class, loader = AnnotationConfigContextLoader.class)
-public class ResourceRepositoryTest {
+public class ResourceRepositoryAndCatalogTest {
 
-    final static Logger LOG = LogManager.getLogger(ResourceRepositoryTest.class);
+    final static Logger LOG = LogManager.getLogger(ResourceRepositoryAndCatalogTest.class);
 
     @Autowired
     private PartyRepository partyRepository = null;
@@ -75,6 +76,9 @@ public class ResourceRepositoryTest {
         LOG.debug("party2=" + party2);
 
         Resource resource1 = new Resource();
+        String uuid1 = UUID.randomUUID().toString();
+
+        resource1.setUuid(uuid1);
 
         resource1.setResourceOwner(party2);
 
@@ -102,6 +106,11 @@ public class ResourceRepositoryTest {
         Resource resource2 = resourceRepository.getOne(id1);
         LOG.debug("resourceEntry2=" + resource2);
 
+        List<Resource> resourceList = resourceRepository.findByUuid(uuid1);
+
+        Resource resource3 = resourceList.get(0);
+        LOG.debug("resourceEntry3=" + resource2);
+
         LOG.debug("end of resourceRepositoryTest");
     }
 
@@ -110,6 +119,8 @@ public class ResourceRepositoryTest {
     public void catalogEntryCatalogRepositoryTest() {
         LOG.debug("start of catalogEntryRepositoryTest");
         ResourceCatalog catalogEntry1 = new ResourceCatalog();
+        String uuid1 = UUID.randomUUID().toString();
+        catalogEntry1.setUuid(uuid1);
 
         catalogEntry1.setResourceController(ResourceAccess.INTERNAL);
         String description = "this is a big boat";
@@ -134,6 +145,11 @@ public class ResourceRepositoryTest {
 
         ResourceCatalog catalogEntry2 = resourceCatalogRepository.getOne(id1);
         LOG.debug("catalogEntryEntry2=" + catalogEntry2);
+
+        List<ResourceCatalog> catalogList = resourceCatalogRepository.findByUuid(uuid1);
+
+        ResourceCatalog catalog3 = catalogList.get(0);
+        LOG.debug("catalog3=" + catalog3);
 
         LOG.debug("end of catalogEntryRepositoryTest");
     }
