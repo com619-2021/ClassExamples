@@ -1,9 +1,7 @@
 
 ## JPA DAO Model
 
-THe JPA DAO model is derived from teh following diagram
-
-![alt text](../UMLmodel/images/jpaExampleClassDiagram.png "Figure jpaExampleClassDiagram.png" )
+The JPA DAO model is derived from the following diagrams
 
 DTO classes are at the bottom of the diagram. 
 These are simple java beans which are used to pass information between layers.
@@ -11,6 +9,13 @@ These are simple java beans which are used to pass information between layers.
 DAO classes are in the middle of the diagram.
 These are used to Create Delete Update and Retrieve (CRUD) data from the database
 
+### User Party Roles - security and login
+
+![alt text](../UMLmodel/images/user-party-roles-classdiagram.png"Figure user-party-roles-classdiagram.png" )
+
+### Order and Catalog patterns
+
+![alt text](../UMLmodel/images/OrderPattern-classdiagram.png"Figure OrderPattern-classdiagram.png" )
 
 
 
