@@ -15,4 +15,8 @@ public interface ResourceInventoryService {
     public ReplyMessage putUpdateResource(Resource resource);
 
     public ReplyMessage getResourceByTemplate(Resource resourceSearchTemplate,Integer offset, Integer limit);
+    
+    public ReplyMessage postRemoveCharacteristic(String resourceUuid, String characteristicName);
+    
+    public ReplyMessage postAddModifyCharacteristic(String resourceUuid, String characteristicName, String value, String description);
 }

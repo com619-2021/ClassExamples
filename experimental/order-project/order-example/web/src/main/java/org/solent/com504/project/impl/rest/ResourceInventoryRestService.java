@@ -51,8 +51,6 @@ public class ResourceInventoryRestService {
 
     @Autowired
     private PartyService partyService;
-    
-    
 
     @Operation(summary = "Find catalog resource by uuid",
             tags = {"resource/inventory"},
@@ -69,7 +67,9 @@ public class ResourceInventoryRestService {
     @Transactional(readOnly = true)
     public Response getResourceInventoryByuuid(@PathParam("uuid") String uuid, @Context UriInfo uriInfo) {
         try {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            ReplyMessage replyMessage = resourceService.getResourceByuuid(uuid);
+            replyMessage.setCode(Response.Status.OK.getStatusCode());
+            return Response.status(Response.Status.OK).entity(replyMessage).build();
 
         } catch (Exception ex) {
             LOG.error("error calling GET /inventory/{uuid} getResourceInventoryByuuid uuid=" + uuid, ex);
@@ -80,7 +80,7 @@ public class ResourceInventoryRestService {
         }
     }
 
-    @Operation(summary = "Delete catalog resource by uuid",
+    @Operation(summary = "Delete resource by uuid",
             tags = {"resource/inventory"},
             responses = {
                 @ApiResponse(responseCode = "200", description = "successful operation returns resource list with one entry", content = @Content(
@@ -90,9 +90,12 @@ public class ResourceInventoryRestService {
             })
     @DELETE
     @Path("/inventory/{uuid}")
+    @Transactional()
     public Response deleteResourceInventoryByUuid(@PathParam("uuid") String uuid, @Context UriInfo uriInfo) {
         try {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            ReplyMessage replyMessage = resourceService.deleteResourceByUuid(uuid);
+            replyMessage.setCode(Response.Status.OK.getStatusCode());
+            return Response.status(Response.Status.OK).entity(replyMessage).build();
 
         } catch (Exception ex) {
             LOG.error("error calling DELETE /inventory/{uuid} getResourceInventoryByuuid uuid=" + uuid, ex);
@@ -103,7 +106,7 @@ public class ResourceInventoryRestService {
         }
     }
 
-    @Operation(summary = "Create new Catalog resource",
+    @Operation(summary = "Create new resource",
             tags = {"resource/inventory"},
             responses = {
                 @ApiResponse(responseCode = "200", description = "successful operation returns resource list with one entry", content = @Content(
@@ -166,9 +169,13 @@ public class ResourceInventoryRestService {
     @Path("/inventory")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public Response getResourceInventoryByTemplate(Resource resourceSearchTemplate, @QueryParam("offset")Integer offset, @QueryParam("offset") Integer Limit, @Context UriInfo uriInfo) {
+    @Transactional(readOnly = true)
+    public Response getResourceInventoryByTemplate(Resource resourceSearchTemplate, @QueryParam("offset") Integer offset, @QueryParam("offset") Integer Limit, @Context UriInfo uriInfo) {
+
         try {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            ReplyMessage replyMessage = resourceService.getResourceByTemplate(resourceSearchTemplate, offset, Limit);
+            replyMessage.setCode(Response.Status.OK.getStatusCode());
+            return Response.status(Response.Status.OK).entity(replyMessage).build();
 
         } catch (Exception ex) {
             LOG.error("error calling GET /inventory getResourceInventoryByTemplate ", ex);

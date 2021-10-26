@@ -88,6 +88,7 @@ public class ResourceCatalogRestService {
             })
     @DELETE
     @Path("/catalog/{uuid}")
+    @Transactional()
     public Response deleteResourceCatalogByUuid(@PathParam("uuid") String uuid, @Context UriInfo uriInfo) {
         try {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -113,7 +114,7 @@ public class ResourceCatalogRestService {
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Transactional
-    public Response postCreateResourceCatalog(Resource resource,  @Context UriInfo uriInfo) {
+    public Response postCreateResourceCatalog(Resource resource, @Context UriInfo uriInfo) {
         try {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 

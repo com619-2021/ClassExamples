@@ -15,7 +15,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.solent.com504.project.model.party.dto.Party;
-import org.solent.com504.project.model.utilities.ListToJsonConverter;
+import org.solent.com504.project.model.utilities.CharacteristicListToJsonConverter;
+
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -78,10 +79,10 @@ public abstract class  AbstractResource {
         this.name = name;
     }
 
-    // this avoids haing to create a table for individual characteristis
+    // this avoids having to create a table for individual characteristis
     // but at the expense of not being able to search on characterists 
-    @Column(name = "characteristics")
-    @Convert(converter = ListToJsonConverter.class)
+    @Column(name = "characteristics", length = 1000)
+    @Convert(converter = CharacteristicListToJsonConverter.class)
     public List<Characteristic> getCharacteristics() {
         return characteristics;
     }

@@ -31,7 +31,6 @@
 
         <form action="./viewModifyResource" method="post">
             <div>
-                <input type="hidden" name="abstractResourceUuid" value="${abstractResource.uuid}"/>
                 <input type="hidden" name="action" value="updateAbstractResource"/>
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <button class="btn" type="submit" >Update Resource </button>
@@ -51,11 +50,11 @@
                     </tr>
                     <tr>
                         <td>uuid</td>
-                        <td><input type="text" name="abstractResourceUuid" value="${abstractResource.uuid}" size="50" disabled /></td>
+                        <td><input type="text" name="abstractResourceUuid" value="${abstractResource.uuid}" size="50" readonly /></td>
                     </tr>
                     <tr>
                         <td>href</td>
-                        <td><input type="text" name="abstractResourceHref" value="${abstractResource.href}" size="100" disabled /></td>
+                        <td><input type="text" name="abstractResourceHref" value="${abstractResource.href}" size="100" readonly /></td>
                     </tr>
                     <tr>
                         <td>control</td>
@@ -74,12 +73,17 @@
             <p>Manage Characteristics </p>
             <table class="table">
                 <thead>
+                    <tr>
+                        <th scope="col">name</th>
+                        <th scope="col">value</th>
+                        <th scope="col">description</th>
+                    </tr>
                 </thead>
                 <tbody>
                     <c:forEach var="characteristic" items="${abstractCharacteristics}">
                         <tr>
                     <form action="./viewModifyResource" method="POST">
-                        <td><input type="text" name="characteristicName" value="${characteristic.name}" /></td>
+                        <td><input type="text" name="characteristicName" value="${characteristic.name}" readonly /></td>
                         <td><input type="text" name="characteristicValue" value="${characteristic.value}" /></td>
                         <td><input type="text" name="characteristicDescription" value="${characteristic.description}" /></td>
                         <td>
@@ -104,21 +108,22 @@
             </table>
 
             <table class="table">
-                <thead>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <form action="./viewModifyResource" method="POST">
-                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                                <input type="hidden" name="action" value="createCharacteristic"/>
-                                <input type="hidden" name="characteristicName" value="${characteristic.name}" />
-                                <input type="hidden" name="abstractResourceUuid" value="${abstractResource.uuid}" />
-                                <button class="btn" type="submit" >Add Characteristic</button>
-                            </form>
-                        </td>
-                    </tr>
-                </tbody>
+                <form action="./viewModifyResource" method="POST">
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                    <input type="hidden" name="action" value="createCharacteristic"/>
+                    <input type="hidden" name="abstractResourceUuid" value="${abstractResource.uuid}" />
+                    <thead>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" name="characteristicName" value="${characteristic.name}" /></td>
+                            <td><input type="text" name="characteristicValue" value="${characteristic.value}" /></td>
+                            <td><input type="text" name="characteristicDescription" value="${characteristic.description}" /></td>
+                            <td><button class="btn" type="submit" >Add Characteristic</button></td>
+                        </tr>
+                    </tbody>
+                </form>
+
             </table>
 
         </div>

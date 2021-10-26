@@ -7,7 +7,9 @@ package org.solent.com504.project.impl.resource.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -86,7 +88,7 @@ public class ResourceInventoryServiceImpl implements ResourceInventoryService {
             Party resourceOwner = partyList.get(0);
             resource.setResourceOwner(resourceOwner);
             // note - will take given uuid or create a new one
-            if (resource.getUuid()==null || resource.getUuid().isEmpty()){
+            if (resource.getUuid() == null || resource.getUuid().isEmpty()) {
                 resource.setUuid(UUID.randomUUID().toString());
                 resource.setResourceController(ResourceAccess.INTERNAL);
             }
@@ -107,7 +109,7 @@ public class ResourceInventoryServiceImpl implements ResourceInventoryService {
         }
         List<Resource> resourceList = resourceRepository.findByUuid(resource.getUuid());
         if (resourceList.isEmpty()) {
-            throw new IllegalArgumentException("cannot update resource not found uuid" + resource.getUuid());
+            throw new IllegalArgumentException("cannot update resource not found uuid=" + resource.getUuid());
         }
         Resource resourceEntity = resourceList.get(0);
 
@@ -130,9 +132,9 @@ public class ResourceInventoryServiceImpl implements ResourceInventoryService {
     public ReplyMessage getResourceByTemplate(Resource resourceSearchTemplate, Integer offset, Integer limit) {
 
         // TODO criteria search
-        if (resourceSearchTemplate != null) {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
+       // if (resourceSearchTemplate != null ) {
+        //    throw new UnsupportedOperationException("Not supported yet.");
+       // }
 
         List<Resource> resourceList = resourceRepository.findAll();
         Long totalCount = resourceRepository.count();
@@ -154,6 +156,80 @@ public class ResourceInventoryServiceImpl implements ResourceInventoryService {
 
     }
 
+    @Override
+    @Transactional
+    public ReplyMessage postRemoveCharacteristic(String resourceUuid, String characteristicName) {
+        List<Resource> resourceList = resourceRepository.findByUuid(resourceUuid);
+        if (resourceList != null && !resourceList.isEmpty()) {
+            Resource resourceEntity = resourceList.get(0);
+            List<Characteristic> characteristics = (resourceEntity.getCharacteristics() != null) ? resourceEntity.getCharacteristics() : new ArrayList<Characteristic>();
+            Iterator<Characteristic> iterator = characteristics.iterator();
+            while (iterator.hasNext()) {
+                Characteristic characteristic = iterator.next();
+                if (characteristicName.equals(characteristic.getName())) {
+                    iterator.remove();
+                }
+            }
+            resourceEntity.setCharacteristics(characteristics);
+            resourceRepository.saveAndFlush(resourceEntity);
 
+            // return detached entity
+            Resource detachedResource = AbstractResourceMapper.INSTANCE.abstractResourceToResource(resourceEntity);
+            ReplyMessage replyMessage = new ReplyMessage();
+            replyMessage.setResourceList(Arrays.asList(detachedResource));
+            return replyMessage;
+        } else {
+            throw new IllegalArgumentException("error deleting characteristic " + characteristicName + " resource not found esourceUuid=" + resourceUuid);
+        }
+    }
+
+    @Override
+    @Transactional
+    public ReplyMessage postAddModifyCharacteristic(String resourceUuid, String characteristicName, String value, String description) {
+        List<Resource> resourceList = resourceRepository.findByUuid(resourceUuid);
+        if (resourceList != null && !resourceList.isEmpty()) {
+            Resource resourceEntity = resourceList.get(0);
+            List<Characteristic> characteristics = (resourceEntity.getCharacteristics() != null) ? resourceEntity.getCharacteristics() : new ArrayList<Characteristic>();
+            //TODO debug
+            if (resourceEntity.getCharacteristics() != null) {
+                for (Object o : resourceEntity.getCharacteristics()) {
+                    LOG.debug("******************x 0=" + o);
+                    LOG.debug("***************type 0=" + o.getClass().getCanonicalName());
+                }
+            } else {
+                LOG.debug("****************** 0=null !!");
+            }
+
+            Iterator<Characteristic> iterator = characteristics.iterator();
+            boolean found = false;
+            Characteristic characteristic;
+            while (iterator.hasNext() && !found) {
+                characteristic = iterator.next();
+                if (characteristicName.equals(characteristic.getName())) {
+                    // update characteristic if found
+                    found = true;
+                    characteristic.setDescription(description);
+                    characteristic.setValue(value);
+                }
+            }
+            // create new characteristic if not found
+            if (!found) {
+                characteristic = new Characteristic(characteristicName, value, description);
+                characteristic.setDescription(description);
+                characteristic.setValue(value);
+                characteristics.add(characteristic);
+            }
+            resourceEntity.setCharacteristics(characteristics);
+            resourceRepository.saveAndFlush(resourceEntity);
+
+            // return detached entity
+            Resource detachedResource = AbstractResourceMapper.INSTANCE.abstractResourceToResource(resourceEntity);
+            ReplyMessage replyMessage = new ReplyMessage();
+            replyMessage.setResourceList(Arrays.asList(detachedResource));
+            return replyMessage;
+        } else {
+            throw new IllegalArgumentException("error updating characteristic " + characteristicName + " resource not found resourceUuid=" + resourceUuid);
+        }
+    }
 
 }
