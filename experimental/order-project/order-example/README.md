@@ -29,6 +29,8 @@ docker run -d  -p 8080:8080 solentdevops/order-example:0.1-SNAPSHOT
 ```
 The application should be available at http://-hostname-:8080/project-web/
 
+where -hostname- is either localhost or the dns name of the server.
+
 to see the container daemon image name use
 ```
 docker ps
