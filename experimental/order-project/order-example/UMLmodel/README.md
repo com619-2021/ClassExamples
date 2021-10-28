@@ -11,11 +11,11 @@ These are used to Create Delete Update and Retrieve (CRUD) data from the databas
 
 ### User Party Roles - security and login
 
-![alt text](../UMLmodel/images/user-party-roles-classdiagram.png"Figure user-party-roles-classdiagram.png" )
+![alt text](../UMLmodel/images/user-party-roles-classdiagram.png "Figure user-party-roles-classdiagram.png" )
 
 ### Order and Catalog patterns
 
-![alt text](../UMLmodel/images/OrderPattern-classdiagram.png"Figure OrderPattern-classdiagram.png" )
+![alt text](../UMLmodel/images/OrderPattern-classdiagram.png "Figure OrderPattern-classdiagram.png" )
 
 
 
