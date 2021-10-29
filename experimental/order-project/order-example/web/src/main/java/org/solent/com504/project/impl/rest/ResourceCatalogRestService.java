@@ -27,6 +27,7 @@ import org.apache.logging.log4j.Logger;
 import org.solent.com504.project.model.dto.ReplyMessage;
 import org.solent.com504.project.model.party.service.PartyService;
 import org.solent.com504.project.model.resource.dto.Resource;
+import org.solent.com504.project.model.resource.dto.ResourceCatalog;
 import org.solent.com504.project.model.resource.service.ResourceCatalogService;
 import org.solent.com504.project.model.resource.service.ResourceInventoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -161,19 +162,54 @@ public class ResourceCatalogRestService {
                 @ApiResponse(responseCode = "404", description = "not found"),
                 @ApiResponse(responseCode = "500", description = "internal server error")
             })
+
+    // note issue - https://github.com/swagger-api/swagger-ui/issues/5388 GET request do not allow a body in swagger UI although supported in JAX-RS
     @GET
     @Path("/catalog")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public Response getResourceCatalogByTemplate(Resource resourceSearchTemplate, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer Limit, @Context UriInfo uriInfo) {
+    public Response getResourceCatalog(@QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @Context UriInfo uriInfo) {
         try {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-
+            ReplyMessage replyMessage = resourceCatalogService.getResourceCatalogByTemplate(null, offset, limit);
+            replyMessage.setCode(Response.Status.OK.getStatusCode());
+            return Response.status(Response.Status.OK).entity(replyMessage).build();
         } catch (Exception ex) {
             LOG.error("error calling GET /catalog getResourceCatalogByTemplate ", ex);
             ReplyMessage replyMessage = new ReplyMessage();
             replyMessage.setCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
             replyMessage.setDebugMessage("error calling GET /catalog getResourceCatalogByTemplate " + ex.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(replyMessage).build();
+        }
+
+    }
+
+    @Operation(summary = "Find catalog resource by resource template (Should be GET but get with resources not allowed in swagger UI)",
+            tags = {"resource/catalog"},
+            responses = {
+                @ApiResponse(responseCode = "200", description = "successful operation returns resource list with one entry", content = @Content(
+                        schema = @Schema(implementation = ReplyMessage.class))),
+                @ApiResponse(responseCode = "404", description = "not found"),
+                @ApiResponse(responseCode = "500", description = "internal server error")
+            })
+
+    // note issue - https://github.com/swagger-api/swagger-ui/issues/5388 GET request do not allow a body in swagger UI although supported in JAX-RS
+    @POST
+    @Path("/getCatalogByTemplate")
+    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Transactional(readOnly = true)
+    public Response getResourceCatalogByTemplate(Resource resourceSearchTemplate, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @Context UriInfo uriInfo) {
+
+        try {
+            ReplyMessage replyMessage = resourceCatalogService.getResourceCatalogByTemplate(resourceSearchTemplate, offset, limit);
+            replyMessage.setCode(Response.Status.OK.getStatusCode());
+            return Response.status(Response.Status.OK).entity(replyMessage).build();
+
+        } catch (Exception ex) {
+            LOG.error("error calling GET /inventory getResourceCatalogByTemplate ", ex);
+            ReplyMessage replyMessage = new ReplyMessage();
+            replyMessage.setCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+            replyMessage.setDebugMessage("error calling GET /inventory getResourceCatalogByTemplate " + ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(replyMessage).build();
         }
 

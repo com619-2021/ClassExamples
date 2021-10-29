@@ -165,15 +165,49 @@ public class ResourceInventoryRestService {
                 @ApiResponse(responseCode = "404", description = "not found"),
                 @ApiResponse(responseCode = "500", description = "internal server error")
             })
+    
+    // note issue - https://github.com/swagger-api/swagger-ui/issues/5388 GET request do not allow a body in swagger UI although supported in JAX-RS
     @GET
     @Path("/inventory")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Transactional(readOnly = true)
-    public Response getResourceInventoryByTemplate(Resource resourceSearchTemplate, @QueryParam("offset") Integer offset, @QueryParam("offset") Integer Limit, @Context UriInfo uriInfo) {
+    public Response getResourceInventory(@QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @Context UriInfo uriInfo) {
 
         try {
-            ReplyMessage replyMessage = resourceService.getResourceByTemplate(resourceSearchTemplate, offset, Limit);
+            ReplyMessage replyMessage = resourceService.getResourceByTemplate(null, offset, limit);
+            replyMessage.setCode(Response.Status.OK.getStatusCode());
+            return Response.status(Response.Status.OK).entity(replyMessage).build();
+
+        } catch (Exception ex) {
+            LOG.error("error calling GET /inventory getResourceInventoryByTemplate ", ex);
+            ReplyMessage replyMessage = new ReplyMessage();
+            replyMessage.setCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+            replyMessage.setDebugMessage("error calling GET /inventory getResourceInventoryByTemplate " + ex.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(replyMessage).build();
+        }
+
+    }
+    
+       @Operation(summary = "Find catalog resource by resource template (Should be GET but get with resources not allowed in swagger UI)",
+            tags = {"resource/inventory"},
+            responses = {
+                @ApiResponse(responseCode = "200", description = "successful operation returns resource list with one entry", content = @Content(
+                        schema = @Schema(implementation = ReplyMessage.class))),
+                @ApiResponse(responseCode = "404", description = "not found"),
+                @ApiResponse(responseCode = "500", description = "internal server error")
+            })
+    
+    // note issue - https://github.com/swagger-api/swagger-ui/issues/5388 GET request do not allow a body in swagger UI although supported in JAX-RS
+    @POST
+    @Path("/getInventoryByTemplate")
+    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Transactional(readOnly = true)
+    public Response getResourceInventoryByTemplate(Resource resourceSearchTemplate, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @Context UriInfo uriInfo) {
+
+        try {
+            ReplyMessage replyMessage = resourceService.getResourceByTemplate(resourceSearchTemplate, offset, limit);
             replyMessage.setCode(Response.Status.OK.getStatusCode());
             return Response.status(Response.Status.OK).entity(replyMessage).build();
 
