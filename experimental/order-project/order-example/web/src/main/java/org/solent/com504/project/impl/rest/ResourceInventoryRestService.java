@@ -47,7 +47,7 @@ public class ResourceInventoryRestService {
     ResourceCatalogService resourceCatalogService = null;
 
     @Autowired
-    ResourceInventoryService resourceService = null;
+    ResourceInventoryService resourceInventoryService = null;
 
     @Autowired
     private PartyService partyService;
@@ -67,7 +67,7 @@ public class ResourceInventoryRestService {
     @Transactional(readOnly = true)
     public Response getResourceInventoryByuuid(@PathParam("uuid") String uuid, @Context UriInfo uriInfo) {
         try {
-            ReplyMessage replyMessage = resourceService.getResourceByuuid(uuid);
+            ReplyMessage replyMessage = resourceInventoryService.getResourceByuuid(uuid);
             replyMessage.setCode(Response.Status.OK.getStatusCode());
             return Response.status(Response.Status.OK).entity(replyMessage).build();
 
@@ -93,7 +93,7 @@ public class ResourceInventoryRestService {
     @Transactional()
     public Response deleteResourceInventoryByUuid(@PathParam("uuid") String uuid, @Context UriInfo uriInfo) {
         try {
-            ReplyMessage replyMessage = resourceService.deleteResourceByUuid(uuid);
+            ReplyMessage replyMessage = resourceInventoryService.deleteResourceByUuid(uuid);
             replyMessage.setCode(Response.Status.OK.getStatusCode());
             return Response.status(Response.Status.OK).entity(replyMessage).build();
 
@@ -175,7 +175,7 @@ public class ResourceInventoryRestService {
     public Response getResourceInventory(@QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @Context UriInfo uriInfo) {
 
         try {
-            ReplyMessage replyMessage = resourceService.getResourceByTemplate(null, offset, limit);
+            ReplyMessage replyMessage = resourceInventoryService.getResourceByTemplate(null, offset, limit);
             replyMessage.setCode(Response.Status.OK.getStatusCode());
             return Response.status(Response.Status.OK).entity(replyMessage).build();
 
@@ -207,7 +207,7 @@ public class ResourceInventoryRestService {
     public Response getResourceInventoryByTemplate(Resource resourceSearchTemplate, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @Context UriInfo uriInfo) {
 
         try {
-            ReplyMessage replyMessage = resourceService.getResourceByTemplate(resourceSearchTemplate, offset, limit);
+            ReplyMessage replyMessage = resourceInventoryService.getResourceByTemplate(resourceSearchTemplate, offset, limit);
             replyMessage.setCode(Response.Status.OK.getStatusCode());
             return Response.status(Response.Status.OK).entity(replyMessage).build();
 
