@@ -6,6 +6,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.solent.com504.project.model.order.dto.Order;
+import org.solent.com504.project.model.order.dto.OrderChangeRequest;
 import org.solent.com504.project.model.party.dto.Party;
 import org.solent.com504.project.model.resource.dto.Resource;
 import org.solent.com504.project.model.user.dto.User;
@@ -31,15 +33,22 @@ public class ReplyMessage {
     @XmlElementWrapper(name = "partylist")
     @XmlElement(name = "party")
     private List<Party> partyList = null;
-    
+
     @XmlElementWrapper(name = "userlist")
     @XmlElement(name = "user")
     private List<User> userList = null;
-    
-        @XmlElementWrapper(name = "resourceList")
+
+    @XmlElementWrapper(name = "resourceList")
     @XmlElement(name = "resource")
     private List<Resource> resourceList = null;
 
+    @XmlElementWrapper(name = "orderChangeRequestList")
+    @XmlElement(name = "orderChangeRequest")
+    private List<OrderChangeRequest> orderChangeRequestList;
+
+    @XmlElementWrapper(name = "orderList")
+    @XmlElement(name = "order")
+    private List<Order> orderList;
 
     public Integer getCode() {
         return code;
@@ -80,9 +89,6 @@ public class ReplyMessage {
     public void setUserList(List<User> userList) {
         this.userList = userList;
     }
-    
-    
-
 
     public Long getTotalCount() {
         return totalCount;
@@ -114,6 +120,22 @@ public class ReplyMessage {
 
     public void setResourceList(List<Resource> resourceList) {
         this.resourceList = resourceList;
+    }
+
+    public List<OrderChangeRequest> getOrderChangeRequestList() {
+        return orderChangeRequestList;
+    }
+
+    public void setOrderChangeRequestList(List<OrderChangeRequest> orderChangeRequestList) {
+        this.orderChangeRequestList = orderChangeRequestList;
+    }
+
+    public List<Order> getOrderList() {
+        return orderList;
+    }
+
+    public void setOrderList(List<Order> orderList) {
+        this.orderList = orderList;
     }
     
     
