@@ -7,10 +7,12 @@ package org.solent.com504.project.model.resource.dto;
 
 import org.solent.com504.project.model.party.dto.*;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValueCheckStrategy;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.factory.Mappers;
+
 
 /**
  *  maps one abstract resource into another abstract resource
@@ -29,6 +31,10 @@ public interface AbstractResourceMapper {
     Resource updateResource(AbstractResource resource, @MappingTarget Resource resourceEntity);
     
     ResourceCatalog updateCatalog(AbstractResource resource, @MappingTarget ResourceCatalog catalogEntity);
+    
+    // prevents attempted database disconnected lazy loading updates of users 
+    @Mapping(ignore = true, target = "users")
+    Party toParty(Party party);
 
 }
 
