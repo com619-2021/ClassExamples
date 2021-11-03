@@ -38,6 +38,10 @@ import org.glassfish.jersey.server.ResourceConfig;
                         url = "https://www.apache.org/licenses/LICENSE-2.0.html")),
         servers = {
             @Server(
+                    description = "default",
+                    url = "/project-web"
+            ),
+            @Server(
                     description = "localhost",
                     url = "{schema}://{host}:{port}/project-web",
                     variables = {
