@@ -44,11 +44,11 @@ public class ReplyMessage {
 
     @XmlElementWrapper(name = "orderChangeRequestList")
     @XmlElement(name = "orderChangeRequest")
-    private List<OrderChangeRequest> orderChangeRequestList;
+    private List<OrderChangeRequest> orderChangeRequestList = null;
 
     @XmlElementWrapper(name = "orderList")
     @XmlElement(name = "order")
-    private List<Order> orderList;
+    private List<Order> orderList = null;
 
     public Integer getCode() {
         return code;

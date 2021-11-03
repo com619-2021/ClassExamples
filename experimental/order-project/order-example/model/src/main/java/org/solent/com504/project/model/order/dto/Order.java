@@ -91,14 +91,17 @@ public class Order {
         this.name = name;
     }
 
-    @OneToMany
-    public List<Order> getSubOrders() {
-        return subOrders;
-    }
-
-    public void setSubOrders(List<Order> subOrders) {
-        this.subOrders = subOrders;
-    }
+//TODO real problem here - swagger does a recursive list and fails to load this data type
+// see https://stackoverflow.com/questions/59598383/swagger-recursively-resolving-dependencies-for-type-infinite-loop
+// https://github.com/springfox/springfox/issues/621 Cycles in Java classes cause infinite loop in ModelAttributeParameterExpander
+//    @OneToMany
+//    public List<Order> getSubOrders() {
+//        return subOrders;
+//    }
+//
+//    public void setSubOrders(List<Order> subOrders) {
+//        this.subOrders = subOrders;
+//    }
 
     public String getDescription() {
         return description;
@@ -141,23 +144,23 @@ public class Order {
         this.orderOwner = orderOwner;
     }
 
-    @OneToMany
-    public List<OrderChangeRequest> getChangeRequests() {
-        return changeRequests;
-    }
-
-    public void setChangeRequests(List<OrderChangeRequest> changeRequests) {
-        this.changeRequests = changeRequests;
-    }
-
-    @OneToOne
-    public Order getParentOrder() {
-        return parentOrder;
-    }
-
-    public void setParentOrder(Order parentOrder) {
-        this.parentOrder = parentOrder;
-    }
+//    @OneToMany
+//    public List<OrderChangeRequest> getChangeRequests() {
+//        return changeRequests;
+//    }
+//
+//    public void setChangeRequests(List<OrderChangeRequest> changeRequests) {
+//        this.changeRequests = changeRequests;
+//    }
+//
+//    @OneToOne
+//    public Order getParentOrder() {
+//        return parentOrder;
+//    }
+//
+//    public void setParentOrder(Order parentOrder) {
+//        this.parentOrder = parentOrder;
+//    }
 
     @OneToMany
     public List<Resource> getResourceOrService() {

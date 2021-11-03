@@ -245,12 +245,12 @@ public class ModelJaxbTest {
             Order subOrder = new Order();
             subOrder.setUuid(UUID.randomUUID().toString());
             subOrder.setHref("http://orderhref/" + subOrder.getUuid());
-            order.setSubOrders(Arrays.asList(subOrder));
+//TODO            order.setSubOrders(Arrays.asList(subOrder));
 
             Order parentOrder = new Order();
             parentOrder.setUuid(UUID.randomUUID().toString());
             parentOrder.setHref("http://orderhref/" + parentOrder.getUuid());
-            order.setParentOrder(parentOrder);
+//TODO            order.setParentOrder(parentOrder);
 
             List<Order> orderList = new ArrayList<Order>();
             orderList.add(order);
