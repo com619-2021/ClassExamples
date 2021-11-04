@@ -16,11 +16,12 @@ import org.springframework.context.annotation.Import;
  * @author cgallen
  */
 @Configuration
-//@ComponentScan
+
 @ComponentScan(basePackages = {"org.solent.com504.project.impl.party.service",
     "org.solent.com504.project.impl.service",
     "org.solent.com504.project.impl.user.service",
-    "org.solent.com504.project.impl.resource.service"
+    "org.solent.com504.project.impl.resource.service",
+    "org.solent.com504.project.impl.order.service"
 })
 @Import({PersistenceJPAConfig.class, SecurityServiceConfiguration.class})
 public class ServiceConfiguration {
