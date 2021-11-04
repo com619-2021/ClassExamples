@@ -72,7 +72,15 @@ public class ResourceController {
     @Autowired
     private ResourceInventoryService resourceService = null;
 
-    @RequestMapping(value = {"/resources"}, method = RequestMethod.GET)
+    // ***************************
+    // Methods to modify resources
+    // ***************************
+    /**
+     *
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = {"/resource"}, method = RequestMethod.GET)
     public String resources(Model model) {
         LOG.debug("resource called:");
         ReplyMessage reply = resourceService.getResourceByTemplate(null, 0, 20);
@@ -86,7 +94,7 @@ public class ResourceController {
         model.addAttribute("partyListSize", partyList.size());
         model.addAttribute("partyList", partyList);
 
-        model.addAttribute("selectedPage", "resources");
+        model.addAttribute("selectedPage", "resource");
         return "resources";
     }
 
@@ -217,16 +225,24 @@ public class ResourceController {
         return "viewModifyResource";
     }
 
+    // ***************************
+    // Methods to modify catalog
+    // ***************************
+    /**
+     *
+     * @param model
+     * @return
+     */
     @RequestMapping(value = {"/catalog"}, method = RequestMethod.GET)
     public String catalog(Model model) {
-        LOG.debug("resource called:");
+        LOG.debug("catalog called:");
         ReplyMessage reply = resourceService.getResourceByTemplate(null, 0, 20);
         List<Resource> resourceList = reply.getResourceList();
 
         model.addAttribute("abstractResourceSize", resourceList.size());
         model.addAttribute("abstractResourceList", resourceList);
 
-        model.addAttribute("selectedPage", "resources");
+        model.addAttribute("selectedPage", "catalog");
         return "catalog";
     }
 
@@ -243,7 +259,7 @@ public class ResourceController {
             @RequestParam(value = "ownerPartyUUID", required = false) String ownerPartyUUID,
             Authentication authentication) {
 
-        LOG.debug("/viewModifyResource: abstractResourceUuid:" + abstractResourceUuid);
+        LOG.debug("/viewModifyCatalog: abstractResourceUuid:" + abstractResourceUuid);
 
         String errorMessage = "";
         String message = "";

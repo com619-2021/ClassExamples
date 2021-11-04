@@ -8,7 +8,7 @@
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@page import="org.solent.com504.project.model.user.dto.User"%>
 <%@page import="org.solent.com504.project.model.user.dto.UserRoles"%>
-<!-- start of viewModifyResource.jsp selectedPage=${selectedPage}-->
+<!-- start of viewModifyCatalog.jsp selectedPage=${selectedPage}-->
 <jsp:include page="header.jsp" />
 
 <!-- Begin page content -->
@@ -20,7 +20,7 @@
         <div style="color:red;">${errorMessage}</div>
         <div style="color:green;">${message}</div>
 
-        <form action="./viewModifyResource" method="post">
+        <form action="./viewModifyCatalog" method="post">
             <div>
                 <input type="hidden" name="abstractResourceUuid" value="${abstractResource.uuid}"/>
                 <input type="hidden" name="action" value="deleteAbstractResource"/>
@@ -29,7 +29,7 @@
             </div>
         </form>
 
-        <form action="./viewModifyResource" method="post">
+        <form action="./viewModifyCatalog" method="post">
             <div>
                 <input type="hidden" name="action" value="updateAbstractResource"/>
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
@@ -82,7 +82,7 @@
                 <tbody>
                     <c:forEach var="characteristic" items="${abstractCharacteristics}">
                         <tr>
-                    <form action="./viewModifyResource" method="POST">
+                    <form action="./viewModifyCatalog" method="POST">
                         <td><input type="text" name="characteristicName" value="${characteristic.name}" readonly /></td>
                         <td><input type="text" name="characteristicValue" value="${characteristic.value}" /></td>
                         <td><input type="text" name="characteristicDescription" value="${characteristic.description}" /></td>
@@ -94,7 +94,7 @@
                         </td>
                     </form> 
                     <td>
-                        <form action="./viewModifyResource" method="POST">
+                        <form action="./viewModifyCatalog" method="POST">
                             <input type="hidden" name="action" value="deleteCharacteristic"/>
                             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                             <input type="hidden" name="characteristicName" value="${characteristic.name}" />
@@ -108,7 +108,7 @@
             </table>
 
             <table class="table">
-                <form action="./viewModifyResource" method="POST">
+                <form action="./viewModifyCatalog" method="POST">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                     <input type="hidden" name="action" value="createCharacteristic"/>
                     <input type="hidden" name="abstractResourceUuid" value="${abstractResource.uuid}" />

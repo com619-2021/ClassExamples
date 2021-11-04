@@ -5,8 +5,7 @@
 --%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<c:set var = "selectedPage" value = "home" scope="request" />
-<!-- start of home.jsp selectedPage=${selectedPage}-->
+<!-- start of resource.jsp selectedPage=${selectedPage}-->
 <jsp:include page="header.jsp" />
 
 <!-- Begin page content -->
