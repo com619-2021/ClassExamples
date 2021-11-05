@@ -47,12 +47,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @Transactional
-public class ResourceController {
+public class CatalogController {
 
-    final static Logger LOG = LogManager.getLogger(ResourceController.class);
+    final static Logger LOG = LogManager.getLogger(CatalogController.class);
 
     {
-        LOG.debug("ResourceController created");
+        LOG.debug("CatalogController created");
     }
 
     @Autowired
@@ -74,51 +74,47 @@ public class ResourceController {
     private ResourceInventoryService resourceService = null;
 
     // ***************************
-    // Methods to modify resources
+    // Methods to modify catalog
     // ***************************
     /**
      *
      * @param model
      * @return
      */
-    @RequestMapping(value = {"/resource"}, method = RequestMethod.GET)
-    public String resources(Model model) {
-        LOG.debug("resource called:");
-        ReplyMessage reply = resourceService.getResourceByTemplate(null, 0, 20);
-        List<Resource> resourceList = reply.getResourceList();
+    @RequestMapping(value = {"/catalog"}, method = RequestMethod.GET)
+    public String catalog(Model model) {
+        LOG.debug("catalog called:");
+        ReplyMessage reply = resourceCatalogService.getResourceCatalogByTemplate(null, 0, 20);
+        List<ResourceCatalog> resourceCatalogList = reply.getResourceCatalogList();
 
-        model.addAttribute("abstractResourceListSize", resourceList.size());
-        model.addAttribute("abstractResourceList", resourceList);
+        model.addAttribute("abstractResourceSize", resourceCatalogList.size());
+        model.addAttribute("abstractResourceList", resourceCatalogList);
 
-        // get parties
-        List<Party> partyList = partyService.findAll();
-        model.addAttribute("partyListSize", partyList.size());
-        model.addAttribute("partyList", partyList);
-
-        model.addAttribute("selectedPage", "resource");
-        return "resources";
+        model.addAttribute("selectedPage", "catalog");
+        return "catalog";
     }
 
-    @RequestMapping(value = {"/viewModifyResource"}, method = RequestMethod.GET)
-    public String viewresource(Model model,
+    @RequestMapping(value = {"/viewModifyCatalog"}, method = RequestMethod.GET)
+    public String viewcatalog(Model model,
             @RequestParam(value = "abstractResourceUuid", required = true) String abstractResourceUuid, Authentication authentication) {
 
-        LOG.debug("/viewModifyResource: abstractResourceUuid:" + abstractResourceUuid);
+        LOG.debug("/viewModifyCatalog: abstractResourceUuid:" + abstractResourceUuid);
         String errorMessage = "";
         String message = "";
 
         Resource abstractResource = new Resource();
         List<Characteristic> abstractCharacteristics = new ArrayList();
 
-        // popultate model
+        // populate model
         List<Resource> resourceList = new ArrayList();
-        ReplyMessage replyMessage = resourceService.getResourceByuuid(abstractResourceUuid);
-        if (replyMessage.getResourceList() != null && !replyMessage.getResourceList().isEmpty()) {
+        ReplyMessage replyMessage = resourceCatalogService.getResourceCatalogByuuid(abstractResourceUuid);
+        if (replyMessage.getResourceCatalogList() != null && !replyMessage.getResourceList().isEmpty()) {
             resourceList = replyMessage.getResourceList();
             abstractResource = resourceList.get(0);
             abstractCharacteristics = (abstractResource.getCharacteristics() != null) ? abstractResource.getCharacteristics() : abstractCharacteristics;
         } else {
-            errorMessage = "error getting resource" + replyMessage.getDebugMessage();
+            errorMessage = "error getting catalog entity resource abstractResourceUuid = "+abstractResourceUuid
+                    + " debug message: " + replyMessage.getDebugMessage();
             model.addAttribute("errorMessage", errorMessage);
         }
 
@@ -130,12 +126,12 @@ public class ResourceController {
         model.addAttribute("errorMessage", errorMessage);
         model.addAttribute("message", message);
 
-        model.addAttribute("selectedPage", "resources");
+        model.addAttribute("selectedPage", "catalog");
         return "viewModifyResource";
     }
 
-    @RequestMapping(value = {"/viewModifyResource"}, method = RequestMethod.POST)
-    public String updateresource(Model model,
+    @RequestMapping(value = {"/viewModifyCatalog"}, method = RequestMethod.POST)
+    public String updatecatalog(Model model,
             @RequestParam(value = "action", required = true) String action,
             @RequestParam(value = "abstractResourceUuid", required = false) String abstractResourceUuid,
             @RequestParam(value = "abstractResourceName", required = false) String abstractResourceName,
@@ -149,29 +145,30 @@ public class ResourceController {
             @RequestParam(value = "ownerPartyUUID", required = false) String ownerPartyUUID,
             Authentication authentication) {
 
-        LOG.debug("/viewModifyResource: abstractResourceUuid:" + abstractResourceUuid);
+        LOG.debug("/viewModifyCatalog: abstractResourceUuid:" + abstractResourceUuid);
 
         String errorMessage = "";
         String message = "";
 
-        Resource abstractResource = new Resource();
+        ResourceCatalog abstractResource = new ResourceCatalog();
         List<Characteristic> abstractCharacteristics = new ArrayList();
         ReplyMessage replyMessage;
 
         // perform actions
         if ("createAbstractResource".equals(action)) {
-            replyMessage = resourceService.postCreateResource(abstractResource, ownerPartyUUID);
-            if (replyMessage.getResourceList() != null && !replyMessage.getResourceList().isEmpty()) {
-                abstractResource = replyMessage.getResourceList().get(0);
+            replyMessage = resourceCatalogService.postCreateResourceCatalog(abstractResource);
+            if (replyMessage.getResourceCatalogList() != null && !replyMessage.getResourceCatalogList().isEmpty()) {
+                abstractResource = replyMessage.getResourceCatalogList().get(0);
                 abstractResourceUuid = abstractResource.getUuid();
-                message = "success created resource uuid=" + abstractResourceUuid;
+                LOG.debug("new catalog entry created uuid=" + abstractResourceUuid);
+                message = "success created";
             } else {
-                errorMessage = "error creating resource" + replyMessage.getDebugMessage();
+                errorMessage = "error creating catalog item" + replyMessage.getDebugMessage();
             }
-            LOG.debug("creating Resource: abstractResourceUuid=" + abstractResourceUuid);
+            LOG.debug("created Catalog entry: abstractResourceUuid=" + abstractResourceUuid);
 
         } else if ("updateAbstractResource".equals(action)) {
-            Resource resource = new Resource();
+            ResourceCatalog resource = new ResourceCatalog();
             resource.setUuid(abstractResourceUuid);
             resource.setName(abstractResourceName);
             resource.setResourceTypeName(abstractTypeName);
@@ -180,41 +177,42 @@ public class ResourceController {
             resource.setResourceController(resourceAccess);
             resource.setDescription(abstractResourceDescription);
 
-            resourceService.putUpdateResource(resource);
+            resourceCatalogService.putUpdateResourceCatalog(resource);
             message = "success updated";
 
         } else if ("deleteAbstractResource".equals(action)) {
-            replyMessage = resourceService.deleteResourceByUuid(abstractResourceUuid);
+            replyMessage = resourceCatalogService.deleteResourceCatalogByUuid(abstractResourceUuid);
             return "redirect:/resources";
 
         } else if ("deleteCharacteristic".equals(action)) {
-            replyMessage = resourceService.postRemoveCharacteristic(abstractResourceUuid, characteristicName);
+            replyMessage = resourceCatalogService.postRemoveCharacteristic(abstractResourceUuid, characteristicName);
             message = "success characteristic " + characteristicName + " deleted";
 
         } else if ("updateCharacteristic".equals(action)) {
-            replyMessage = resourceService.postAddModifyCharacteristic(abstractResourceUuid, characteristicName, characteristicValue, characteristicDescription);
+            replyMessage = resourceCatalogService.postAddModifyCharacteristic(abstractResourceUuid, characteristicName, characteristicValue, characteristicDescription);
             message = "success characteristic " + characteristicName + " updated";
 
         } else if ("createCharacteristic".equals(action)) {
             if (characteristicName.isEmpty()) {
                 errorMessage = "characteristic name cannot be blank";
             } else {
-                replyMessage = resourceService.postAddModifyCharacteristic(abstractResourceUuid, characteristicName, characteristicValue, characteristicDescription);
+                replyMessage = resourceCatalogService.postAddModifyCharacteristic(abstractResourceUuid, characteristicName, characteristicValue, characteristicDescription);
                 message = "success characteristic " + characteristicName + " added";
             }
         }
 
         // populate model
-        List<Resource> resourceList = new ArrayList();
-        replyMessage = resourceService.getResourceByuuid(abstractResourceUuid);
-        if (replyMessage.getResourceList() != null && !replyMessage.getResourceList().isEmpty()) {
-            resourceList = replyMessage.getResourceList();
-            abstractResource = resourceList.get(0);
+        List<ResourceCatalog> resourceCatalogList = new ArrayList();
+        replyMessage = resourceCatalogService.getResourceCatalogByuuid(abstractResourceUuid);
+        if (replyMessage.getResourceCatalogList() != null && !replyMessage.getResourceCatalogList().isEmpty()) {
+            resourceCatalogList = replyMessage.getResourceCatalogList();
+            abstractResource = resourceCatalogList.get(0);
             abstractCharacteristics = (abstractResource.getCharacteristics() != null) ? abstractResource.getCharacteristics() : abstractCharacteristics;
         } else {
-            errorMessage = "error creating resource" + replyMessage.getDebugMessage();
+            errorMessage = "error accessing catalog item abstractResourceUuid: " + abstractResourceUuid
+                    + " reply debug message=" + replyMessage.getDebugMessage();
         }
-        model.addAttribute("abstractResourceSize", resourceList.size());
+        model.addAttribute("abstractResourceSize", resourceCatalogList.size());
         model.addAttribute("abstractResource", abstractResource);
         model.addAttribute("abstractCharacteristics", abstractCharacteristics);
 
@@ -222,11 +220,9 @@ public class ResourceController {
         model.addAttribute("errorMessage", errorMessage);
         model.addAttribute("message", message);
 
-        model.addAttribute("selectedPage", "resources");
-        return "viewModifyResource";
+        model.addAttribute("selectedPage", "catalog");
+        return "viewModifyCatalog";
     }
-
-
 
     private Map<String, String> selectedRolesMap(User user) {
 

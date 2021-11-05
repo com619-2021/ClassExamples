@@ -59,8 +59,8 @@ public class ResourceCatalogServiceImpl implements ResourceCatalogService {
         ResourceCatalog resourceCatalogEntity = resourceCatalogList.get(0);
 
         //create a detached resource dto for reply message
-        Resource detachedResource = AbstractResourceMapper.INSTANCE.abstractResourceToResource(resourceCatalogEntity);
-        replyMessage.setResourceList(Arrays.asList(detachedResource));
+        ResourceCatalog detachedResource = AbstractResourceMapper.INSTANCE.abstractResourceToResourceCatalog(resourceCatalogEntity);
+        replyMessage.setResourceCatalogList(Arrays.asList(detachedResource));
         replyMessage.setOffset(0);
         replyMessage.setLimit(1);
         replyMessage.setTotalCount(1L);
@@ -116,12 +116,12 @@ public class ResourceCatalogServiceImpl implements ResourceCatalogService {
         resourceCatalogEntity = resourceCatalogRepository.saveAndFlush(resourceCatalogEntity);
 
         //create a detached resourceCatalog dto for reply message
-        Resource detachedResource = AbstractResourceMapper.INSTANCE.abstractResourceToResource(resourceCatalogEntity);
+        ResourceCatalog detachedResource = AbstractResourceMapper.INSTANCE.abstractResourceToResourceCatalog(resourceCatalogEntity);
         ReplyMessage replyMessage = new ReplyMessage();
         replyMessage.setOffset(1);
         replyMessage.setLimit(1);
         replyMessage.setTotalCount(1L);
-        replyMessage.setResourceList(Arrays.asList(detachedResource));
+        replyMessage.setResourceCatalogList(Arrays.asList(detachedResource));
         return replyMessage;
     }
 
@@ -220,9 +220,9 @@ public class ResourceCatalogServiceImpl implements ResourceCatalogService {
             resourceCatalogRepository.saveAndFlush(resourceCatalogEntity);
 
             // return detached entity
-            Resource detachedResource = AbstractResourceMapper.INSTANCE.abstractResourceToResource(resourceCatalogEntity);
+            ResourceCatalog detachedResource = AbstractResourceMapper.INSTANCE.abstractResourceToResourceCatalog(resourceCatalogEntity);
             ReplyMessage replyMessage = new ReplyMessage();
-            replyMessage.setResourceList(Arrays.asList(detachedResource));
+            replyMessage.setResourceCatalogList(Arrays.asList(detachedResource));
             return replyMessage;
         } else {
             throw new IllegalArgumentException("error updating characteristic " + characteristicName + " resource not found resourceUuid=" + resourceUuid);

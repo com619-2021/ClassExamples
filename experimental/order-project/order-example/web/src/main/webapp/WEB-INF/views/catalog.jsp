@@ -37,7 +37,7 @@
                         <td>
                             <form action="./viewModifyCatalog" method="GET">
                                 <input type="hidden" name="abstractResourceUuid" value="${abstractResource.uuid}">
-                                <button class="btn" type="submit" >Modify Resource</button>
+                                <button class="btn" type="submit" >Modify Catalogue Entry</button>
                             </form> 
                         </td>
                     </tr>
