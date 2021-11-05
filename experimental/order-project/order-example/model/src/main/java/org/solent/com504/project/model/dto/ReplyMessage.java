@@ -10,6 +10,7 @@ import org.solent.com504.project.model.order.dto.Order;
 import org.solent.com504.project.model.order.dto.OrderChangeRequest;
 import org.solent.com504.project.model.party.dto.Party;
 import org.solent.com504.project.model.resource.dto.Resource;
+import org.solent.com504.project.model.resource.dto.ResourceCatalog;
 import org.solent.com504.project.model.user.dto.User;
 
 @XmlRootElement
@@ -41,6 +42,10 @@ public class ReplyMessage {
     @XmlElementWrapper(name = "resourceList")
     @XmlElement(name = "resource")
     private List<Resource> resourceList = null;
+
+    @XmlElementWrapper(name = "resourceCatalogList")
+    @XmlElement(name = "resourceCatalog")
+    private List<ResourceCatalog> resourceCatalogList = null;
 
     @XmlElementWrapper(name = "orderChangeRequestList")
     @XmlElement(name = "orderChangeRequest")
@@ -122,6 +127,14 @@ public class ReplyMessage {
         this.resourceList = resourceList;
     }
 
+    public List<ResourceCatalog> getResourceCatalogList() {
+        return resourceCatalogList;
+    }
+
+    public void setResourceCatalogList(List<ResourceCatalog> resourceCatalogList) {
+        this.resourceCatalogList = resourceCatalogList;
+    }
+
     public List<OrderChangeRequest> getOrderChangeRequestList() {
         return orderChangeRequestList;
     }
@@ -137,7 +150,5 @@ public class ReplyMessage {
     public void setOrderList(List<Order> orderList) {
         this.orderList = orderList;
     }
-    
-    
 
 }

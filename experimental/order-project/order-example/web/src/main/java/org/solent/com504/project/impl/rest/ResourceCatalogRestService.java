@@ -198,7 +198,7 @@ public class ResourceCatalogRestService {
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Transactional(readOnly = true)
-    public Response getResourceCatalogByTemplate(Resource resourceSearchTemplate, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @Context UriInfo uriInfo) {
+    public Response getResourceCatalogByTemplate(ResourceCatalog resourceSearchTemplate, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @Context UriInfo uriInfo) {
 
         try {
             ReplyMessage replyMessage = resourceCatalogService.getResourceCatalogByTemplate(resourceSearchTemplate, offset, limit);
@@ -206,10 +206,10 @@ public class ResourceCatalogRestService {
             return Response.status(Response.Status.OK).entity(replyMessage).build();
 
         } catch (Exception ex) {
-            LOG.error("error calling GET /inventory getResourceCatalogByTemplate ", ex);
+            LOG.error("error calling GET /getCatalogByTemplate getResourceCatalogByTemplate ", ex);
             ReplyMessage replyMessage = new ReplyMessage();
             replyMessage.setCode(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
-            replyMessage.setDebugMessage("error calling GET /inventory getResourceCatalogByTemplate " + ex.getMessage());
+            replyMessage.setDebugMessage("error calling GET /getCatalogByTemplate getResourceCatalogByTemplate " + ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(replyMessage).build();
         }
 

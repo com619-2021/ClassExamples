@@ -46,17 +46,12 @@
             </tbody>
         </table>
         <form action="./viewModifyCatalog" method="POST">
-            <p>Select Owning Party</p>
-            <select class="form-control" name="ownerPartyUUID" >
-                <c:forEach var="party" items="${partyList}">
-                    <option value="${party.uuid}">${party.firstName}  ${party.uuid}</option>
-                </c:forEach>
-            </select>
+
             <!-- creates a new resource -->
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <input type="hidden" name="action" value="createAbstractResource">
 
-            <button class="btn" type="submit" >Add Resource</button>
+            <button class="btn" type="submit" >Add Catalogue Item</button>
         </form> 
     </div>
 </main>
