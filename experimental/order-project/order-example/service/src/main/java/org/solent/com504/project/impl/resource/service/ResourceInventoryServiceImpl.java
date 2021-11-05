@@ -7,6 +7,7 @@ package org.solent.com504.project.impl.resource.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -101,6 +102,26 @@ public class ResourceInventoryServiceImpl implements ResourceInventoryService {
     }
 
     @Override
+    public ReplyMessage postCreateResourceFromCatalogResource(String catalogUUID, String ownerPartyUUID) {
+        // find catalog entry and creat a new resource from it
+        List<ResourceCatalog> resourceCatalogList = resourceCatalogRepository.findByUuid(catalogUUID);
+        if (resourceCatalogList.isEmpty()) {
+            throw new IllegalArgumentException("cannot create resource catalog entry not found uuid=" + catalogUUID);
+        }
+        ResourceCatalog resourceCatalog = resourceCatalogList.get(0);
+
+        // update found resource with new values
+        Resource resource = AbstractResourceMapper.INSTANCE.abstractResourceToResource(resourceCatalog);
+        // simple to set an unique initial type name
+        Long t = new Date().getTime();
+        resource.setName("update resource name " + t);
+        resource.setId(null);
+
+        ReplyMessage replyMessage = postCreateResource(resource, ownerPartyUUID);
+        return replyMessage;
+    }
+
+    @Override
     @Transactional
     public ReplyMessage putUpdateResource(Resource resource) {
         resource.setId(null); // may be differnt db id
@@ -132,10 +153,9 @@ public class ResourceInventoryServiceImpl implements ResourceInventoryService {
     public ReplyMessage getResourceByTemplate(Resource resourceSearchTemplate, Integer offset, Integer limit) {
 
         // TODO criteria search
-       // if (resourceSearchTemplate != null ) {
+        // if (resourceSearchTemplate != null ) {
         //    throw new UnsupportedOperationException("Not supported yet.");
-       // }
-
+        // }
         List<Resource> resourceList = resourceRepository.findAll();
         Long totalCount = resourceRepository.count();
 

@@ -7,6 +7,7 @@ package org.solent.com504.project.impl.resource.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
@@ -87,6 +88,9 @@ public class ResourceCatalogServiceImpl implements ResourceCatalogService {
         // note - will take given uuid or create a new one
         if (resource.getUuid() == null || resource.getUuid().isEmpty()) {
             resource.setUuid(UUID.randomUUID().toString());
+            // simple to set an unique initial type name
+            Long t = new Date().getTime();
+            resource.setResourceTypeName("update type name "+t );
             resource.setResourceController(ResourceAccess.INTERNAL);
         }
         resource = resourceCatalogRepository.saveAndFlush(resource);

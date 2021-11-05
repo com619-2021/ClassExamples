@@ -11,6 +11,8 @@ public interface ResourceInventoryService {
     public ReplyMessage deleteResourceByUuid(String uuid);
 
     public ReplyMessage postCreateResource(Resource resource, String ownerPartyUUID);
+    
+    public ReplyMessage postCreateResourceFromCatalogResource(String catalogUUID, String ownerPartyUUID);
 
     public ReplyMessage putUpdateResource(Resource resource);
 

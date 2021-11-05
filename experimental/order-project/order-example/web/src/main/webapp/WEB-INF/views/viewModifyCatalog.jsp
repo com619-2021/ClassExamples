@@ -25,7 +25,7 @@
                 <input type="hidden" name="abstractResourceUuid" value="${abstractResource.uuid}"/>
                 <input type="hidden" name="action" value="deleteAbstractResource"/>
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                <button class="btn" style="color:red;" type="submit" >Delete Resource</button>
+                <button class="btn" style="color:red;" type="submit" >Delete Catalogue Item</button>
             </div>
         </form>
 
@@ -33,7 +33,7 @@
             <div>
                 <input type="hidden" name="action" value="updateAbstractResource"/>
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                <button class="btn" type="submit" >Update Resource </button>
+                <button class="btn" type="submit" >Update Catalogue Item </button>
             </div>
             <table class="table">
                 <thead>
@@ -42,7 +42,7 @@
                 <tbody>
                     <tr>
                         <td>Name</td>
-                        <td><input type="text" name="abstractResourceName" value="${abstractResource.name}" /></td>
+                        <td><input type="text" name="abstractResourceName" value="${abstractResource.name}" readonly /></td>
                     </tr>
                     <tr>
                         <td>type</td>
@@ -74,8 +74,8 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th scope="col">name</th>
-                        <th scope="col">value</th>
+                        <th scope="col">characteistic name</th>
+                        <th scope="col">default value</th>
                         <th scope="col">description</th>
                     </tr>
                 </thead>

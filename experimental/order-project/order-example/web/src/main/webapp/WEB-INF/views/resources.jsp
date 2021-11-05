@@ -34,6 +34,8 @@
                         <td>${abstractResource.resourceTypeName}</td>
                         <td>${abstractResource.resourceController}</td>
                         <td>${abstractResource.uuid}</td>
+                        <td>${abstractResource.href}</td>
+                        <td>todo </td>
                         <td>
                             <form action="./viewModifyResource" method="GET">
                                 <input type="hidden" name="abstractResourceUuid" value="${abstractResource.uuid}">
@@ -50,6 +52,12 @@
             <select class="form-control" name="ownerPartyUUID" >
                 <c:forEach var="party" items="${partyList}">
                     <option value="${party.uuid}">${party.firstName}  ${party.uuid}</option>
+                </c:forEach>
+            </select>
+            <p>Select Catalogue Template </p>
+            <select class="form-control" name="catalogUUID" >
+                <c:forEach var="catalog" items="${catalogList}">
+                    <option value="${catalog.uuid}">TYPE: ${catalog.resourceTypeName} UUID: ${catalog.uuid}</option>
                 </c:forEach>
             </select>
             <!-- creates a new resource -->

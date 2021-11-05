@@ -46,7 +46,7 @@
                     </tr>
                     <tr>
                         <td>type</td>
-                        <td><input type="text" name="abstractTypeName" value="${abstractResource.resourceTypeName}" /></td>
+                        <td><input type="text" name="abstractTypeName" value="${abstractResource.resourceTypeName}" readonly/></td>
                     </tr>
                     <tr>
                         <td>uuid</td>
@@ -74,7 +74,7 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th scope="col">name</th>
+                        <th scope="col">Characteristic name</th>
                         <th scope="col">value</th>
                         <th scope="col">description</th>
                     </tr>

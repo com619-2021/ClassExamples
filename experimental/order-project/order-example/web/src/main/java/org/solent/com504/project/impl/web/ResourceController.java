@@ -90,6 +90,13 @@ public class ResourceController {
         model.addAttribute("abstractResourceListSize", resourceList.size());
         model.addAttribute("abstractResourceList", resourceList);
 
+        // get catalog entries
+        List<ResourceCatalog> catalogList;
+        ReplyMessage replyMessage = resourceCatalogService.getResourceCatalogByTemplate(null, 0, 100);
+        catalogList = replyMessage.getResourceCatalogList();
+        model.addAttribute("catalogListSize", catalogList.size());
+        model.addAttribute("catalogList", catalogList);
+
         // get parties
         List<Party> partyList = partyService.findAll();
         model.addAttribute("partyListSize", partyList.size());
@@ -147,6 +154,7 @@ public class ResourceController {
             @RequestParam(value = "characteristicValue", required = false) String characteristicValue,
             @RequestParam(value = "characteristicDescription", required = false) String characteristicDescription,
             @RequestParam(value = "ownerPartyUUID", required = false) String ownerPartyUUID,
+            @RequestParam(value = "catalogUUID", required = false) String catalogUUID,
             Authentication authentication) {
 
         LOG.debug("/viewModifyResource: abstractResourceUuid:" + abstractResourceUuid);
@@ -160,7 +168,11 @@ public class ResourceController {
 
         // perform actions
         if ("createAbstractResource".equals(action)) {
-            replyMessage = resourceService.postCreateResource(abstractResource, ownerPartyUUID);
+  
+            
+            
+            
+            replyMessage = resourceService.postCreateResourceFromCatalogResource(catalogUUID, ownerPartyUUID);
             if (replyMessage.getResourceList() != null && !replyMessage.getResourceList().isEmpty()) {
                 abstractResource = replyMessage.getResourceList().get(0);
                 abstractResourceUuid = abstractResource.getUuid();
@@ -225,8 +237,6 @@ public class ResourceController {
         model.addAttribute("selectedPage", "resources");
         return "viewModifyResource";
     }
-
-
 
     private Map<String, String> selectedRolesMap(User user) {
 

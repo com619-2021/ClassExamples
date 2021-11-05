@@ -47,7 +47,7 @@
         </table>
         <form action="./viewModifyCatalog" method="POST">
 
-            <!-- creates a new resource -->
+            <!-- creates a new catalog entry -->
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <input type="hidden" name="action" value="createAbstractResource">
 
