@@ -102,14 +102,14 @@ public class CatalogController {
         String errorMessage = "";
         String message = "";
 
-        Resource abstractResource = new Resource();
+        ResourceCatalog abstractResource = new ResourceCatalog();
         List<Characteristic> abstractCharacteristics = new ArrayList();
 
         // populate model
-        List<Resource> resourceList = new ArrayList();
+        List<ResourceCatalog> resourceList = new ArrayList();
         ReplyMessage replyMessage = resourceCatalogService.getResourceCatalogByuuid(abstractResourceUuid);
-        if (replyMessage.getResourceCatalogList() != null && !replyMessage.getResourceList().isEmpty()) {
-            resourceList = replyMessage.getResourceList();
+        if (replyMessage.getResourceCatalogList() != null && !replyMessage.getResourceCatalogList().isEmpty()) {
+            resourceList = replyMessage.getResourceCatalogList();
             abstractResource = resourceList.get(0);
             abstractCharacteristics = (abstractResource.getCharacteristics() != null) ? abstractResource.getCharacteristics() : abstractCharacteristics;
         } else {
@@ -127,7 +127,7 @@ public class CatalogController {
         model.addAttribute("message", message);
 
         model.addAttribute("selectedPage", "catalog");
-        return "viewModifyResource";
+        return "viewModifyCatalog";
     }
 
     @RequestMapping(value = {"/viewModifyCatalog"}, method = RequestMethod.POST)

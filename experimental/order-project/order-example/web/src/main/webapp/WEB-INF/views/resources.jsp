@@ -56,17 +56,22 @@
             </select>
             <p>Select Catalogue Template </p>
             <select class="form-control" name="catalogUUID" >
+                <c:if test="${empty catalogList}">
+                    <option value="notDefined">You need to define a catalogue entry first</option>
+                </c:if>
+
                 <c:forEach var="catalog" items="${catalogList}">
                     <option value="${catalog.uuid}">TYPE: ${catalog.resourceTypeName} UUID: ${catalog.uuid}</option>
                 </c:forEach>
+
             </select>
             <!-- creates a new resource -->
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <input type="hidden" name="action" value="createAbstractResource">
 
-            <button class="btn" type="submit" >Add Resource</button>
-        </form> 
-    </div>
-</main>
+            <button class="btn" type="submit" <c:if test="${empty catalogList}">disabled </c:if> >Add Resource</button>
+            </form> 
+        </div>
+    </main>
 
 <jsp:include page="footer.jsp" />

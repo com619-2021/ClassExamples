@@ -34,11 +34,18 @@ import org.solent.com504.project.model.dto.ReplyMessage;
 import org.solent.com504.project.model.order.dto.ChangeStatus;
 import org.solent.com504.project.model.order.dto.Order;
 import org.solent.com504.project.model.order.dto.OrderChangeRequest;
+import org.solent.com504.project.model.order.dto.OrderHref;
+import org.solent.com504.project.model.order.dto.OrderMapper;
 import org.solent.com504.project.model.order.dto.OrderStatus;
+import org.solent.com504.project.model.party.dto.PartyHref;
+import org.solent.com504.project.model.party.dto.PartyMapper;
 import org.solent.com504.project.model.party.dto.PartyRole;
 import org.solent.com504.project.model.party.dto.PartyStatus;
+import org.solent.com504.project.model.resource.dto.AbstractResource;
+import org.solent.com504.project.model.resource.dto.AbstractResourceMapper;
 import org.solent.com504.project.model.resource.dto.Characteristic;
 import org.solent.com504.project.model.resource.dto.Resource;
+import org.solent.com504.project.model.resource.dto.ResourceHref;
 import org.solent.com504.project.model.user.dto.Role;
 import org.solent.com504.project.model.user.dto.User;
 import org.solent.com504.project.model.user.dto.UserRoles;
@@ -224,6 +231,7 @@ public class ModelJaxbTest {
 
             Order order = new Order();
             order.setDescription("order description");
+            order.setName("PO1234");
             order.setEndDate(new Date());
             order.setOrderDate(new Date());
 
@@ -231,31 +239,56 @@ public class ModelJaxbTest {
             order.setStatus(OrderStatus.ACKNOWLEGED);
             order.setUuid(UUID.randomUUID().toString());
             order.setHref("http://orderhref/" + order.getUuid());
+            
+                        Resource resource = new Resource();
+            List<Characteristic> characteristics = new ArrayList<Characteristic>();
+            Characteristic characteristic1 = new Characteristic("nameIsName", "valueIsValue", "description is descriptoion");
+            characteristics.add(characteristic1);
+
+            resource.setCharacteristics(characteristics);
+            resource.setDescription("the description");
+            resource.setUuid(UUID.randomUUID().toString());
+            resource.setHref("http://localhost/resource/" + resource.getUuid());
+            resource.setId(1L);
+            resource.setName("testResource");
+            
+            List<AbstractResource> resourceList = Arrays.asList(resource);
+            List<ResourceHref> resourceOrService = AbstractResourceMapper.INSTANCE.abstractResourceListToResourceHrefList(resourceList)
+            ;
+            order.setResourceOrService(resourceOrService);
 
             Party orderOwner = new Party();
             orderOwner.setUuid(UUID.randomUUID().toString());
             orderOwner.setHref("http://localhost/party/" + orderOwner.getUuid());
             orderOwner.setPartyStatus(PartyStatus.ACTIVE);
             orderOwner.setPartyRole(PartyRole.UNDEFINED);
+            orderOwner.setFirstName("company x");
             Address address = new Address();
             address.setAddressLine1("home for me");
             orderOwner.setAddress(address);
-            order.setOrderOwner(orderOwner);
+
+            PartyHref orderOwnerHref = PartyMapper.INSTANCE.partyToHref(orderOwner);
+
+            order.setOrderOwner(orderOwnerHref);
 
             Order subOrder = new Order();
             subOrder.setUuid(UUID.randomUUID().toString());
             subOrder.setHref("http://orderhref/" + subOrder.getUuid());
-//TODO            order.setSubOrders(Arrays.asList(subOrder));
+
+            OrderHref subOrderHref = OrderMapper.INSTANCE.orderToOrderHref(order);
+            order.setSubOrders(Arrays.asList(subOrderHref));
 
             Order parentOrder = new Order();
             parentOrder.setUuid(UUID.randomUUID().toString());
             parentOrder.setHref("http://orderhref/" + parentOrder.getUuid());
-//TODO            order.setParentOrder(parentOrder);
+
+            OrderHref parentOrderHref = OrderMapper.INSTANCE.orderToOrderHref(parentOrder);
+            order.setParentOrder(parentOrderHref);
 
             List<Order> orderList = new ArrayList<Order>();
             orderList.add(order);
             replyMessage.setOrderList(orderList);
-            
+
             OrderChangeRequest orderChangeRequest = new OrderChangeRequest();
             orderChangeRequest.setApprovedDate(new Date());
             orderChangeRequest.setChangeReason("a great change");
@@ -265,9 +298,11 @@ public class ModelJaxbTest {
             orderChangeRequest.setResponseDescription("wasnt a good idea");
             orderChangeRequest.setUuid(UUID.randomUUID().toString());
             orderChangeRequest.setHref("http://orderchangeref/" + orderChangeRequest.getUuid());
+            
+            orderChangeRequest.setChangeRequest(order);
 
             List<OrderChangeRequest> orderChangeRequestList = Arrays.asList(orderChangeRequest);
-            
+
             // also create orderChangeRequest
             replyMessage.setOrderChangeRequestList(orderChangeRequestList);
 

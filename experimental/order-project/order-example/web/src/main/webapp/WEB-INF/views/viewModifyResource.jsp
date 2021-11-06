@@ -93,37 +93,9 @@
                             <button class="btn" type="submit" >Update</button>
                         </td>
                     </form> 
-                    <td>
-                        <form action="./viewModifyResource" method="POST">
-                            <input type="hidden" name="action" value="deleteCharacteristic"/>
-                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                            <input type="hidden" name="characteristicName" value="${characteristic.name}" />
-                            <input type="hidden" name="abstractResourceUuid" value="${abstractResource.uuid}" />
-                            <button class="btn" type="submit" >Delete</button>
-                        </form>
-                    </td>
                     </tr>
                 </c:forEach>
                 </tbody>
-            </table>
-
-            <table class="table">
-                <form action="./viewModifyResource" method="POST">
-                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                    <input type="hidden" name="action" value="createCharacteristic"/>
-                    <input type="hidden" name="abstractResourceUuid" value="${abstractResource.uuid}" />
-                    <thead>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><input type="text" name="characteristicName" value="${characteristic.name}" /></td>
-                            <td><input type="text" name="characteristicValue" value="${characteristic.value}" /></td>
-                            <td><input type="text" name="characteristicDescription" value="${characteristic.description}" /></td>
-                            <td><button class="btn" type="submit" >Add Characteristic</button></td>
-                        </tr>
-                    </tbody>
-                </form>
-
             </table>
 
         </div>

@@ -30,5 +30,6 @@ public interface PartyMapper {
 
     Party partyUpdatePartyEntity(Party party, @MappingTarget Party partyEntity);
 
+    PartyHref partyToHref(Party partyEntity);
+    
 }
-

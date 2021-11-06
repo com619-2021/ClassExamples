@@ -90,7 +90,7 @@ public class ResourceCatalogServiceImpl implements ResourceCatalogService {
             resource.setUuid(UUID.randomUUID().toString());
             // simple to set an unique initial type name
             Long t = new Date().getTime();
-            resource.setResourceTypeName("update type name "+t );
+            resource.setResourceTypeName("initial name "+t );
             resource.setResourceController(ResourceAccess.INTERNAL);
         }
         resource = resourceCatalogRepository.saveAndFlush(resource);

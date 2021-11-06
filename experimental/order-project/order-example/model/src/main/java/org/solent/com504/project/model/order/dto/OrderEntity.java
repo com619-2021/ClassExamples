@@ -2,21 +2,26 @@ package org.solent.com504.project.model.order.dto;
 
 import java.util.Date;
 import java.util.List;
-
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.solent.com504.project.model.party.dto.Party;
-import org.solent.com504.project.model.party.dto.PartyHref;
 import org.solent.com504.project.model.resource.dto.Resource;
 import org.solent.com504.project.model.resource.dto.ResourceAccess;
-import org.solent.com504.project.model.resource.dto.ResourceHref;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Order {
+
+@Entity
+public class OrderEntity {
 
     private String href;
 
@@ -27,8 +32,8 @@ public class Order {
     private String name;
 
     @XmlElementWrapper(name = "subOrdersList")
-    @XmlElement(name = "orderHref")
-    private List<OrderHref> subOrders;
+    @XmlElement(name = "order")
+    private List<OrderEntity> subOrders;
 
     private String description;
 
@@ -38,22 +43,22 @@ public class Order {
 
     private Date endDate;
 
-    private PartyHref orderOwner;
+    private Party orderOwner;
 
-    @XmlElementWrapper(name = "changeRequestsList")
-    @XmlElement(name = "orderChangeRequestHref")
-    private List<OrderChangeRequestHref> changeRequests;
+    private List<OrderChangeRequest> changeRequests;
 
-    private OrderHref parentOrder;
+    private OrderEntity parentOrder;
 
     @XmlElementWrapper(name = "resourceList")
-    @XmlElement(name = "resourceHref")
-    private List<ResourceHref> resourceOrService;
+    @XmlElement(name = "resource")
+    private List<Resource> resourceOrService;
 
     private OrderStatus status;
 
     private ResourceAccess resourceAccess;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long getId() {
         return id;
     }
@@ -89,14 +94,15 @@ public class Order {
 //TODO real problem here - swagger does a recursive list and fails to load this data type
 // see https://stackoverflow.com/questions/59598383/swagger-recursively-resolving-dependencies-for-type-infinite-loop
 // https://github.com/springfox/springfox/issues/621 Cycles in Java classes cause infinite loop in ModelAttributeParameterExpander
-
-    public List<OrderHref> getSubOrders() {
+    @OneToMany
+    public List<OrderEntity> getSubOrders() {
         return subOrders;
     }
 
-    public void setSubOrders(List<OrderHref> subOrders) {
+    public void setSubOrders(List<OrderEntity> subOrders) {
         this.subOrders = subOrders;
     }
+
     public String getDescription() {
         return description;
     }
@@ -129,37 +135,38 @@ public class Order {
         this.endDate = endDate;
     }
 
-    public PartyHref getOrderOwner() {
+    @OneToOne
+    public Party getOrderOwner() {
         return orderOwner;
     }
 
-    public void setOrderOwner(PartyHref orderOwner) {
+    public void setOrderOwner(Party orderOwner) {
         this.orderOwner = orderOwner;
     }
 
-
-    public List<OrderChangeRequestHref> getChangeRequests() {
-        return changeRequests;
-    }
-
-    public void setChangeRequests(List<OrderChangeRequestHref> changeRequests) {
-        this.changeRequests = changeRequests;
-    }
-
-
-    public OrderHref getParentOrder() {
-        return parentOrder;
-    }
-
-    public void setParentOrder(OrderHref parentOrder) {
-        this.parentOrder = parentOrder;
-    }
-
-    public List<ResourceHref> getResourceOrService() {
+//    @OneToMany
+//    public List<OrderChangeRequest> getChangeRequests() {
+//        return changeRequests;
+//    }
+//
+//    public void setChangeRequests(List<OrderChangeRequest> changeRequests) {
+//        this.changeRequests = changeRequests;
+//    }
+//
+//    @OneToOne
+//    public Order getParentOrder() {
+//        return parentOrder;
+//    }
+//
+//    public void setParentOrder(Order parentOrder) {
+//        this.parentOrder = parentOrder;
+//    }
+    @OneToMany
+    public List<Resource> getResourceOrService() {
         return resourceOrService;
     }
 
-    public void setResourceOrService(List<ResourceHref> resourceOrService) {
+    public void setResourceOrService(List<Resource> resourceOrService) {
         this.resourceOrService = resourceOrService;
     }
 

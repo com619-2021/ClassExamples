@@ -168,10 +168,7 @@ public class ResourceController {
 
         // perform actions
         if ("createAbstractResource".equals(action)) {
-  
-            
-            
-            
+
             replyMessage = resourceService.postCreateResourceFromCatalogResource(catalogUUID, ownerPartyUUID);
             if (replyMessage.getResourceList() != null && !replyMessage.getResourceList().isEmpty()) {
                 abstractResource = replyMessage.getResourceList().get(0);

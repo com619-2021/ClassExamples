@@ -15,7 +15,7 @@
 <main role="main" class="container">
 
     <div>
-        <H1>Resource Details</H1>
+        <H1>Catalogue Entry Details</H1>
         <!-- print error message if there is one -->
         <div style="color:red;">${errorMessage}</div>
         <div style="color:green;">${message}</div>
@@ -41,7 +41,7 @@
 
                 <tbody>
                     <tr>
-                        <td>Name</td>
+                        <td>name</td>
                         <td><input type="text" name="abstractResourceName" value="${abstractResource.name}" readonly /></td>
                     </tr>
                     <tr>
