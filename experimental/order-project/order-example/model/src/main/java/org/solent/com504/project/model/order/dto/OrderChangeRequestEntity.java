@@ -1,23 +1,20 @@
 package org.solent.com504.project.model.order.dto;
 
 import java.util.Date;
-import javax.persistence.Embedded;
+import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
 import org.solent.com504.project.model.party.dto.Party;
-
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
+import org.solent.com504.project.model.utilities.OrderToJsonConverter;
 
 @Entity
-public class OrderChangeRequestEntiy {
+public class OrderChangeRequestEntity {
 
+    // NOTE NOT ORDER ENTITY - THIS IS EMBEDDED
     private Order changeRequest;
 
     private Date requestDate;
@@ -48,8 +45,10 @@ public class OrderChangeRequestEntiy {
         this.id = id;
     }
 
-    // not referring to table entry since this is just an update dto
-    @Embedded
+    // this avoids having to create tables for the received change request
+    // but at the expense of not being able to search on characterists 
+    @Column(name = "orderchange", length = 1000)
+    @Convert(converter = OrderToJsonConverter.class)
     public Order getChangeRequest() {
         return changeRequest;
     }
@@ -121,6 +120,11 @@ public class OrderChangeRequestEntiy {
 
     public void setHref(String href) {
         this.href = href;
+    }
+
+    @Override
+    public String toString() {
+        return "OrderChangeRequestEntity{" + "requestDate=" + requestDate + ", approvedDate=" + approvedDate + ", status=" + status + ", changeReason=" + changeReason + ", changeRequestor=" + changeRequestor + ", responseDescription=" + responseDescription + ", id=" + id + ", uuid=" + uuid + ", href=" + href + '}';
     }
 
 }

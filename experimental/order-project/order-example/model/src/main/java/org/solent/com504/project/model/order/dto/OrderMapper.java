@@ -26,11 +26,11 @@ public interface OrderMapper {
 
     OrderEntity orderToOrderEntity(Order order);
 
-    Order orderEntityToOrder(OrderEntity order);
+    Order orderEntityToOrder(OrderEntity orderEntity);
 
     OrderHref orderToOrderHref(Order order);
 
-    OrderHref orderEntityToOrderHref(OrderEntity order);
+    OrderHref orderEntityToOrderHref(OrderEntity orderEntity);
     
     OrderEntity updateOrderEntity(Order order, @MappingTarget OrderEntity orderEntity);
 

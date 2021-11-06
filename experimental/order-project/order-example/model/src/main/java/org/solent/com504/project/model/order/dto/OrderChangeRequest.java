@@ -1,11 +1,6 @@
 package org.solent.com504.project.model.order.dto;
 
 import java.util.Date;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -14,8 +9,6 @@ import org.solent.com504.project.model.party.dto.Party;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-
-@Entity
 public class OrderChangeRequest {
 
     private Order changeRequest;
@@ -38,8 +31,6 @@ public class OrderChangeRequest {
 
     private String href;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long getId() {
         return id;
     }
@@ -48,8 +39,6 @@ public class OrderChangeRequest {
         this.id = id;
     }
 
-    // not referring to table entry since this is just an update dto
-    @Embedded
     public Order getChangeRequest() {
         return changeRequest;
     }

@@ -1,24 +1,21 @@
 package org.solent.com504.project.model.order.dto;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
 import org.solent.com504.project.model.party.dto.Party;
 import org.solent.com504.project.model.resource.dto.Resource;
 import org.solent.com504.project.model.resource.dto.ResourceAccess;
-
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
 
 @Entity
 public class OrderEntity {
@@ -31,9 +28,7 @@ public class OrderEntity {
 
     private String name;
 
-    @XmlElementWrapper(name = "subOrdersList")
-    @XmlElement(name = "order")
-    private List<OrderEntity> subOrders;
+    private List<OrderEntity> subOrders  = new ArrayList<OrderEntity>();
 
     private String description;
 
@@ -45,13 +40,11 @@ public class OrderEntity {
 
     private Party orderOwner;
 
-    private List<OrderChangeRequest> changeRequests;
+    private List<OrderChangeRequestEntity> changeRequests = new ArrayList<OrderChangeRequestEntity>(); 
 
     private OrderEntity parentOrder;
 
-    @XmlElementWrapper(name = "resourceList")
-    @XmlElement(name = "resource")
-    private List<Resource> resourceOrService;
+    private List<Resource> resourceOrService = new ArrayList<Resource>();
 
     private OrderStatus status;
 
@@ -144,23 +137,26 @@ public class OrderEntity {
         this.orderOwner = orderOwner;
     }
 
-//    @OneToMany
-//    public List<OrderChangeRequest> getChangeRequests() {
-//        return changeRequests;
-//    }
-//
-//    public void setChangeRequests(List<OrderChangeRequest> changeRequests) {
-//        this.changeRequests = changeRequests;
-//    }
-//
-//    @OneToOne
-//    public Order getParentOrder() {
-//        return parentOrder;
-//    }
-//
-//    public void setParentOrder(Order parentOrder) {
-//        this.parentOrder = parentOrder;
-//    }
+    // REMOVES order change requests if order is deleted
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "orderchangerequests_id")
+    public List<OrderChangeRequestEntity> getChangeRequests() {
+        return changeRequests;
+    }
+
+    public void setChangeRequests(List<OrderChangeRequestEntity> changeRequests) {
+        this.changeRequests = changeRequests;
+    }
+
+    @OneToOne
+    public OrderEntity getParentOrder() {
+        return parentOrder;
+    }
+
+    public void setParentOrder(OrderEntity parentOrder) {
+        this.parentOrder = parentOrder;
+    }
+
     @OneToMany
     public List<Resource> getResourceOrService() {
         return resourceOrService;
@@ -185,5 +181,11 @@ public class OrderEntity {
     public void setResourceAccess(ResourceAccess resourceAccess) {
         this.resourceAccess = resourceAccess;
     }
+
+    @Override
+    public String toString() {
+        return "OrderEntity{" + "href=" + href + ", uuid=" + uuid + ", id=" + id + ", name=" + name + ", subOrders=" + subOrders + ", description=" + description + ", orderDate=" + orderDate + ", startDate=" + startDate + ", endDate=" + endDate + ", orderOwner=" + orderOwner + ", parentOrder=" + parentOrder + ", resourceOrService=" + resourceOrService + ", status=" + status + ", resourceAccess=" + resourceAccess + '}';
+    }
+  
 
 }

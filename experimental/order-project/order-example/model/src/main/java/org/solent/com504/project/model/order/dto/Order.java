@@ -1,5 +1,6 @@
 package org.solent.com504.project.model.order.dto;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class Order {
     private String name;
 
     @XmlElementWrapper(name = "subOrdersList")
-    @XmlElement(name = "orderHref")
+    @XmlElement(name = "subOrder")
     private List<OrderHref> subOrders;
 
     private String description;
