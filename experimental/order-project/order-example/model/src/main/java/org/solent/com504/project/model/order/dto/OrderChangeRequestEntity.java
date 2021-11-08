@@ -45,7 +45,7 @@ public class OrderChangeRequestEntity {
         this.id = id;
     }
 
-    // this avoids having to create tables for the received change request
+    // this avoids having to create tables for the recieved change request
     // but at the expense of not being able to search on characterists 
     @Column(name = "orderchange", length = 1000)
     @Convert(converter = OrderToJsonConverter.class)

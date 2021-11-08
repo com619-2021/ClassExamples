@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -16,6 +18,7 @@ import javax.persistence.OneToOne;
 import org.solent.com504.project.model.party.dto.Party;
 import org.solent.com504.project.model.resource.dto.Resource;
 import org.solent.com504.project.model.resource.dto.ResourceAccess;
+import org.solent.com504.project.model.utilities.OrderToJsonConverter;
 
 @Entity
 public class OrderEntity {
@@ -49,6 +52,9 @@ public class OrderEntity {
     private OrderStatus status;
 
     private ResourceAccess resourceAccess;
+    
+    // holds an external order as a json string - used for references
+    private Order externalOrder;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -181,6 +187,21 @@ public class OrderEntity {
     public void setResourceAccess(ResourceAccess resourceAccess) {
         this.resourceAccess = resourceAccess;
     }
+
+    // this avoids having to create tables for the external order
+    // but at the expense of not being able to search on characterists 
+    @Column(name = "externalorder", length = 1000)
+    @Convert(converter = OrderToJsonConverter.class)
+    public Order getExternalOrder() {
+        return externalOrder;
+    }
+
+
+    public void setExternalOrder(Order externalOrder) {
+        this.externalOrder = externalOrder;
+    }
+    
+    
 
     @Override
     public String toString() {
