@@ -1,4 +1,4 @@
-## packing docker imate in tomcat container
+## packing docker image using tomcat container
 
 
 To build the docker image from the parent project use
