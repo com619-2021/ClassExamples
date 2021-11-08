@@ -15,9 +15,14 @@ These are used to Create Delete Update and Retrieve (CRUD) data from the databas
 
 ### Order and Catalog patterns
 
+#### separation of Entity from DTO objects
+
 ![alt text](../UMLmodel/images/OrderPattern-classdiagram.png "Figure OrderPattern-classdiagram.png" )
 
 
+#### simple version 
+
+![alt text](../UMLmodel/images/OrderPattern-classdiagram.png "Figure OrderPattern-classdiagram.png" )
 
 ## Use Cases and Robustness Diagrams
 
