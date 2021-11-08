@@ -6,6 +6,7 @@
 package org.solent.com504.project.model.party.dto;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValueCheckStrategy;
 import org.mapstruct.NullValuePropertyMappingStrategy;
@@ -30,6 +31,7 @@ public interface PartyMapper {
 
     Party partyUpdatePartyEntity(Party party, @MappingTarget Party partyEntity);
 
+    @Mapping(source = "firstName", target = "name")
     PartyHref partyToHref(Party partyEntity);
     
 }

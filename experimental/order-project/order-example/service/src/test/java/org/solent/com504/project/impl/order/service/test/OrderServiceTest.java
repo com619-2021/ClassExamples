@@ -3,9 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.solent.com504.project.impl.resource.service.test;
+package org.solent.com504.project.impl.order.service.test;
 
+import org.solent.com504.project.impl.resource.service.test.*;
 import java.util.ArrayList;
+import java.util.Date;
 import org.solent.com504.project.impl.service.test.*;
 import java.util.List;
 import java.util.UUID;
@@ -17,6 +19,9 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.solent.com504.project.model.dto.ReplyMessage;
+import org.solent.com504.project.model.order.dto.Order;
+import org.solent.com504.project.model.order.dto.OrderStatus;
+import org.solent.com504.project.model.order.service.OrderService;
 import org.solent.com504.project.model.party.dto.Party;
 import org.solent.com504.project.model.party.dto.PartyRole;
 import org.solent.com504.project.model.party.service.PartyService;
@@ -26,6 +31,7 @@ import org.solent.com504.project.model.resource.dto.ResourceAccess;
 import org.solent.com504.project.model.resource.service.ResourceCatalogService;
 import org.solent.com504.project.model.resource.service.ResourceInventoryService;
 import org.solent.com504.project.model.service.ServiceFacade;
+import org.solent.com504.project.model.utilities.PrintOutJson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -39,9 +45,9 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 // ApplicationContext will be loaded from the OrderServiceConfig class
 @ContextConfiguration(classes = ServiceTestConfiguration.class, loader = AnnotationConfigContextLoader.class)
 @Transactional
-public class ResourceInventoryServiceTest {
+public class OrderServiceTest {
 
-    final static Logger LOG = LogManager.getLogger(ResourceInventoryServiceTest.class);
+    final static Logger LOG = LogManager.getLogger(OrderServiceTest.class);
 
     @Autowired
     ServiceFacade serviceFacade = null;
@@ -55,19 +61,20 @@ public class ResourceInventoryServiceTest {
     @Autowired
     PartyService partyService = null;
 
-    @Test
+    @Autowired
+    OrderService orderService = null;
+
     public void testFactory() {
-        LOG.debug("start ServiceFacadeTest testFpartyy");
+        LOG.debug("start OrderServiceTest testFactory");
         assertNotNull(serviceFacade);
         assertNotNull(resourceInventoryService);
         assertNotNull(partyService);
-        LOG.debug("end ServiceFacadeTest testFpartyy");
+        assertNotNull(orderService);
+        LOG.debug("end OrderServiceTest testFactory");
     }
 
     @Test
-    public void resourceInventoryTest() {
-        LOG.debug("start of resourceInventoryTest");
-
+    public void internalOrderTest() {
         // create a resource with a party
         Party party1 = new Party();
         party1.setFirstName("party1");
@@ -81,11 +88,28 @@ public class ResourceInventoryServiceTest {
         ReplyMessage replyMessage = resourceInventoryService.postCreateResource(resourceIn, ownerPartyUUID);
         List<Resource> resourceList = replyMessage.getResourceList();
         assertEquals(1, resourceList.size());
-        
-        Resource createdResource = resourceList.get(0);
-        LOG.debug("created Resource:"+createdResource);
 
-        LOG.debug("end of resourceInventoryTest");
+        Resource createdResource = resourceList.get(0);
+        LOG.debug("created Resource:" + createdResource);
+
+        Order order = new Order();
+        order.setDescription("order description");
+        order.setName("PO1234");
+        order.setEndDate(new Date());
+        order.setOrderDate(new Date());
+
+        order.setStartDate(new Date());
+        order.setStatus(OrderStatus.ACKNOWLEGED);
+        String testUUID = UUID.randomUUID().toString();
+        order.setUuid(testUUID);
+        order.setHref("http://orderhref/" + order.getUuid());
+
+        replyMessage = orderService.postCreateOrder(order, party1.getUuid());
+
+        String jsonOut = PrintOutJson.getJson(replyMessage);
+
+        LOG.debug("reply message " + jsonOut);
+
     }
 
     /*

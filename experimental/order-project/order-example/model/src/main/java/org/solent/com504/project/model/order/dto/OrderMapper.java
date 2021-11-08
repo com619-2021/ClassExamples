@@ -31,7 +31,10 @@ public interface OrderMapper {
     OrderHref orderToOrderHref(Order order);
 
     OrderHref orderEntityToOrderHref(OrderEntity orderEntity);
-    
+
     OrderEntity updateOrderEntity(Order order, @MappingTarget OrderEntity orderEntity);
+
+    @Mapping(source = "firstName", target = "name")
+    PartyHref partyToHref(Party partyEntity);
 
 }
