@@ -53,16 +53,16 @@
                             <!-- this jstl should work but problems with multiple if statements -->
                             <!-- selected page = ${selectedPage} home ${'home'.equals(selectedPage) } about ${'about'.equals(selectedPage) } contact ${'contact'.equals(selectedPage) }-->
                             <!--<li <c:if test="${'home'.equals(selectedPage) }"> class="active"  </c:if> ><a href="${contextPath}/home">Home</a></li>--> 
-
                                 <!-- this raw java code works !! -->
-                            <li <% if ("home".equals(request.getAttribute("selectedPage"))) {%> class="active"  <% } %> ><a href="${contextPath}/home">Home</a></li> 
-                            <li <% if ("about".equals(request.getAttribute("selectedPage"))) {%>  class="active"  <% } %> ><a href="${contextPath}/about">About</a></li> 
-                            <li <% if ("contact".equals(request.getAttribute("selectedPage"))) {%>  class="active"  <% }%> ><a href="${contextPath}/contact">Contact</a></li>                          
+                                <li <% if ("home".equals(request.getAttribute("selectedPage"))) {%> class="active"  <% } %> ><a href="${contextPath}/home">Home</a></li> 
+                            <li <% if ("order".equals(request.getAttribute("selectedPage"))) {%> class="active"  <% } %> ><a href="${contextPath}/order">Orders</a></li> 
                             <li <% if ("resource".equals(request.getAttribute("selectedPage"))) {%> class="active"  <% } %> ><a href="${contextPath}/resource">Resource Inventory</a></li> 
-                            <li <% if ("catalog".equals(request.getAttribute("selectedPage"))) {%> class="active"  <% } %> ><a href="${contextPath}/catalog">Resource Catalogue</a></li> 
+                            <li <% if ("catalog".equals(request.getAttribute("selectedPage"))) {%> class="active"  <% }%> ><a href="${contextPath}/catalog">Resource Catalogue</a></li> 
+                            <li <% if ("about".equals(request.getAttribute("selectedPage"))) {%>  class="active"  <% } %> ><a href="${contextPath}/about">About</a></li> 
+                            <li <% if ("contact".equals(request.getAttribute("selectedPage"))) {%>  class="active"  <% }%> ><a href="${contextPath}/contact">Contact</a></li> 
 
                             <li><a href="${contextPath}/swagger-ui/index.html" target="_blank" >ReST API</a></li>                          
-                            <sec:authorize access="hasRole('ROLE_GLOBAL_ADMIN')">
+                                <sec:authorize access="hasRole('ROLE_GLOBAL_ADMIN')">
                                 <li class="dropdown" >
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> Admin <span class="caret"></span></a>
                                     <ul class="dropdown-menu">
@@ -76,8 +76,8 @@
                         <ul class="nav navbar-nav navbar-right">
                             <c:if test="${pageContext.request.userPrincipal.name == null}">
                                 <li><a href="${contextPath}/login">Login or create a new Account</a></li>
-                            </c:if>
-                            <c:if test="${pageContext.request.userPrincipal.name != null}">
+                                </c:if>
+                                <c:if test="${pageContext.request.userPrincipal.name != null}">
                                 <form id="logoutForm" method="POST" action="${contextPath}/logout">
                                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                 </form>
@@ -85,9 +85,9 @@
                                     <input type="hidden" name="username" value="${pageContext.request.userPrincipal.name}"/>
                                 </form>
                                 <p class="text-muted"> Welcome ${pageContext.request.userPrincipal.name}&nbsp;&nbsp;
-                                <a onclick="document.forms['logoutForm'].submit()">Logout</a><BR>
-                                <a onclick="document.forms['profile'].submit()">User Profile</a></p>
-                            </c:if>
+                                    <a onclick="document.forms['logoutForm'].submit()">Logout</a><BR>
+                                    <a onclick="document.forms['profile'].submit()">User Profile</a></p>
+                                </c:if>
                         </ul>
                     </div><!--/.nav-collapse -->
                 </div><!--/.container-fluid -->
