@@ -54,8 +54,8 @@
                         <td>${order.uuid}</td>
                         <td>${order.href}</td>
                         <td>${order.name}</td>
-                        <td>${order.orderRole}</td>
                         <td>${order.status}</td>
+                        <td>${order.resourceAccess}</td>
                         <td>${order.orderDate}</td>
                         <td>${order.startDate}</td>
                         <td>${order.endDate}</td>
@@ -71,7 +71,7 @@
 
             </tbody>
         </table>
-        <form action="./viewModifyParty" method="POST">
+        <form action="./viewModifyOrder" method="POST">
             <!-- orderuuid ="" creates a new order -->
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <input type="hidden" name="orderuuid" value="">
