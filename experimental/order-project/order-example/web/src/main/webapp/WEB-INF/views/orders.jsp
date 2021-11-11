@@ -62,7 +62,7 @@
 
                             <td>
                                 <form action="./viewModifyOrder" method="GET">
-                                    <input type="hidden" name="orderuuid" value="${order.uuid}">
+                                    <input type="hidden" name="orderUuid" value="${order.uuid}">
                                 <button class="btn" type="submit" >View Order Details</button>
                             </form> 
                         </td>
@@ -72,9 +72,9 @@
             </tbody>
         </table>
         <form action="./viewModifyOrder" method="POST">
-            <!-- orderuuid ="" creates a new order -->
+            <!-- orderUuid ="" creates a new order -->
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-            <input type="hidden" name="orderuuid" value="">
+            <input type="hidden" name="orderUuid" value="">
             <button class="btn" type="submit" >Add New Order</button>
         </form> 
 </main>
