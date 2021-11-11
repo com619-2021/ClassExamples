@@ -2,20 +2,27 @@ package org.solent.com504.project.impl.web;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.solent.com504.project.impl.validator.UserValidator;
 import org.solent.com504.project.model.dto.ReplyMessage;
+import org.solent.com504.project.model.order.dto.Order;
+import org.solent.com504.project.model.order.dto.OrderHref;
+import org.solent.com504.project.model.order.dto.OrderStatus;
 import org.solent.com504.project.model.party.dto.Address;
 import org.solent.com504.project.model.party.dto.Party;
 import org.solent.com504.project.model.party.dto.PartyRole;
@@ -50,6 +57,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class OrderController {
 
     final static Logger LOG = LogManager.getLogger(OrderController.class);
+    
+    final static DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm a z");
 
     {
         LOG.debug("OrderController created");
@@ -84,6 +93,41 @@ public class OrderController {
     @RequestMapping(value = {"/order"}, method = RequestMethod.GET)
     public String catalog(Model model) {
         LOG.debug("order called:");
+
+        /*
+    private Long id;                    
+    private String href;
+    private String uuid;
+    private String name;
+    private OrderStatus status;
+    private ResourceAccess resourceAccess;                    
+    private Date orderDate;
+    private Date startDate;
+    private Date endDate;
+    private String description; 
+     private List<OrderHref> subOrders;
+   private PartyHref orderOwner;
+    private List<OrderChangeRequestHref> changeRequests;
+    private OrderHref parentOrder;
+    private List<ResourceHref> resourceOrService;
+         */
+        Order tmporder = new Order();
+        tmporder.setDescription("my order");
+        tmporder.setStartDate(new Date());
+        tmporder.setHref("http://tmp");
+        tmporder.setId(1L);
+        tmporder.setUuid(UUID.randomUUID().toString());
+        tmporder.setStatus(OrderStatus.PLACED);
+        tmporder.setResourceAccess(ResourceAccess.EXTERNAL);
+        OrderHref parent = new OrderHref();
+        tmporder.setParentOrder(parent);
+        tmporder.setSubOrders(Arrays.asList(parent,parent));
+        List<Order> orderList = Arrays.asList(tmporder);
+
+        int orderListSize = orderList.size();
+        model.addAttribute("orderListSize", orderListSize);
+        model.addAttribute("orderList", orderList);
+        model.addAttribute("dateFormat", df);
 
         model.addAttribute("selectedPage", "orders");
         return "orders";
