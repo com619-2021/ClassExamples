@@ -6,6 +6,7 @@
 package org.solent.com504.project.model.order.dto;
 
 
+import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -25,6 +26,8 @@ public class OrderChangeRequestHref {
     private Long id;
 
     private String name;
+    
+    private Date requestDate;
 
     public String getHref() {
         return href;
@@ -58,10 +61,17 @@ public class OrderChangeRequestHref {
         this.name = name;
     }
 
+    public Date getRequestDate() {
+        return requestDate;
+    }
+
+    public void setRequestDate(Date requestDate) {
+        this.requestDate = requestDate;
+    }
+
     @Override
     public String toString() {
-        return "OrderHref{" + "href=" + href + ", uuid=" + uuid + ", id=" + id + ", name=" + name + '}';
+        return "OrderChangeRequestHref{" + "href=" + href + ", uuid=" + uuid + ", id=" + id + ", name=" + name + ", requestDate=" + requestDate + '}';
     }
-    
     
 }

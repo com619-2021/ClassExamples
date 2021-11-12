@@ -21,6 +21,7 @@ import org.apache.logging.log4j.Logger;
 import org.solent.com504.project.impl.validator.UserValidator;
 import org.solent.com504.project.model.dto.ReplyMessage;
 import org.solent.com504.project.model.order.dto.Order;
+import org.solent.com504.project.model.order.dto.OrderChangeRequestHref;
 import org.solent.com504.project.model.order.dto.OrderHref;
 import org.solent.com504.project.model.order.dto.OrderStatus;
 import org.solent.com504.project.model.party.dto.Address;
@@ -57,7 +58,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class OrderController {
 
     final static Logger LOG = LogManager.getLogger(OrderController.class);
-    
+
     final static DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm a z");
 
     {
@@ -82,18 +83,7 @@ public class OrderController {
     @Autowired
     private ResourceInventoryService resourceService = null;
 
-    // ***************************
-    // Methods to modify catalog
-    // ***************************
-    /**
-     *
-     * @param model
-     * @return
-     */
-    @RequestMapping(value = {"/order"}, method = RequestMethod.GET)
-    public String catalog(Model model) {
-        LOG.debug("order called:");
-
+    Order mockOrder() {
         /*
     private Long id;                    
     private String href;
@@ -121,7 +111,37 @@ public class OrderController {
         tmporder.setResourceAccess(ResourceAccess.EXTERNAL);
         OrderHref parent = new OrderHref();
         tmporder.setParentOrder(parent);
-        tmporder.setSubOrders(Arrays.asList(parent,parent));
+        tmporder.setSubOrders(Arrays.asList(parent, parent));
+
+        OrderChangeRequestHref changehref1 = new OrderChangeRequestHref();
+        changehref1.setUuid(UUID.randomUUID().toString());
+        changehref1.setName("change 1");
+        changehref1.setRequestDate(new Date());
+        OrderChangeRequestHref changehref2 = new OrderChangeRequestHref();
+        changehref2.setUuid(UUID.randomUUID().toString());
+        changehref2.setName("change 2");
+        changehref2.setRequestDate(new Date());
+
+        List<OrderChangeRequestHref> changeRequests = Arrays.asList(changehref1, changehref2);
+
+        tmporder.setChangeRequests(changeRequests);
+        return tmporder;
+    }
+
+    // ***************************
+    // Methods to modify catalog
+    // ***************************
+    /**
+     *
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = {"/order"}, method = RequestMethod.GET)
+    public String catalog(Model model) {
+        LOG.debug("order called:");
+
+        Order tmporder = mockOrder();
+
         List<Order> orderList = Arrays.asList(tmporder);
 
         int orderListSize = orderList.size();
@@ -129,17 +149,26 @@ public class OrderController {
         model.addAttribute("orderList", orderList);
         model.addAttribute("dateFormat", df);
 
-        model.addAttribute("selectedPage", "orders");
+        model.addAttribute("selectedPage", "order");
         return "orders";
     }
 
     @RequestMapping(value = {"/viewModifyOrder"}, method = RequestMethod.GET)
     public String vieworder(Model model,
-            @RequestParam(value = "orderUuid", required = true) String orderUuid, Authentication authentication) {
+            @RequestParam(value = "orderUuid", required = true) String orderUuid,
+            @RequestParam(value = "changeRequestUUID", required = false) String changeRequestUUID,
+            Authentication authentication) {
 
         LOG.debug("/viewModifyOrder: abstractResourceUuid:" + orderUuid);
         String errorMessage = "";
         String message = "";
+
+        Order order = mockOrder();
+
+        model.addAttribute("order", order);
+
+        model.addAttribute("changeOrder", order);
+        model.addAttribute("changeRequestUUID", changeRequestUUID);
 
         // add message if there are any 
         model.addAttribute("errorMessage", errorMessage);
