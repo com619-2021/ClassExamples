@@ -10,6 +10,15 @@
 
     <artifactId>order-example-swagger-client</artifactId>
     <packaging>jar</packaging>
+    <properties>
+        <specPackageName>spec</specPackageName>
+        <!--<version.swagger.codegen>2.4.13</version.swagger.codegen>-->
+        <version.swagger.codegen>3.0.29</version.swagger.codegen>
+        
+        <spec.file>${project.build.directory}/openapi/openapi.json</spec.file>
+        <generated-sources-path>${project.build.directory}${file.separator}generated-sources</generated-sources-path>
+        <generated-sources-java-path>src${file.separator}main${file.separator}java</generated-sources-java-path>
+    </properties>
     
     <build>
         <plugins>
@@ -20,7 +29,7 @@
                 <executions>
                     <execution>
                         <id>unpack</id>
-                        <phase>process-resources</phase>
+                        <phase>generate-sources</phase>
                         <goals>
                             <goal>unpack</goal>
                         </goals>
@@ -40,6 +49,41 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            
+            <!-- this plugin generates server code from the swagger specification -->
+            <plugin>
+                <groupId>io.swagger.codegen.v3</groupId>
+                <artifactId>swagger-codegen-maven-plugin</artifactId>
+                <version>${version.swagger.codegen}</version>
+                <configuration>
+                    <inputSpec>${spec.file}</inputSpec>
+                    <configOptions>
+                        <sourceFolder>${generated-sources-java-path}</sourceFolder>
+                        <library>jersey2</library>
+                        <dateLibrary>java8</dateLibrary>
+                    </configOptions>
+                    <output>${generated-sources-path}</output>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>generate-swagger-spring</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <!--<language>jaxrs-jersey</language>--> 
+                            <language>java</language> 
+                            <addCompileSourceRoot>false</addCompileSourceRoot>
+
+                            <modelPackage>${project.groupId}.${specPackageName}.swagger.model</modelPackage>
+                            <apiPackage>${project.groupId}.${specPackageName}.swagger.api</apiPackage>
+                            <invokerPackage>${project.groupId}.${specPackageName}.swagger.invoker</invokerPackage>
+                        </configuration>
+                    </execution>
+                </executions>
+
             </plugin>
         </plugins>
     </build>
