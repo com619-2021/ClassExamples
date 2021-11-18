@@ -1,0 +1,48 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>solent.ac.uk.devops.traffic</groupId>
+        <artifactId>order-example</artifactId>
+        <version>0.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>order-example-swagger-client</artifactId>
+    <packaging>jar</packaging>
+    
+    <build>
+        <plugins>
+            <!-- this plugin downloads the swagger ui -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>solent.ac.uk.devops.traffic</groupId>
+                                    <artifactId>order-example-web</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>openapi</classifier>
+                                    <!--<extension>json</extension>-->
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${project.build.directory}/openapi</outputDirectory>
+                            <overWriteReleases>true</overWriteReleases>
+                            <overWriteSnapshots>true</overWriteSnapshots>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+
+</project>

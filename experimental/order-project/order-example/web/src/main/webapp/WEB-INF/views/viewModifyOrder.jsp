@@ -29,83 +29,91 @@ private OrderHref parentOrder;
 private List<ResourceHref> resourceOrService;
 -->
 <main role="main" class="container">
-    <H1>View and Modify Order</H1>
-    
 
-    <!-- left hand side current order -->
-    <div class="col-xs-6">
-        <h3 class="sub-header">Current Order</h3>
-        <div class="table-responsive">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th class="col-md-1">Property</th>
-                        <th class="col-md-2">Current Value</th>
-                        <th class="col-md-3"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="col-md-1">order Id</td>
-                        <td class="col-md-2"><input type="text" name="orderId" value="${order.id}" readonly /></td>
-                        <td class="col-md-3"></td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-1">Order Uuid</td>
-                        <td class="col-md-2"><input type="text" name="orderUuid" value="${order.uuid}" readonly /></td>
-                        <td class="col-md-3"></td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-1">Order Href</td>
-                        <td class="col-md-2"><input type="text" name="orderHref" value="${order.href}" readonly /></td>
-                        <td class="col-md-3"></td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-1">Order Name</td>
-                        <td class="col-md-2"><input type="text" name="orderName" value="${order.name}" readonly /></td>
-                        <td class="col-md-3"></td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-1">Order Status</td>
-                        <td class="col-md-2"><input type="text" name="orderStatus" value="${order.status}" readonly /></td>
-                        <td class="col-md-3"></td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-1">Order Resource Access</td>
-                        <td class="col-md-2"><input type="text" name="orderStatus" value="${order.resourceAccess}" readonly /></td>
-                        <td class="col-md-3"></td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-1">Latest Update to Order</td>
-                        <td class="col-md-2"><input type="text" name="orderDate" value="${order.orderDate}" readonly /></td>
-                        <td class="col-md-3"></td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-1">Start Date of Order</td>
-                        <td class="col-md-2"><input type="text" name="orderDate" value="${order.startDate}" readonly /></td>
-                        <td class="col-md-3"></td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-1">End Date of Order</td>
-                        <td class="col-md-2"><input type="text" name="orderDate" value="${order.endDate}" readonly /></td>
-                        <td class="col-md-3"></td>
-                    </tr>
+    <div class="row">
 
-                </tbody>
-            </table>
+        <div class="col-xs-6">
+            <H1>View and Modify Order</H1>
         </div>
-    </div>
-    <div class="col-xs-6">
+        <div class="col-xs-6">
 
             <select class="form-control" name="changeRequestUUID" >
                 <c:forEach var="changeRequest" items="${order.changeRequests}">
                     <option value="${changeRequest.uuid}">${changeRequest.requestDate} ${changeRequest.name}  ${changeRequest.uuid}</option>
                 </c:forEach>
             </select>
+        </div>
+    </div>
 
+    <div class="row">
 
-        <h3 class="sub-header">change request</h3>
-         <table class="table table-striped"  >
+        <!-- left hand side current order -->
+        <div class="col-xs-6">
+            <h3 class="sub-header">Current Order</h3>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th class="col-md-1">Property</th>
+                            <th class="col-md-2">Current Value</th>
+                            <th class="col-md-3"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="col-md-1">order Id</td>
+                            <td class="col-md-2"><input type="text" name="orderId" value="${order.id}" readonly /></td>
+                            <td class="col-md-3"></td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-1">Order Uuid</td>
+                            <td class="col-md-2"><input type="text" name="orderUuid" value="${order.uuid}" readonly /></td>
+                            <td class="col-md-3"></td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-1">Order Href</td>
+                            <td class="col-md-2"><input type="text" name="orderHref" value="${order.href}" readonly /></td>
+                            <td class="col-md-3"></td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-1">Order Name</td>
+                            <td class="col-md-2"><input type="text" name="orderName" value="${order.name}" readonly /></td>
+                            <td class="col-md-3"></td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-1">Order Status</td>
+                            <td class="col-md-2"><input type="text" name="orderStatus" value="${order.status}" readonly /></td>
+                            <td class="col-md-3"></td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-1">Order Resource Access</td>
+                            <td class="col-md-2"><input type="text" name="orderStatus" value="${order.resourceAccess}" readonly /></td>
+                            <td class="col-md-3"></td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-1">Latest Update to Order</td>
+                            <td class="col-md-2"><input type="text" name="orderDate" value="${order.orderDate}" readonly /></td>
+                            <td class="col-md-3"></td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-1">Start Date of Order</td>
+                            <td class="col-md-2"><input type="text" name="orderDate" value="${order.startDate}" readonly /></td>
+                            <td class="col-md-3"></td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-1">End Date of Order</td>
+                            <td class="col-md-2"><input type="text" name="orderDate" value="${order.endDate}" readonly /></td>
+                            <td class="col-md-3"></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-xs-6">
+
+            <h3 class="sub-header">change request</h3>
+            <table class="table table-striped"  >
                 <thead>
                     <tr>
                         <th class="col-md-1">Property</th>
@@ -120,7 +128,7 @@ private List<ResourceHref> resourceOrService;
                         <td class="col-md-3"></td>
                     </tr>
                     <tr>
-                        <td class="col-md-1">change Order Uuid</td>
+                        <td class="col-md-1">change Uuid</td>
                         <td class="col-md-2"><input type="text" name="changeOrderUuid" value="${changeOrder.uuid}" readonly /></td>
                         <td class="col-md-3"></td>
                     </tr>
@@ -159,10 +167,31 @@ private List<ResourceHref> resourceOrService;
                         <td class="col-md-2"><input type="text" name="changeendDate" value="${changeOrder.endDate}" readonly /></td>
                         <td class="col-md-3"></td>
                     </tr>
-
+                    <tr>
+                        <!--change request details --> 
+                    </tr>
+                    <tr>
+                        <!-- 
+                        changeRequest
+                         private Order changeRequest;
+    private Date requestDate;
+    private Date approvedDate;
+    private ChangeStatus status;
+    private String changeReason;
+    private Party changeRequestor;
+    private String responseDescription;
+    private Long id;
+    private String uuid;
+    private String href;
+                        -->
+                        <td class="col-md-1">Change Request Date</td>
+                        <td class="col-md-2"></td>
+                        <td class="col-md-3"></td>
+                    </tr>
                 </tbody>
             </table>
         </div>
+    </div>
 </main>
 
 
