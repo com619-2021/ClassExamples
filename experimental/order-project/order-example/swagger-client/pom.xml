@@ -9,14 +9,14 @@
     </parent>
 
     <artifactId>order-example-swagger-client</artifactId>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
     <properties>
-        <specPackageName>spec</specPackageName>
+        <specPackageName>client</specPackageName>
         <!--<version.swagger.codegen>2.4.13</version.swagger.codegen>-->
         <version.swagger.codegen>3.0.29</version.swagger.codegen>
         
         <spec.file>${project.build.directory}/openapi/openapi.json</spec.file>
-        <generated-sources-path>${project.build.directory}${file.separator}generated-sources</generated-sources-path>
+        <generated-sources-path>${project.build.directory}${file.separator}generated-client</generated-sources-path>
         <generated-sources-java-path>src${file.separator}main${file.separator}java</generated-sources-java-path>
     </properties>
     
@@ -85,6 +85,28 @@
                 </executions>
 
             </plugin>
+            
+            <!-- this plugin zipls the client code -->
+            <!-- see https://medium.com/@kasunpdh/using-the-maven-assembly-plugin-to-build-a-zip-distribution-5cbca2a3b052 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <descriptors>
+                                <descriptor>src/main/assembly/assembly.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 
