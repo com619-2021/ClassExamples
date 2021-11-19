@@ -53,7 +53,9 @@ import solent.ac.uk.devops.traffic.client.swagger.invoker.auth.OAuth;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.JavaClientCodegen", date = "2021-11-19T14:34:17.894448800Z[Europe/London]")public class ApiClient {
   protected Map<String, String> defaultHeaderMap = new HashMap<String, String>();
-  protected String basePath = "/project-web";
+  //
+  protected String basePath = "http://localhost:8080/project-web";
+ // protected String basePath = "/project-web";
   protected boolean debugging = false;
   protected int connectionTimeout = 0;
   private int readTimeout = 0;
