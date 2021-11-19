@@ -10,6 +10,8 @@
     <fileSets>
         <fileSet>
             <directory>${project.build.directory}/openapi/</directory>
+        </fileSet>
+        <fileSet>
             <directory>${generated-sources-path}</directory>
         </fileSet>
     </fileSets>

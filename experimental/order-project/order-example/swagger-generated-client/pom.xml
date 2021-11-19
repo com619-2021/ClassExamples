@@ -8,7 +8,8 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>order-example-swagger-client</artifactId>
+    <artifactId>order-example-swagger-generated-client</artifactId>
+
     <packaging>pom</packaging>
     <properties>
         <specPackageName>client</specPackageName>
@@ -22,7 +23,7 @@
     
     <build>
         <plugins>
-            <!-- this plugin downloads the swagger ui -->
+            <!-- this plugin downloads the swagger  openapi api -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -51,7 +52,7 @@
                 </executions>
             </plugin>
             
-            <!-- this plugin generates server code from the swagger specification -->
+            <!-- this plugin generates client code from the swagger specification -->
             <plugin>
                 <groupId>io.swagger.codegen.v3</groupId>
                 <artifactId>swagger-codegen-maven-plugin</artifactId>
