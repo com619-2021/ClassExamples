@@ -76,6 +76,7 @@
                         <configuration>
                             <!--<language>jaxrs-jersey</language>--> 
                             <language>java</language> 
+                            <!-- <withXml>true</withXml> --> <!--includes jaxb annotations -->
                             <addCompileSourceRoot>false</addCompileSourceRoot>
 
                             <modelPackage>${project.groupId}.${specPackageName}.swagger.model</modelPackage>
