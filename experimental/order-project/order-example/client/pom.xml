@@ -118,6 +118,13 @@
     </build>
 
     <dependencies>
+        
+       <dependency>
+            <groupId>solent.ac.uk.devops.traffic</groupId>
+            <artifactId>order-example-model</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-annotations</artifactId>

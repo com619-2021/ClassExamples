@@ -13,9 +13,9 @@
 package solent.ac.uk.devops.traffic.client.swagger.api;
 
 import solent.ac.uk.devops.traffic.client.swagger.invoker.ApiException;
-import solent.ac.uk.devops.traffic.client.swagger.model.Order;
-import solent.ac.uk.devops.traffic.client.swagger.model.OrderChangeRequest;
-import solent.ac.uk.devops.traffic.client.swagger.model.ReplyMessage;
+import org.solent.com504.project.model.order.dto.Order;
+import org.solent.com504.project.model.order.dto.OrderChangeRequest;
+import org.solent.com504.project.model.dto.ReplyMessage;
 import org.junit.Test;
 import org.junit.Ignore;
 

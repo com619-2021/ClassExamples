@@ -7,7 +7,7 @@ import solent.ac.uk.devops.traffic.client.swagger.invoker.Pair;
 
 import javax.ws.rs.core.GenericType;
 
-import solent.ac.uk.devops.traffic.client.swagger.model.ReplyMessage;
+import org.solent.com504.project.model.dto.ReplyMessage;
 
 import java.util.ArrayList;
 import java.util.HashMap;

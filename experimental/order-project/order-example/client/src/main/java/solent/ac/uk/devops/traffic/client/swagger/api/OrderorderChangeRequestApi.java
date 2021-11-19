@@ -7,9 +7,9 @@ import solent.ac.uk.devops.traffic.client.swagger.invoker.Pair;
 
 import javax.ws.rs.core.GenericType;
 
-import solent.ac.uk.devops.traffic.client.swagger.model.Order;
-import solent.ac.uk.devops.traffic.client.swagger.model.OrderChangeRequest;
-import solent.ac.uk.devops.traffic.client.swagger.model.ReplyMessage;
+import org.solent.com504.project.model.order.dto.Order;
+import org.solent.com504.project.model.order.dto.OrderChangeRequest;
+import org.solent.com504.project.model.dto.ReplyMessage;
 
 import java.util.ArrayList;
 import java.util.HashMap;

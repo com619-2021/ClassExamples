@@ -13,8 +13,8 @@
 package solent.ac.uk.devops.traffic.client.swagger.api;
 
 import solent.ac.uk.devops.traffic.client.swagger.invoker.ApiException;
-import solent.ac.uk.devops.traffic.client.swagger.model.ReplyMessage;
-import solent.ac.uk.devops.traffic.client.swagger.model.Resource;
+import org.solent.com504.project.model.dto.ReplyMessage;
+import org.solent.com504.project.model.resource.dto.Resource;
 import org.junit.Test;
 import org.junit.Ignore;
 
