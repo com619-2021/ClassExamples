@@ -6,9 +6,13 @@
 package org.solent.com504.project.impl.rest;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.info.License;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.servers.ServerVariable;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -48,8 +52,13 @@ import org.glassfish.jersey.server.ResourceConfig;
                         @ServerVariable(name = "schema", description = "url schema", defaultValue = "http", allowableValues = {"http", "https"}),
                         @ServerVariable(name = "host", description = "dns hostname", defaultValue = "localhost", allowableValues = {"localhost", "org.example.com"}),
                         @ServerVariable(name = "port", description = "html port", defaultValue = "8080", allowableValues = {"8080", "443"}),})
+        },
+        security = {
+            @SecurityRequirement(name = "basicAuth" )
         }
 )
+// if you dont add security scheme,  authentications.put("basicAuth", new HttpBasicAuth()); is left out of ApiClient
+@SecurityScheme(name = "basicAuth", scheme = "basic", type = SecuritySchemeType.HTTP)
 @ApplicationPath("/rest")
 public class RestApp extends ResourceConfig {
 
