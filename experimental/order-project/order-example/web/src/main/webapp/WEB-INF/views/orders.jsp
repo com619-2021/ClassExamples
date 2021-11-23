@@ -74,7 +74,7 @@
         <form action="./viewModifyOrder" method="POST">
             <!-- orderUuid ="" creates a new order -->
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-            <input type="hidden" name="orderUuid" value="">
+            <input type="hidden" name="action" value="addNewOrder">
             <button class="btn" type="submit" >Add New Order</button>
         </form> 
 </main>

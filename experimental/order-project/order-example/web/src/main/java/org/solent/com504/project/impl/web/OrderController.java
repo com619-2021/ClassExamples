@@ -108,7 +108,7 @@ public class OrderController {
         tmporder.setId(1L);
         tmporder.setUuid(UUID.randomUUID().toString());
         tmporder.setStatus(OrderStatus.PLACED);
-        tmporder.setResourceAccess(ResourceAccess.EXTERNAL);
+        tmporder.setResourceAccess(ResourceAccess.INTERNAL);
         OrderHref parent = new OrderHref();
         tmporder.setParentOrder(parent);
         tmporder.setSubOrders(Arrays.asList(parent, parent));
@@ -173,7 +173,10 @@ public class OrderController {
         // add message if there are any 
         model.addAttribute("errorMessage", errorMessage);
         model.addAttribute("message", message);
-
+        
+        model.addAttribute("resourceAccessValues",ResourceAccess.values() );
+        model.addAttribute("orderStatusValues", OrderStatus.values());
+        model.addAttribute("allowChangeButtons", true);
         model.addAttribute("selectedPage", "order");
         return "viewModifyOrder";
     }
@@ -191,6 +194,9 @@ public class OrderController {
         model.addAttribute("errorMessage", errorMessage);
         model.addAttribute("message", message);
 
+        model.addAttribute("resourceAccessValues",ResourceAccess.values() );
+        model.addAttribute("orderStatusValues", OrderStatus.values());
+        model.addAttribute("allowChangeButtons", true);
         model.addAttribute("selectedPage", "order");
         return "viewModifyOrder";
     }
