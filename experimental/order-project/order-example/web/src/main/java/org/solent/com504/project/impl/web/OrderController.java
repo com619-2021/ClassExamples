@@ -24,6 +24,7 @@ import org.solent.com504.project.model.order.dto.Order;
 import org.solent.com504.project.model.order.dto.OrderChangeRequestHref;
 import org.solent.com504.project.model.order.dto.OrderHref;
 import org.solent.com504.project.model.order.dto.OrderStatus;
+import org.solent.com504.project.model.order.service.OrderService;
 import org.solent.com504.project.model.party.dto.Address;
 import org.solent.com504.project.model.party.dto.Party;
 import org.solent.com504.project.model.party.dto.PartyRole;
@@ -82,6 +83,9 @@ public class OrderController {
 
     @Autowired
     private ResourceInventoryService resourceService = null;
+    
+    @Autowired
+    private OrderService orderService = null;
 
     Order mockOrder() {
         /*
@@ -140,6 +144,11 @@ public class OrderController {
     public String catalog(Model model) {
         LOG.debug("order called:");
 
+        // get parties
+        List<Party> partyList = partyService.findAll();
+        model.addAttribute("partyListSize", partyList.size());
+        model.addAttribute("partyList", partyList);
+
         Order tmporder = mockOrder();
 
         List<Order> orderList = Arrays.asList(tmporder);
@@ -157,9 +166,10 @@ public class OrderController {
     public String vieworder(Model model,
             @RequestParam(value = "orderUuid", required = true) String orderUuid,
             @RequestParam(value = "changeRequestUUID", required = false) String changeRequestUUID,
+            @RequestParam(value = "ownerPartyUUID", required = false) String ownerPartyUUID,
             Authentication authentication) {
 
-        LOG.debug("/viewModifyOrder: abstractResourceUuid:" + orderUuid);
+        LOG.debug("/viewModifyOrder: orderUuid:" + orderUuid);
         String errorMessage = "";
         String message = "";
 
@@ -173,8 +183,8 @@ public class OrderController {
         // add message if there are any 
         model.addAttribute("errorMessage", errorMessage);
         model.addAttribute("message", message);
-        
-        model.addAttribute("resourceAccessValues",ResourceAccess.values() );
+
+        model.addAttribute("resourceAccessValues", ResourceAccess.values());
         model.addAttribute("orderStatusValues", OrderStatus.values());
         model.addAttribute("allowChangeButtons", true);
         model.addAttribute("selectedPage", "order");
@@ -184,17 +194,25 @@ public class OrderController {
     @RequestMapping(value = {"/viewModifyOrder"}, method = RequestMethod.POST)
     public String updateorder(Model model,
             @RequestParam(value = "action", required = true) String action,
-            @RequestParam(value = "orderUuid", required = true) String orderUuid, Authentication authentication) {
+            @RequestParam(value = "orderUuid", required = false) String orderUuid,
+            @RequestParam(value = "ownerPartyUUID", required = false) String ownerPartyUUID,
+            Authentication authentication) {
 
-        LOG.debug("/viewModifyOrder: orderUuid:" + orderUuid);
+        LOG.debug("/viewModifyOrder: action=" + action + " orderUuid:" + orderUuid);
         String errorMessage = "";
         String message = "";
+
+        Order order = new Order();
+        if ("addNewOrder".equals(action)) {
+            ReplyMessage replyMessage = orderService.postCreateOrder(order, ownerPartyUUID);
+            order = replyMessage.getOrderList().get(0);
+        }
 
         // add message if there are any 
         model.addAttribute("errorMessage", errorMessage);
         model.addAttribute("message", message);
 
-        model.addAttribute("resourceAccessValues",ResourceAccess.values() );
+        model.addAttribute("resourceAccessValues", ResourceAccess.values());
         model.addAttribute("orderStatusValues", OrderStatus.values());
         model.addAttribute("allowChangeButtons", true);
         model.addAttribute("selectedPage", "order");
