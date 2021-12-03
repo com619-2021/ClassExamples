@@ -14,10 +14,21 @@ services:
       - "443:443"
     command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
 
-  certbot:
-    image: certbot/certbot
-    restart: unless-stopped
+  order-example1:
+    image: solentdevops/order-example:0.1-SNAPSHOT
+    ports:
+      - "8080:8080"
     volumes:
-      - ./data/certbot/conf:/etc/letsencrypt
-      - ./data/certbot/www:/var/www/certbot
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+      - order-example1-logs:/usr/local/tomcat/logs
+
+  order-example2:
+    image: solentdevops/order-example:0.1-SNAPSHOT
+    ports:
+      - "8081:8080"
+    volumes:
+      - order-example2-logs:/usr/local/tomcat/logs
+
+
+volumes:
+  order-example1-logs: {}
+  order-example2-logs: {}
