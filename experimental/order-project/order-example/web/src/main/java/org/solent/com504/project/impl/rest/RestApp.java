@@ -22,6 +22,7 @@ import java.util.Set;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
+import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 
 // see https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Annotations#server
@@ -68,6 +69,13 @@ public class RestApp extends ResourceConfig {
         packages("org.solent.com504.project.impl.rest",
                 "io.swagger.v3.jaxrs2.integration.resources"
         );
+        
+        // this sets up jersey server logging of messages
+        // note using jul logging which is converted go log4j
+        // see https://www.javaguides.net/2018/06/jersey-rest-logging-using-loggingfeature.html
+        register(new LoggingFeature(java.util.logging.Logger.getLogger(LoggingFeature.DEFAULT_LOGGER_NAME),
+                java.util.logging.Level.INFO, LoggingFeature.Verbosity.PAYLOAD_ANY, 10000));
+
         // configureSwagger();
     }
 
