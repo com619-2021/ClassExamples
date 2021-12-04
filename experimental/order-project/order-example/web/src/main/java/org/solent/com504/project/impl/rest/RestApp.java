@@ -47,6 +47,10 @@ import org.glassfish.jersey.server.ResourceConfig;
                     url = "/project-web"
             ),
             @Server(
+                    description = "proxy",
+                    url = "/order-example1/project-web"
+            ),
+            @Server(
                     description = "localhost",
                     url = "{schema}://{host}:{port}/project-web",
                     variables = {

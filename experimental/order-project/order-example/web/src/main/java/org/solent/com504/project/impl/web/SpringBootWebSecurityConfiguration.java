@@ -14,11 +14,39 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.DefaultRedirectStrategy;
+import org.springframework.security.web.RedirectStrategy;
+import org.springframework.security.web.firewall.DefaultHttpFirewall;
+import org.springframework.security.web.firewall.HttpFirewall;
+import org.springframework.security.web.firewall.StrictHttpFirewall;
 
 // see https://stackoverflow.com/questions/58883936/can-i-have-multiple-configurations-in-spring-security-for-securing-web-applicati
 @Configuration
 @EnableWebSecurity
 public class SpringBootWebSecurityConfiguration {
+
+    // see https://stackoverflow.com/questions/48453980/spring-5-0-3-requestrejectedexception-the-request-was-rejected-because-the-url
+    // avoids errors when behind reverse proxy org.springframework.security.web.firewall.RequestRejectedException: The request was rejected because the URL contained a potentially malicious String "//"
+//    @Bean
+//    public HttpFirewall allowUrlEncodedSlashHttpFirewall() {
+//        StrictHttpFirewall firewall = new StrictHttpFirewall();
+//        firewall.setAllowUrlEncodedSlash(true);
+//        return firewall;
+//    }
+    @Bean
+    public HttpFirewall defaultHttpFirewall() {
+        return new DefaultHttpFirewall();
+    }
+
+    // see https://stackoverflow.com/questions/32577346/spring-security-change-all-instances-of-redirectstrategy
+//    @Bean
+//    public RedirectStrategy createRedirectStrategy() {
+//        // create the redirect strategy to set the urls to context relative
+//        DefaultRedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+//        redirectStrategy.setContextRelative(true);
+//
+//        return redirectStrategy;
+//    }
 
     @Configuration
     @Order(1)
@@ -32,8 +60,7 @@ public class SpringBootWebSecurityConfiguration {
                     .antMatcher("/rest/**")
                     .authorizeRequests()
                     .antMatchers("/rest/openapi.json").permitAll()
-                    .antMatchers("/rest/**").permitAll() 
-                    //  .antMatchers("/rest/**").hasAnyRole("REST_USER", "GLOBAL_ADMIN") // ROLE_GLOBAL_ADMIN
+                    .antMatchers("/rest/**").permitAll() //  .antMatchers("/rest/**").hasAnyRole("REST_USER", "GLOBAL_ADMIN") // ROLE_GLOBAL_ADMIN
                     //  .and().httpBasic();
                     ;
 
@@ -75,7 +102,8 @@ public class SpringBootWebSecurityConfiguration {
                     .logout()
                     .permitAll()
                     .logoutSuccessUrl("/login?logout")
-                    .and().csrf().ignoringAntMatchers("/rest/**"); // prevents csrf checking on rest api
+                    .and().csrf().ignoringAntMatchers("/rest/**",
+                          "/login"  ); // prevents csrf checking on rest api and login
         }
 
     }
