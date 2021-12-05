@@ -1,3 +1,4 @@
-# Docker Compose NGINX
+# Docker Compose NGINX Test
 
-simple forwarding http (not https)
+This configuration provides simple http forwarding to a docker machine running on a desktop
+
