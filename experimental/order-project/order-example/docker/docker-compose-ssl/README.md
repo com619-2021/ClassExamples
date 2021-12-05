@@ -4,6 +4,8 @@ This configuration is based upon an example given by Philipp Schmieder here
 
 https://github.com/wmnnd/nginx-certbot
 
+and here https://pentacent.medium.com/nginx-and-lets-encrypt-with-docker-in-less-than-5-minutes-b4b8a60d3a71
+
 [Details of configuration](../docker-compose/nginx-readme.md)
 
 ## usage
