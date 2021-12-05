@@ -57,9 +57,6 @@ public class UserController {
     @Autowired
     private SecurityService securityService;
 
-    @Autowired
-    private UserValidator userValidator;
-
     @RequestMapping(value = "/registration", method = RequestMethod.GET)
     public String registration(Model model) {
         model.addAttribute("userForm", new User());
@@ -68,20 +65,44 @@ public class UserController {
     }
 
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
-    public String registration(@ModelAttribute("userForm") User userForm, BindingResult bindingResult, Model model) {
-        userValidator.validate(userForm, bindingResult);
+    public String registration(
+            @RequestParam(value = "username", required = false) String username,
+            @RequestParam(value = "password", required = false) String password,
+            @RequestParam(value = "passwordConfirm", required = false) String passwordConfirm,
+            Model model) {
 
-        if (bindingResult.hasErrors()) {
+        String errorMessage = "";
+
+        if (username == null || username.trim().isEmpty()) {
+            errorMessage = "you must enter a username";
+            model.addAttribute("errorMessage", errorMessage);
             return "registration";
         }
 
-        userService.create(userForm);
+        if (password == null || !password.equals(passwordConfirm) || password.length() < 8) {
+            errorMessage = "you must enter two identical passwords with at least 8 characters";
+            model.addAttribute("errorMessage", errorMessage);
+            return "registration";
+        }
+
+        User userForm = new User();
+        userForm.setUsername(username);
+        userForm.setPassword(password);
+
+        try {
+            userService.create(userForm);
+        } catch (Exception ex) {
+            errorMessage = "problem creating new user : " + ex.getMessage();
+            LOG.debug("problem creating user : ", ex);
+            model.addAttribute("errorMessage", errorMessage);
+            return "registration";
+        }
 
         // if not logged in then log in as new party
         // if logged in, stay as present party (e.g. global admin)
         if (!hasRole(UserRoles.ROLE_USER.name())) {
             LOG.debug("creating new user and logging in : " + userForm);
-            securityService.autologin(userForm.getUsername(), userForm.getPasswordConfirm());
+            securityService.autologin(username, password);
         } else {
             LOG.debug("creating new user : " + userForm);
         }
@@ -106,7 +127,7 @@ public class UserController {
 
         return "login";
     }
-    
+
     // this redirects calls to the root of our application to index.html
     @RequestMapping(value = "/", method = {RequestMethod.GET, RequestMethod.POST})
     public String index(Model model) {
@@ -422,7 +443,7 @@ public class UserController {
         if (partyuuid == null || partyuuid.isEmpty()) {
             party = new Party();
             LOG.debug("viewModifyParty POST called to create Party uuid=" + party.getUuid());
-            
+
             // else try to modify an existing party    
         } else {
             party = partyService.findByUuid(partyuuid);
@@ -442,7 +463,7 @@ public class UserController {
                             + " to party " + party);
                 }
                 // remove user if requested
-            } else if (removeUsername != null ) {
+            } else if (removeUsername != null) {
                 LOG.debug("removing username=" + removeUsername + " from party " + party);
                 Iterator<User> users = party.getUsers().iterator();
                 while (users.hasNext()) {
@@ -456,7 +477,7 @@ public class UserController {
                 }
 
             } else { // update values if not adding / removing user
-                LOG.debug("updating party partyuuid="+partyuuid);
+                LOG.debug("updating party partyuuid=" + partyuuid);
                 party.setUuid(partyuuid);
 
                 if (partyRole != null) {
@@ -529,7 +550,6 @@ public class UserController {
 
         return "viewModifyParty";
     }
-    
 
     @RequestMapping(value = {"/addUsersToParty"}, method = RequestMethod.POST)
     public String addUsersToParty(Model model,
@@ -548,8 +568,7 @@ public class UserController {
 
         return "addUsersToParty";
     }
-    
-    
+
     /*
      * Default exception handler, catches all exceptions, redirects to friendly
      * error page. Does not catch request mapping errors

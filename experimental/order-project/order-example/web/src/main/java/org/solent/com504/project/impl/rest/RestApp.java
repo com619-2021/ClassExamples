@@ -47,8 +47,16 @@ import org.glassfish.jersey.server.ResourceConfig;
                     url = "/project-web"
             ),
             @Server(
-                    description = "proxy",
+                    description = "order-example1 proxy",
                     url = "/order-example1/project-web"
+            ),
+            @Server(
+                    description = "order-example2 proxy",
+                    url = "/order-example2/project-web"
+            ),
+            @Server(
+                    description = "order-example3 proxy",
+                    url = "/order-example3/project-web"
             ),
             @Server(
                     description = "localhost",

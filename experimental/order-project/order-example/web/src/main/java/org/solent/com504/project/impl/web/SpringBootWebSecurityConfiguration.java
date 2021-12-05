@@ -33,11 +33,14 @@ public class SpringBootWebSecurityConfiguration {
 //        firewall.setAllowUrlEncodedSlash(true);
 //        return firewall;
 //    }
+    
+    // this may not be needed now the proxy is working OK
     @Bean
     public HttpFirewall defaultHttpFirewall() {
         return new DefaultHttpFirewall();
     }
 
+    // this is probably not needed now proxy is working OK (not working anyway)
     // see https://stackoverflow.com/questions/32577346/spring-security-change-all-instances-of-redirectstrategy
 //    @Bean
 //    public RedirectStrategy createRedirectStrategy() {

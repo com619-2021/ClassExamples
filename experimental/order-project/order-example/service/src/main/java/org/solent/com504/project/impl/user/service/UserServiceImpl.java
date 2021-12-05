@@ -34,6 +34,11 @@ public class UserServiceImpl implements UserService {
     // private UserDAO userDAO;
     @Override
     public User create(User user) {
+        // check that user is unique
+        User existingUser = userRepository.findByUsername(user.getUsername());
+        if (existingUser != null){
+            throw new IllegalArgumentException("user already exists "+user.getUsername());
+        }
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         user.setRoles(new HashSet<>(roleRepository.findByName(UserRoles.ROLE_USER.toString())));
         return userRepository.save(user);
