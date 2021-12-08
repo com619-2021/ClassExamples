@@ -3,6 +3,7 @@ package org.solent.com504.project.model.order.dto;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -53,7 +54,8 @@ public class Order {
 
     private OrderStatus status;
 
-    private ResourceAccess resourceAccess;
+    // default internal
+    private ResourceAccess resourceAccess = ResourceAccess.INTERNAL;
 
     public Long getId() {
         return id;
@@ -179,5 +181,12 @@ public class Order {
     public void setResourceAccess(ResourceAccess resourceAccess) {
         this.resourceAccess = resourceAccess;
     }
+
+    @Override
+    public String toString() {
+        return "Order{" + "href=" + href + ", uuid=" + uuid + ", id=" + id + ", name=" + name + ", subOrders=" + subOrders + ", description=" + description + ", orderDate=" + orderDate + ", startDate=" + startDate + ", endDate=" + endDate + ", orderOwner=" + orderOwner + ", changeRequests=" + changeRequests + ", parentOrder=" + parentOrder + ", resourceOrService=" + resourceOrService + ", status=" + status + ", resourceAccess=" + resourceAccess + '}';
+    }
+    
+    
 
 }

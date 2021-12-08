@@ -133,7 +133,7 @@ public class OrderController {
     }
 
     // ***************************
-    // Methods to modify catalog
+    // Methods to modify orders
     // ***************************
     /**
      *

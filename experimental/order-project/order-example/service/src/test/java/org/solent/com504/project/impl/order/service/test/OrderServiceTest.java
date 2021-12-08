@@ -82,6 +82,7 @@ public class OrderServiceTest {
         party1 = partyService.save(party1);
         LOG.debug("party1=" + party1);
 
+        // create a mock resource
         Resource resourceIn = mockResource();
         String ownerPartyUUID = party1.getUuid();
 
@@ -92,7 +93,9 @@ public class OrderServiceTest {
         Resource createdResource = resourceList.get(0);
         LOG.debug("created Resource:" + createdResource);
 
+        // create an order
         Order order = new Order();
+        order.setResourceAccess(ResourceAccess.INTERNAL);
         order.setDescription("order description");
         order.setName("PO1234");
         order.setEndDate(new Date());
@@ -100,21 +103,27 @@ public class OrderServiceTest {
 
         order.setStartDate(new Date());
         order.setStatus(OrderStatus.ACKNOWLEGED);
-        String testUUID = UUID.randomUUID().toString();
-        order.setUuid(testUUID);
-        order.setHref("http://orderhref/" + order.getUuid());
 
         replyMessage = orderService.postCreateOrder(order, party1.getUuid());
 
         String jsonOut = PrintOutJson.getJson(replyMessage);
 
-        LOG.debug("reply message " + jsonOut);
+        LOG.debug("create order reply message " + jsonOut);
+
+        // update an order with put
+        Order updateOrder = replyMessage.getOrderList().get(0);
+        updateOrder.setDescription("updated order description");
+        updateOrder.setEndDate(new Date(new Date().getTime() + 1000 * 60 * 24));
+        updateOrder.setStatus(OrderStatus.IN_PROGRESS);
+        jsonOut = PrintOutJson.getJson(updateOrder);
+        LOG.debug("updated order  " + jsonOut);
+
+        replyMessage = orderService.putUpdateOrder(updateOrder);
+        jsonOut = PrintOutJson.getJson(replyMessage);
+        LOG.debug("updated order reply message " + jsonOut);
 
     }
 
-    /*
-    TOTO REMOVE WHEN NOT NEEDED
-     */
     private Resource mockResource() {
         Resource resource = new Resource();
         List<Characteristic> characteristics = new ArrayList();

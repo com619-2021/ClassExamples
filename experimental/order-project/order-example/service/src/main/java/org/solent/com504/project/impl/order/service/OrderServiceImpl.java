@@ -88,7 +88,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public ReplyMessage postCreateOrder(Order order, String ownerPartyUUID) {
-        order.setId(null); // may be differnt db id
+        order.setId(null); // may be different db id
         List<Party> partyList = partyRepository.findByUuid(ownerPartyUUID);
         if (partyList.isEmpty()) {
             throw new IllegalArgumentException("cannot create order party not found ownerPartyUUID=" + ownerPartyUUID);
@@ -99,12 +99,17 @@ public class OrderServiceImpl implements OrderService {
             orderEntity = new OrderEntity();
             orderEntity.setResourceAccess(ResourceAccess.EXTERNAL);
             orderEntity.setExternalOrder(order);
+            if(order.getUuid()==null ||"".equals(order.getUuid().trim()) ){
+                 throw new IllegalArgumentException("cannot create external order reference with null uuid external order=" + order);
+            }
+            // use external order uuid as uid of this order
+            orderEntity.setUuid(order.getUuid());
         } else {
             orderEntity = OrderMapper.INSTANCE.orderToOrderEntity(order);
+            // create new uuid if this is an order o our machine
             orderEntity.setUuid(UUID.randomUUID().toString());
             orderEntity.setId(null); // may be differnt db id
             orderEntity.setResourceAccess(ResourceAccess.INTERNAL);
-            
             //TODO try and create resource reference
         }
         orderEntity.setOrderOwner(resourceOwner);
@@ -124,7 +129,34 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public ReplyMessage putUpdateOrder(Order order) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (order.getUuid() == null) {
+            throw new IllegalArgumentException("order should not have null uuid order=" + order);
+        }
+        List<OrderEntity> orderEntityList = orderRepository.findByUuid(order.getUuid());
+        if (orderEntityList.isEmpty()) {
+            throw new IllegalArgumentException("order not found with uuid" + order.getUuid());
+        }
+        OrderEntity orderEntity = orderEntityList.get(0);
+
+        if (ResourceAccess.EXTERNAL.equals(order.getResourceAccess())) {
+            orderEntity.setResourceAccess(ResourceAccess.EXTERNAL);
+            orderEntity.setExternalOrder(order);
+        } else {
+            orderEntity = OrderMapper.INSTANCE.updateOrderEntity(order, orderEntity);
+
+            //TODO try and create resource reference
+        }
+        orderEntity = orderRepository.saveAndFlush(orderEntity);
+
+        //create a detached order dto for reply message
+        Order detachedOrder = orderEntityToOrder(orderEntity);
+
+        ReplyMessage replyMessage = new ReplyMessage();
+        replyMessage.setOrderList(Arrays.asList(detachedOrder));
+        replyMessage.setOffset(0);
+        replyMessage.setLimit(1);
+        replyMessage.setTotalCount(1L);
+        return replyMessage;
     }
 
     @Override
