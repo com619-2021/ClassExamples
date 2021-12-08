@@ -83,54 +83,9 @@ public class OrderController {
 
     @Autowired
     private ResourceInventoryService resourceService = null;
-    
+
     @Autowired
     private OrderService orderService = null;
-
-    Order mockOrder() {
-        /*
-    private Long id;                    
-    private String href;
-    private String uuid;
-    private String name;
-    private OrderStatus status;
-    private ResourceAccess resourceAccess;                    
-    private Date orderDate;
-    private Date startDate;
-    private Date endDate;
-    private String description; 
-     private List<OrderHref> subOrders;
-   private PartyHref orderOwner;
-    private List<OrderChangeRequestHref> changeRequests;
-    private OrderHref parentOrder;
-    private List<ResourceHref> resourceOrService;
-         */
-        Order tmporder = new Order();
-        tmporder.setDescription("my order");
-        tmporder.setStartDate(new Date());
-        tmporder.setHref("http://tmp");
-        tmporder.setId(1L);
-        tmporder.setUuid(UUID.randomUUID().toString());
-        tmporder.setStatus(OrderStatus.PLACED);
-        tmporder.setResourceAccess(ResourceAccess.INTERNAL);
-        OrderHref parent = new OrderHref();
-        tmporder.setParentOrder(parent);
-        tmporder.setSubOrders(Arrays.asList(parent, parent));
-
-        OrderChangeRequestHref changehref1 = new OrderChangeRequestHref();
-        changehref1.setUuid(UUID.randomUUID().toString());
-        changehref1.setName("change 1");
-        changehref1.setRequestDate(new Date());
-        OrderChangeRequestHref changehref2 = new OrderChangeRequestHref();
-        changehref2.setUuid(UUID.randomUUID().toString());
-        changehref2.setName("change 2");
-        changehref2.setRequestDate(new Date());
-
-        List<OrderChangeRequestHref> changeRequests = Arrays.asList(changehref1, changehref2);
-
-        tmporder.setChangeRequests(changeRequests);
-        return tmporder;
-    }
 
     // ***************************
     // Methods to modify orders
@@ -148,10 +103,8 @@ public class OrderController {
         List<Party> partyList = partyService.findAll();
         model.addAttribute("partyListSize", partyList.size());
         model.addAttribute("partyList", partyList);
-
-        Order tmporder = mockOrder();
-
-        List<Order> orderList = Arrays.asList(tmporder);
+        ReplyMessage replyMessage = orderService.getOrderByTemplate(null, null, null);
+        List<Order> orderList = replyMessage.getOrderList();
 
         int orderListSize = orderList.size();
         model.addAttribute("orderListSize", orderListSize);
@@ -164,6 +117,7 @@ public class OrderController {
 
     @RequestMapping(value = {"/viewModifyOrder"}, method = RequestMethod.GET)
     public String vieworder(Model model,
+            @RequestParam(value = "action", required = true) String action,
             @RequestParam(value = "orderUuid", required = true) String orderUuid,
             @RequestParam(value = "changeRequestUUID", required = false) String changeRequestUUID,
             @RequestParam(value = "ownerPartyUUID", required = false) String ownerPartyUUID,
@@ -172,8 +126,15 @@ public class OrderController {
         LOG.debug("/viewModifyOrder: orderUuid:" + orderUuid);
         String errorMessage = "";
         String message = "";
+        
+        //viewOrderDetails
 
-        Order order = mockOrder();
+        ReplyMessage replyMessage = orderService.getOrderByUuid(orderUuid);
+        List<Order> orderList = replyMessage.getOrderList();
+        if (orderList.isEmpty()) {
+            throw new IllegalArgumentException("cannot find order for orderUuid=" + orderUuid);
+        }
+        Order order = orderList.get(0);
 
         model.addAttribute("order", order);
 

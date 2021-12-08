@@ -5,26 +5,36 @@
  */
 package org.solent.com504.project.impl.user.service;
 
-
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import javax.annotation.PostConstruct;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.solent.com504.project.impl.dao.order.springdata.OrderRepository;
 import org.solent.com504.project.impl.dao.party.springdata.PartyRepository;
 import org.solent.com504.project.impl.dao.user.springdata.RoleRepository;
 import org.solent.com504.project.impl.dao.user.springdata.UserRepository;
+import org.solent.com504.project.model.order.dto.Order;
+import org.solent.com504.project.model.order.dto.OrderChangeRequestHref;
+import org.solent.com504.project.model.order.dto.OrderEntity;
+import org.solent.com504.project.model.order.dto.OrderHref;
+import org.solent.com504.project.model.order.dto.OrderMapper;
+import org.solent.com504.project.model.order.dto.OrderStatus;
 
 import org.solent.com504.project.model.party.dto.Party;
+import org.solent.com504.project.model.resource.dto.ResourceAccess;
 import org.solent.com504.project.model.user.dto.Role;
 import org.solent.com504.project.model.user.dto.User;
 import org.solent.com504.project.model.user.dto.UserRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
-
 
 /**
  *
@@ -34,11 +44,10 @@ import org.springframework.stereotype.Component;
 public class DBInitialise {
 
     final static Logger LOG = LogManager.getLogger(DBInitialise.class);
-    
-    private SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    
-    private static final long HOUR_IN_MS = 1000 * 60 * 60;
 
+    private SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+    private static final long HOUR_IN_MS = 1000 * 60 * 60;
 
     @Autowired
     private UserRepository userRepository;
@@ -47,6 +56,9 @@ public class DBInitialise {
 
     @Autowired
     private PartyRepository partyRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -114,5 +126,58 @@ public class DBInitialise {
             LOG.debug("added party to database:" + party);
 
         }
+
+//        if (orderRepository.findAll().isEmpty()) {
+//            Order mockOrder = mockOrder();
+//            OrderEntity orderEntity = OrderMapper.INSTANCE.orderToOrderEntity(mockOrder);
+//            orderRepository.save(orderEntity);
+//        }
+
+    }
+
+    //TODO REMOVE
+    private Order mockOrder() {
+        /*
+    private Long id;                    
+    private String href;
+    private String uuid;
+    private String name;
+    private OrderStatus status;
+    private ResourceAccess resourceAccess;                    
+    private Date orderDate;
+    private Date startDate;
+    private Date endDate;
+    private String description; 
+     private List<OrderHref> subOrders;
+   private PartyHref orderOwner;
+    private List<OrderChangeRequestHref> changeRequests;
+    private OrderHref parentOrder;
+    private List<ResourceHref> resourceOrService;
+         */
+        Order tmporder = new Order();
+        tmporder.setDescription("my order");
+        tmporder.setStartDate(new Date());
+        tmporder.setHref("http://tmp");
+        tmporder.setId(1L);
+        tmporder.setUuid(UUID.randomUUID().toString());
+        tmporder.setStatus(OrderStatus.PLACED);
+        tmporder.setResourceAccess(ResourceAccess.EXTERNAL);
+        OrderHref parent = new OrderHref();
+        tmporder.setParentOrder(parent);
+        tmporder.setSubOrders(Arrays.asList(parent, parent));
+
+        OrderChangeRequestHref changehref1 = new OrderChangeRequestHref();
+        changehref1.setUuid(UUID.randomUUID().toString());
+        changehref1.setName("change 1");
+        changehref1.setRequestDate(new Date());
+        OrderChangeRequestHref changehref2 = new OrderChangeRequestHref();
+        changehref2.setUuid(UUID.randomUUID().toString());
+        changehref2.setName("change 2");
+        changehref2.setRequestDate(new Date());
+
+        List<OrderChangeRequestHref> changeRequests = Arrays.asList(changehref1, changehref2);
+
+        tmporder.setChangeRequests(changeRequests);
+        return tmporder;
     }
 }

@@ -63,6 +63,7 @@
                             <td>
                                 <form action="./viewModifyOrder" method="GET">
                                     <input type="hidden" name="orderUuid" value="${order.uuid}">
+                                    <input type="hidden" name="action" value="viewOrderDetails">
                                 <button class="btn" type="submit" >View Order Details</button>
                             </form> 
                         </td>

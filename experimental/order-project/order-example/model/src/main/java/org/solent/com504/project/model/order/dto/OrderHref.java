@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OrderHref {
-    
+
     private String href;
 
     private String uuid;
@@ -62,6 +62,6 @@ public class OrderHref {
     public String toString() {
         return "OrderHref{" + "href=" + href + ", uuid=" + uuid + ", id=" + id + ", name=" + name + '}';
     }
-    
+
     
 }

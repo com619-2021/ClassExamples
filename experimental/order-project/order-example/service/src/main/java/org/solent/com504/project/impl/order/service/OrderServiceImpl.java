@@ -5,8 +5,12 @@
  */
 package org.solent.com504.project.impl.order.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -94,24 +98,37 @@ public class OrderServiceImpl implements OrderService {
             throw new IllegalArgumentException("cannot create order party not found ownerPartyUUID=" + ownerPartyUUID);
         }
         Party resourceOwner = partyList.get(0);
+
         OrderEntity orderEntity;
         if (ResourceAccess.EXTERNAL.equals(order.getResourceAccess())) {
             orderEntity = new OrderEntity();
             orderEntity.setResourceAccess(ResourceAccess.EXTERNAL);
             orderEntity.setExternalOrder(order);
-            if(order.getUuid()==null ||"".equals(order.getUuid().trim()) ){
-                 throw new IllegalArgumentException("cannot create external order reference with null uuid external order=" + order);
+            if (order.getUuid() == null || "".equals(order.getUuid().trim())) {
+                throw new IllegalArgumentException("cannot create external order reference with null uuid external order=" + order);
             }
             // use external order uuid as uid of this order
             orderEntity.setUuid(order.getUuid());
         } else {
             orderEntity = OrderMapper.INSTANCE.orderToOrderEntity(order);
-            // create new uuid if this is an order o our machine
+            // create new uuid if this is an order on our machine
             orderEntity.setUuid(UUID.randomUUID().toString());
             orderEntity.setId(null); // may be differnt db id
             orderEntity.setResourceAccess(ResourceAccess.INTERNAL);
-            //TODO try and create resource reference
+
+            // create resource references
+            // check if resources exists and inject if do
+            List<Resource> newResources = new ArrayList();
+            for (Resource interimResource : orderEntity.getResourceOrService()) {
+                List<Resource> resourceList = resourceRepository.findByUuid(interimResource.getUuid());
+                if (resourceList.isEmpty()) {
+                    throw new IllegalArgumentException("you can only update internal order with internal resources. Trying to update internal order with non existant resource: " + interimResource);
+                }
+                newResources.add(resourceList.get(0));
+            }
+            orderEntity.setResourceOrService(newResources);
         }
+
         orderEntity.setOrderOwner(resourceOwner);
 
         orderEntity = orderRepository.saveAndFlush(orderEntity);
@@ -138,13 +155,55 @@ public class OrderServiceImpl implements OrderService {
         }
         OrderEntity orderEntity = orderEntityList.get(0);
 
+        // check matching resource access
         if (ResourceAccess.EXTERNAL.equals(order.getResourceAccess())) {
-            orderEntity.setResourceAccess(ResourceAccess.EXTERNAL);
+            if (!ResourceAccess.EXTERNAL.equals(orderEntity.getResourceAccess())) {
+                throw new IllegalArgumentException("cannot update internal order " + orderEntity.getUuid()
+                        + " with an external order" + order);
+            }
             orderEntity.setExternalOrder(order);
         } else {
-            orderEntity = OrderMapper.INSTANCE.updateOrderEntity(order, orderEntity);
+            if (!ResourceAccess.INTERNAL.equals(orderEntity.getResourceAccess())) {
+                throw new IllegalArgumentException("cannot update external order " + orderEntity.getUuid()
+                        + " with an internal order update" + order);
+            }
+            //try and create resource reference for detached order entity
+            OrderEntity newOrderEntity = new OrderEntity();
+            newOrderEntity = OrderMapper.INSTANCE.updateOrderEntity(order, newOrderEntity);
 
-            //TODO try and create resource reference
+            // create resource references
+            // check if resources exists and inject if do
+            List<Resource> newResources = new ArrayList();
+            for (Resource interimResource : newOrderEntity.getResourceOrService()) {
+                List<Resource> resourceList = resourceRepository.findByUuid(interimResource.getUuid());
+                if (resourceList.isEmpty()) {
+                    throw new IllegalArgumentException("you can only update internal order with internal resources. Trying to update internal order with non existant resource: " + interimResource);
+                }
+                newResources.add(resourceList.get(0));
+            }
+            // replacing old resources list
+            newOrderEntity.setResourceOrService(newResources);
+
+            // check if sub orders exist and inject if do
+            Set<OrderEntity> suborders = new HashSet();
+            for (OrderEntity suborder : newOrderEntity.getSubOrders()) {
+                List<OrderEntity> subOrderList = orderRepository.findByUuid(suborder.getUuid());
+                if (subOrderList.isEmpty()) {
+                    throw new IllegalArgumentException("trying to attach an unknown internal suborder to parent order : " + suborder);
+                }
+                suborders.add(subOrderList.get(0));
+            }
+            // remove old suborders
+            Iterator<OrderEntity> suborderiterator = orderEntity.getSubOrders().iterator();
+            while (suborderiterator.hasNext()) {
+                orderEntity.removeSuborder(suborderiterator.next());
+            }
+            // add back new suborders
+            for (OrderEntity suborder : suborders) {
+                orderEntity.addSuborder(suborder);
+            }
+
+            orderEntity = OrderMapper.INSTANCE.updateOrderEntityFromOrderEntity(newOrderEntity, orderEntity);
         }
         orderEntity = orderRepository.saveAndFlush(orderEntity);
 
@@ -161,7 +220,16 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public ReplyMessage getOrderByTemplate(Order orderSearchTemplate, Integer offset, Integer limit) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // currently just gets all orders with no template
+        ReplyMessage replyMessage = new ReplyMessage();
+        List<OrderEntity> orderEntityList = orderRepository.findAll();
+        
+        List<Order> orderList = new ArrayList();
+        for(OrderEntity orderEntity:orderEntityList ){
+            orderList.add(orderEntityToOrder(orderEntity));
+        }
+        replyMessage.setOrderList(orderList);
+        return replyMessage;
     }
 
     private Order orderEntityToOrder(OrderEntity orderEntity) {

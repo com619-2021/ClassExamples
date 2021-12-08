@@ -9,6 +9,7 @@ import org.solent.com504.project.impl.dao.resource.springdata.test.*;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import org.solent.com504.project.impl.dao.party.springdata.test.*;
 import org.apache.logging.log4j.LogManager;
@@ -135,13 +136,11 @@ public class OrderRepositoryTest {
         orderEntity1.setName("orderEntity1");
         orderEntity1.setEndDate(new Date());
         orderEntity1.setOrderDate(new Date());
-
         orderEntity1.setStartDate(new Date());
         orderEntity1.setStatus(OrderStatus.ACKNOWLEGED);
-        String testUUID = UUID.randomUUID().toString();
-        orderEntity1.setUuid(testUUID);
+        String testUUID1 = UUID.randomUUID().toString();
+        orderEntity1.setUuid(testUUID1);
         orderEntity1.setHref("http://orderhref/" + orderEntity1.getUuid());
-
         orderEntity1 = orderRepository.save(orderEntity1);
         LOG.debug("*** test savedOrderEntity1 A = " + orderEntity1);
 
@@ -151,13 +150,11 @@ public class OrderRepositoryTest {
         orderEntity2.setName("orderEntity2");
         orderEntity2.setEndDate(new Date());
         orderEntity2.setOrderDate(new Date());
-
         orderEntity2.setStartDate(new Date());
         orderEntity2.setStatus(OrderStatus.ACKNOWLEGED);
         String testUUID2 = UUID.randomUUID().toString();
         orderEntity2.setUuid(testUUID2);
         orderEntity2.setHref("http://orderhref/" + orderEntity2.getUuid());
-
         orderEntity2 = orderRepository.save(orderEntity2);
         LOG.debug("*** test savedOrderEntity2 B = " + orderEntity2);
 
@@ -167,44 +164,87 @@ public class OrderRepositoryTest {
         orderEntity3.setName("orderEntity3");
         orderEntity3.setEndDate(new Date());
         orderEntity3.setOrderDate(new Date());
-
         orderEntity3.setStartDate(new Date());
         orderEntity3.setStatus(OrderStatus.ACKNOWLEGED);
         String testUUID3 = UUID.randomUUID().toString();
         orderEntity3.setUuid(testUUID3);
         orderEntity3.setHref("http://orderhref/" + orderEntity3.getUuid());
-
         orderEntity3 = orderRepository.save(orderEntity3);
         LOG.debug("*** test orderEntity3 C = " + orderEntity3);
-        
-        List<OrderEntity> elements = orderRepository.findAll();
-        assertEquals(3,elements.size());
 
-        orderEntity2.setParentOrder(orderEntity1);
+        // order entity 4
+        OrderEntity orderEntity4 = new OrderEntity();
+        orderEntity4.setDescription("order description");
+        orderEntity4.setName("orderEntity4");
+        orderEntity4.setEndDate(new Date());
+        orderEntity4.setOrderDate(new Date());
+        orderEntity4.setStartDate(new Date());
+        orderEntity4.setStatus(OrderStatus.ACKNOWLEGED);
+        String testUUID4 = UUID.randomUUID().toString();
+        orderEntity4.setUuid(testUUID4);
+        orderEntity4.setHref("http://orderhref/" + orderEntity4.getUuid());
+        orderEntity4 = orderRepository.save(orderEntity4);
+        LOG.debug("*** test orderEntity4 C = " + orderEntity4);
+
+        // now find all 4 created orders
+        List<OrderEntity> elements = orderRepository.findAll();
+        assertEquals(4, elements.size());
+
+        // add suborder to entity 1
+        orderEntity1.addSuborder(orderEntity2);
+        orderEntity1 = orderRepository.saveAndFlush(orderEntity1);
+        LOG.debug("*** test orderEntity1 D = " + orderEntity1);
+
+        orderEntity2.addSuborder(orderEntity3);
+        orderEntity2.addSuborder(orderEntity4);
         orderEntity2 = orderRepository.saveAndFlush(orderEntity2);
-        LOG.debug("*** test orderEntity2 D = " + orderEntity2);
+        LOG.debug("*** test orderEntity1 D = " + orderEntity2);
 
         // note this doesnt work - some problem with immutable arrays
         //List subOrders = Arrays.asList(orderEntity3);
         //orderEntity2.setSubOrders(subOrders);
-        
         // this works - but also need array list created empty
-        List<OrderEntity> subOrders = orderEntity2.getSubOrders();
-        subOrders.add(orderEntity3);
-        orderEntity2.setSubOrders(subOrders);
-                
-        orderEntity2 = orderRepository.save(orderEntity2);
-        LOG.debug("*** test orderEntity2 E = " + orderEntity2);
-
-        List<OrderEntity> foundOrderEntitys = orderRepository.findByUuid(testUUID2);
-        assertEquals(1,foundOrderEntitys.size());
-        
+        //Set<OrderEntity> subOrders = orderEntity2.getSubOrders();
+        //subOrders.add(orderEntity3);
+        //orderEntity2.setSubOrders(subOrders);
+        //orderEntity2 = orderRepository.save(orderEntity2);
+        List<OrderEntity> foundOrderEntitys = orderRepository.findByUuid(testUUID1);
+        assertEquals(1, foundOrderEntitys.size());
         OrderEntity foundOrderEntity = foundOrderEntitys.get(0);
-        
-        
         Order foundOrder = OrderMapper.INSTANCE.orderEntityToOrder(foundOrderEntity);
+        LOG.debug("*** test returned order object 1 = " + PrintOutJson.getJson(foundOrder));
 
-        LOG.debug("*** test returned order object = " + PrintOutJson.getJson(foundOrder));
+        foundOrderEntitys = orderRepository.findByUuid(testUUID2);
+        assertEquals(1, foundOrderEntitys.size());
+        foundOrderEntity = foundOrderEntitys.get(0);
+        foundOrder = OrderMapper.INSTANCE.orderEntityToOrder(foundOrderEntity);
+        LOG.debug("*** test returned order object 2 = " + PrintOutJson.getJson(foundOrder));
+
+        foundOrderEntitys = orderRepository.findByUuid(testUUID3);
+        assertEquals(1, foundOrderEntitys.size());
+        foundOrderEntity = foundOrderEntitys.get(0);
+        foundOrder = OrderMapper.INSTANCE.orderEntityToOrder(foundOrderEntity);
+        LOG.debug("*** test returned order object 3 = " + PrintOutJson.getJson(foundOrder));
+
+        foundOrderEntitys = orderRepository.findByUuid(testUUID4);
+        assertEquals(1, foundOrderEntitys.size());
+        foundOrderEntity = foundOrderEntitys.get(0);
+        foundOrder = OrderMapper.INSTANCE.orderEntityToOrder(foundOrderEntity);
+        LOG.debug("*** test returned order object 4 = " + PrintOutJson.getJson(foundOrder));
+
+        orderEntity2.removeSuborder(orderEntity4);
+        orderEntity2 = orderRepository.saveAndFlush(orderEntity2);
+        LOG.debug("*** test orderEntity2 after removing sub order = " + orderEntity2);
+
+        foundOrderEntitys = orderRepository.findByUuid(testUUID4);
+        assertEquals(1, foundOrderEntitys.size());
+        foundOrderEntity = foundOrderEntitys.get(0);
+        foundOrder = OrderMapper.INSTANCE.orderEntityToOrder(foundOrderEntity);
+        LOG.debug("*** test returned order object 4 = " + PrintOutJson.getJson(foundOrder));
+        
+        //final check of mapper for orders
+        List<OrderEntity> orderList = orderRepository.findAll();
+        
 
         LOG.debug("*** end of resourceParentOrderRepositoryTest");
     }

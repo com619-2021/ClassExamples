@@ -24,6 +24,7 @@ public class ResourceHref {
 
     private String name;
 
+
     public String getHref() {
         return href;
     }

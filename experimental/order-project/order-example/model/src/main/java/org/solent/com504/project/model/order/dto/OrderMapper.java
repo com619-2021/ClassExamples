@@ -5,6 +5,7 @@
  */
 package org.solent.com504.project.model.order.dto;
 
+import java.util.List;
 import org.solent.com504.project.model.resource.dto.*;
 import org.solent.com504.project.model.party.dto.*;
 import org.mapstruct.Mapper;
@@ -27,6 +28,8 @@ public interface OrderMapper {
     OrderEntity orderToOrderEntity(Order order);
 
     Order orderEntityToOrder(OrderEntity orderEntity);
+    
+    List<Order> orderEntityListToOrderList(List<OrderEntity> orderEntityList);
 
     OrderHref orderToOrderHref(Order order);
 
@@ -36,5 +39,7 @@ public interface OrderMapper {
 
     @Mapping(source = "firstName", target = "name")
     PartyHref partyToHref(Party partyEntity);
+
+    OrderEntity updateOrderEntityFromOrderEntity(OrderEntity newOrderEntity, @MappingTarget OrderEntity orderEntity);
 
 }

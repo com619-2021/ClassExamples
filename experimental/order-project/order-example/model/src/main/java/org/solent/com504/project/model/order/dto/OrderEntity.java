@@ -2,8 +2,10 @@ package org.solent.com504.project.model.order.dto;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -13,6 +15,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import org.solent.com504.project.model.party.dto.Party;
@@ -31,7 +34,7 @@ public class OrderEntity {
 
     private String name;
 
-    private List<OrderEntity> subOrders  = new ArrayList<OrderEntity>();
+    private Set<OrderEntity> subOrders = new HashSet<OrderEntity>();
 
     private String description;
 
@@ -43,7 +46,7 @@ public class OrderEntity {
 
     private Party orderOwner;
 
-    private List<OrderChangeRequestEntity> changeRequests = new ArrayList<OrderChangeRequestEntity>(); 
+    private List<OrderChangeRequestEntity> changeRequests = new ArrayList<OrderChangeRequestEntity>();
 
     private OrderEntity parentOrder;
 
@@ -52,7 +55,7 @@ public class OrderEntity {
     private OrderStatus status;
 
     private ResourceAccess resourceAccess;
-    
+
     // holds an external order as a json string - used for references
     private Order externalOrder;
 
@@ -93,13 +96,35 @@ public class OrderEntity {
 //TODO real problem here - swagger does a recursive list and fails to load this data type
 // see https://stackoverflow.com/questions/59598383/swagger-recursively-resolving-dependencies-for-type-infinite-loop
 // https://github.com/springfox/springfox/issues/621 Cycles in Java classes cause infinite loop in ModelAttributeParameterExpander
-    @OneToMany
-    public List<OrderEntity> getSubOrders() {
+    @OneToMany(mappedBy = "parentOrder", fetch = FetchType.EAGER)
+    public Set<OrderEntity> getSubOrders() {
         return subOrders;
     }
 
-    public void setSubOrders(List<OrderEntity> subOrders) {
+    public void setSubOrders(Set<OrderEntity> subOrders) {
         this.subOrders = subOrders;
+    }
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "parentorder_id", nullable = true)
+    public OrderEntity getParentOrder() {
+        return parentOrder;
+    }
+
+    // sued to safely add and remove orders from both sides of association
+    // see https://medium.com/@rajibrath20/the-best-way-to-map-a-onetomany-relationship-with-jpa-and-hibernate-dbbf6dba00d3
+    public void addSuborder(OrderEntity orderEntity) {
+        this.subOrders.add(orderEntity);
+        orderEntity.setParentOrder(this);
+    }
+
+    public void removeSuborder(OrderEntity orderEntity) {
+        this.subOrders.remove(orderEntity);
+        orderEntity.setParentOrder(null);
+    }
+
+    public void setParentOrder(OrderEntity parentOrder) {
+        this.parentOrder = parentOrder;
     }
 
     public String getDescription() {
@@ -154,15 +179,6 @@ public class OrderEntity {
         this.changeRequests = changeRequests;
     }
 
-    @OneToOne
-    public OrderEntity getParentOrder() {
-        return parentOrder;
-    }
-
-    public void setParentOrder(OrderEntity parentOrder) {
-        this.parentOrder = parentOrder;
-    }
-
     @OneToMany
     public List<Resource> getResourceOrService() {
         return resourceOrService;
@@ -196,17 +212,42 @@ public class OrderEntity {
         return externalOrder;
     }
 
-
     public void setExternalOrder(Order externalOrder) {
         this.externalOrder = externalOrder;
     }
-    
-    
 
     @Override
     public String toString() {
-        return "OrderEntity{" + "href=" + href + ", uuid=" + uuid + ", id=" + id + ", name=" + name + ", subOrders=" + subOrders + ", description=" + description + ", orderDate=" + orderDate + ", startDate=" + startDate + ", endDate=" + endDate + ", orderOwner=" + orderOwner + ", parentOrder=" + parentOrder + ", resourceOrService=" + resourceOrService + ", status=" + status + ", resourceAccess=" + resourceAccess + '}';
+        return "Partial OrderEntity{" + "href=" + href + ", uuid=" + uuid + ", id=" + id + ", name=" + name + ", description=" + description + ", orderDate=" + orderDate + ", startDate=" + startDate + ", endDate=" + endDate + ", orderOwner=" + orderOwner + ", status=" + status + ", resourceAccess=" + resourceAccess + '}';
     }
-  
+
+
+
+    // see https://stackoverflow.com/questions/5031614/the-jpa-hashcode-equals-dilemma
+    // identity only being determine by the uniquely and early assigned hash code
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 23 * hash + Objects.hashCode(this.uuid);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final OrderEntity other = (OrderEntity) obj;
+        if (!Objects.equals(this.uuid, other.uuid)) {
+            return false;
+        }
+        return true;
+    }
 
 }
