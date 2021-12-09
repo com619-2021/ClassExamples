@@ -7,6 +7,7 @@ package org.solent.com504.project.impl.order.service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.solent.com504.project.impl.dao.order.springdata.OrderChangeRequestRepository;
@@ -81,9 +82,19 @@ public class OrderChangeRequestServiceImpl implements OrderChangeRequestService 
         
         OrderChangeRequestEntity orderChangeRequestEntity = OrderChangeRequestMapper.INSTANCE.orderToOrderChangeRequestEntity(orderChangeRequest);
         orderChangeRequestEntity.setId(null); // creating new entity)
+        orderChangeRequestEntity.setUuid(UUID.randomUUID().toString());
+        orderChangeRequestEntity.setHref("/rest/solent-api/order/v1/orderChangeRequest/" + orderChangeRequestEntity.getUuid());
         orderChangeRequestEntity.setChangeRequestor(resourceOwner);
         
         orderChangeRequestEntity = orderChangeRequestRepository.save(orderChangeRequestEntity);
+        List<OrderEntity> orderEntityList = orderRepository.findByUuid(orderChangeRequestEntity.getOrderUuid());
+        if (orderEntityList.isEmpty()) {
+            throw new IllegalArgumentException("order not found with uuid" + orderChangeRequestEntity.getOrderUuid());
+        }
+        OrderEntity orderEntity = orderEntityList.get(0);
+        orderEntity.addOrderChangeRequest(orderChangeRequestEntity);
+        orderRepository.save(orderEntity);
+        
         OrderChangeRequest orderChangeRequestReply = OrderChangeRequestMapper.INSTANCE.orderChangeRequestEntityToOrderChangeRequest(orderChangeRequestEntity);
         List<OrderChangeRequest> orderChangeRequestList = Arrays.asList(orderChangeRequestReply);
         

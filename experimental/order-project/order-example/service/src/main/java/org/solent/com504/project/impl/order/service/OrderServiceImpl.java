@@ -134,7 +134,7 @@ public class OrderServiceImpl implements OrderService {
             }
             orderEntity.setResourceOrService(newResources);
         }
-        
+        orderEntity.setHref("/rest/solent-api/order/v1/order/"+orderEntity.getUuid());
         orderEntity.setOrderOwner(resourceOwner);
         
         orderEntity = orderRepository.saveAndFlush(orderEntity);
@@ -145,6 +145,7 @@ public class OrderServiceImpl implements OrderService {
         // now update order change requests
         OrderChangeRequestEntity orderChangeRequestEntity = new OrderChangeRequestEntity();
         orderChangeRequestEntity.setUuid(UUID.randomUUID().toString());
+        orderChangeRequestEntity.setHref("/rest/solent-api/order/v1/orderChangeRequest/"+orderEntity.getUuid());
         orderChangeRequestEntity.setChangeRequest(detachedOrder);
         orderChangeRequestEntity.setStatus(ChangeStatus.APPROVED);
         orderChangeRequestEntity.setChangeReason("created directly from api");
@@ -152,6 +153,10 @@ public class OrderServiceImpl implements OrderService {
         orderChangeRequestEntity.setApprovedDate(new Date());
         orderChangeRequestEntity.setOrderUuid(orderEntity.getUuid());
         orderChangeRequestRepository.save(orderChangeRequestEntity);
+        orderEntity.addOrderChangeRequest(orderChangeRequestEntity);
+        orderEntity = orderRepository.saveAndFlush(orderEntity);
+        
+        detachedOrder = orderEntityToOrder(orderEntity);
         
         ReplyMessage replyMessage = new ReplyMessage();
         replyMessage.setOrderList(Arrays.asList(detachedOrder));
@@ -238,6 +243,11 @@ public class OrderServiceImpl implements OrderService {
         orderChangeRequestEntity.setApprovedDate(new Date());
         orderChangeRequestEntity.setOrderUuid(orderEntity.getUuid());
         orderChangeRequestRepository.save(orderChangeRequestEntity);
+
+        orderEntity.addOrderChangeRequest(orderChangeRequestEntity);
+        orderEntity = orderRepository.saveAndFlush(orderEntity);
+        
+        detachedOrder = orderEntityToOrder(orderEntity);
         
         ReplyMessage replyMessage = new ReplyMessage();
         replyMessage.setOrderList(Arrays.asList(detachedOrder));

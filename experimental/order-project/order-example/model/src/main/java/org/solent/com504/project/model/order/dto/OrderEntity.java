@@ -111,7 +111,7 @@ public class OrderEntity {
         return parentOrder;
     }
 
-    // sued to safely add and remove orders from both sides of association
+    // used to safely add and remove orders from both sides of association
     // see https://medium.com/@rajibrath20/the-best-way-to-map-a-onetomany-relationship-with-jpa-and-hibernate-dbbf6dba00d3
     public void addSuborder(OrderEntity orderEntity) {
         this.subOrders.add(orderEntity);
@@ -179,6 +179,15 @@ public class OrderEntity {
         this.changeRequests = changeRequests;
     }
 
+    public void addOrderChangeRequest(OrderChangeRequestEntity orderChangeRequestEntity) {
+        this.changeRequests.add(orderChangeRequestEntity);
+        orderChangeRequestEntity.setOrderUuid(orderChangeRequestEntity.getOrderUuid());
+    }
+
+    public void removeOrderChangeRequest(OrderChangeRequestEntity orderChangeRequestEntity) {
+        this.changeRequests.remove(orderChangeRequestEntity);
+    }
+
     @OneToMany
     public List<Resource> getResourceOrService() {
         return resourceOrService;
@@ -220,8 +229,6 @@ public class OrderEntity {
     public String toString() {
         return "Partial OrderEntity{" + "href=" + href + ", uuid=" + uuid + ", id=" + id + ", name=" + name + ", description=" + description + ", orderDate=" + orderDate + ", startDate=" + startDate + ", endDate=" + endDate + ", orderOwner=" + orderOwner + ", status=" + status + ", resourceAccess=" + resourceAccess + '}';
     }
-
-
 
     // see https://stackoverflow.com/questions/5031614/the-jpa-hashcode-equals-dilemma
     // identity only being determine by the uniquely and early assigned hash code

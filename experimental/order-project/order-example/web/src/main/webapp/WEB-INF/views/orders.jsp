@@ -79,10 +79,7 @@
                     <option value="${party.uuid}">${party.firstName}  ${party.uuid}</option>
                 </c:forEach>
             </select>
-            
-            
-            
-            
+
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <input type="hidden" name="action" value="addNewOrder">
             <button class="btn" type="submit" >Add New Order</button>

@@ -21,9 +21,11 @@ import org.apache.logging.log4j.Logger;
 import org.solent.com504.project.impl.validator.UserValidator;
 import org.solent.com504.project.model.dto.ReplyMessage;
 import org.solent.com504.project.model.order.dto.Order;
+import org.solent.com504.project.model.order.dto.OrderChangeRequest;
 import org.solent.com504.project.model.order.dto.OrderChangeRequestHref;
 import org.solent.com504.project.model.order.dto.OrderHref;
 import org.solent.com504.project.model.order.dto.OrderStatus;
+import org.solent.com504.project.model.order.service.OrderChangeRequestService;
 import org.solent.com504.project.model.order.service.OrderService;
 import org.solent.com504.project.model.party.dto.Address;
 import org.solent.com504.project.model.party.dto.Party;
@@ -87,6 +89,9 @@ public class OrderController {
     @Autowired
     private OrderService orderService = null;
 
+    @Autowired
+    private OrderChangeRequestService orderChangeRequestService = null;
+
     // ***************************
     // Methods to modify orders
     // ***************************
@@ -118,28 +123,58 @@ public class OrderController {
     @RequestMapping(value = {"/viewModifyOrder"}, method = RequestMethod.GET)
     public String vieworder(Model model,
             @RequestParam(value = "action", required = true) String action,
-            @RequestParam(value = "orderUuid", required = true) String orderUuid,
+            @RequestParam(value = "orderUuid", required = false) String orderUuid,
             @RequestParam(value = "changeRequestUUID", required = false) String changeRequestUUID,
             @RequestParam(value = "ownerPartyUUID", required = false) String ownerPartyUUID,
             Authentication authentication) {
 
-        LOG.debug("/viewModifyOrder: orderUuid:" + orderUuid);
+        LOG.debug("/viewModifyOrder: action:" + action);
         String errorMessage = "";
         String message = "";
-        
-        //viewOrderDetails
 
-        ReplyMessage replyMessage = orderService.getOrderByUuid(orderUuid);
-        List<Order> orderList = replyMessage.getOrderList();
-        if (orderList.isEmpty()) {
-            throw new IllegalArgumentException("cannot find order for orderUuid=" + orderUuid);
+        Order order = null;
+        OrderChangeRequest orderChangeRequest = null;
+
+        // find order change request and order from order change request
+        if ("viewChangeRequestUUID".equals(action)) {
+            ReplyMessage replyMessage = orderChangeRequestService.getOrderChangeRequestByUuid(changeRequestUUID);
+            List<OrderChangeRequest> orderChangeRequestList = replyMessage.getOrderChangeRequestList();
+            if (orderChangeRequestList.isEmpty()) {
+                throw new IllegalArgumentException("cannot find orderChangeRequest for changeRequestUUID=" + changeRequestUUID);
+            }
+            orderChangeRequest = replyMessage.getOrderChangeRequestList().get(0);
+            orderUuid = orderChangeRequest.getOrderUuid();
+            replyMessage = orderService.getOrderByUuid(orderUuid);
+            List<Order> orderList = replyMessage.getOrderList();
+            if (orderList.isEmpty()) {
+                throw new IllegalArgumentException("cannot find order for orderUuid=" + orderUuid);
+            }
+            order = orderList.get(0);
+
+        } else if ("viewOrderDetails".equals(action)) {
+            // find order and order change request from order
+            ReplyMessage replyMessage = orderService.getOrderByUuid(orderUuid);
+            List<Order> orderList = replyMessage.getOrderList();
+            if (orderList.isEmpty()) {
+                throw new IllegalArgumentException("cannot find order for orderUuid=" + orderUuid);
+            }
+            order = orderList.get(0);
+            changeRequestUUID = order.getChangeRequests().get(0).getUuid();
+            replyMessage = orderChangeRequestService.getOrderChangeRequestByUuid(changeRequestUUID);
+            List<OrderChangeRequest> orderChangeRequestList = replyMessage.getOrderChangeRequestList();
+            if (orderChangeRequestList.isEmpty()) {
+                throw new IllegalArgumentException("cannot find orderChangeRequest for changeRequestUUID=" + changeRequestUUID);
+            }
+            orderChangeRequest = replyMessage.getOrderChangeRequestList().get(0);
+
+        } else {
+            throw new IllegalArgumentException("unknown action for page action=" + action);
         }
-        Order order = orderList.get(0);
 
         model.addAttribute("order", order);
-
         model.addAttribute("changeOrder", order);
         model.addAttribute("changeRequestUUID", changeRequestUUID);
+        model.addAttribute("orderChangeRequest", orderChangeRequest);
 
         // add message if there are any 
         model.addAttribute("errorMessage", errorMessage);
@@ -157,17 +192,59 @@ public class OrderController {
             @RequestParam(value = "action", required = true) String action,
             @RequestParam(value = "orderUuid", required = false) String orderUuid,
             @RequestParam(value = "ownerPartyUUID", required = false) String ownerPartyUUID,
+            @RequestParam(value = "changeRequestUUID", required = false) String changeRequestUUID,
             Authentication authentication) {
 
         LOG.debug("/viewModifyOrder: action=" + action + " orderUuid:" + orderUuid);
         String errorMessage = "";
         String message = "";
+        ReplyMessage replyMessage=null;
 
         Order order = new Order();
         if ("addNewOrder".equals(action)) {
-            ReplyMessage replyMessage = orderService.postCreateOrder(order, ownerPartyUUID);
+            replyMessage = orderService.postCreateOrder(order, ownerPartyUUID);
             order = replyMessage.getOrderList().get(0);
+            changeRequestUUID = order.getChangeRequests().get(0).getUuid();
+        } else if ("newChangeRequest".equals(action)) {
+            replyMessage = orderService.getOrderByUuid(orderUuid);
+            List<Order> orderList = replyMessage.getOrderList();
+            if (orderList.isEmpty()) {
+                throw new IllegalArgumentException("cannot find order for orderUuid=" + orderUuid);
+            }
+            order = replyMessage.getOrderList().get(0);
+            OrderChangeRequest orderChangeRequest = new OrderChangeRequest();
+            orderChangeRequest.setChangeRequest(order);
+            orderChangeRequest.setOrderUuid(orderUuid);
+            String changeRequestorPartyUUID = order.getOrderOwner().getUuid(); //todo change to session user
+            replyMessage = orderChangeRequestService.postCreateOrderChangeRequest(orderChangeRequest, changeRequestorPartyUUID);
+            List<OrderChangeRequest> orderChangeRequestList = replyMessage.getOrderChangeRequestList();
+            if (orderChangeRequestList.isEmpty()) {
+                throw new IllegalArgumentException("cannot order change request not created");
+            }
+            changeRequestUUID = replyMessage.getOrderChangeRequestList().get(0).getUuid();
+
+            // get updated order
+            replyMessage = orderService.getOrderByUuid(orderUuid);
+            orderList = replyMessage.getOrderList();
+            if (orderList.isEmpty()) {
+                throw new IllegalArgumentException("cannot find order for orderUuid=" + orderUuid);
+            }
+            order = replyMessage.getOrderList().get(0);
+        } else {
+            throw new IllegalArgumentException("unknown action for page action=" + action);
         }
+
+        replyMessage = orderChangeRequestService.getOrderChangeRequestByUuid(changeRequestUUID);
+        List<OrderChangeRequest> orderChangeRequestList = replyMessage.getOrderChangeRequestList();
+        if (orderChangeRequestList.isEmpty()) {
+            throw new IllegalArgumentException("cannot find orderChangeRequest for changeRequestUUID=" + changeRequestUUID);
+        }
+        OrderChangeRequest orderChangeRequest = replyMessage.getOrderChangeRequestList().get(0);
+
+        model.addAttribute("order", order);
+        model.addAttribute("changeOrder", order);
+        model.addAttribute("changeRequestUUID", changeRequestUUID);
+        model.addAttribute("orderChangeRequest", orderChangeRequest);
 
         // add message if there are any 
         model.addAttribute("errorMessage", errorMessage);
