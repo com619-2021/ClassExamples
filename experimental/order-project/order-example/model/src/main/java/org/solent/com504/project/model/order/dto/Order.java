@@ -28,8 +28,8 @@ public class Order {
 
     private String name;
 
-    @XmlElementWrapper(name = "subOrdersList")
-    @XmlElement(name = "subOrder")
+    @XmlElementWrapper(name = "subOrders")
+    @XmlElement(name = "orderHref")
     private List<OrderHref> subOrders;
 
     private String description;
@@ -42,13 +42,13 @@ public class Order {
 
     private PartyHref orderOwner;
 
-    @XmlElementWrapper(name = "changeRequestsList")
+    @XmlElementWrapper(name = "changeRequests")
     @XmlElement(name = "orderChangeRequestHref")
     private List<OrderChangeRequestHref> changeRequests;
 
     private OrderHref parentOrder;
 
-    @XmlElementWrapper(name = "resourceList")
+    @XmlElementWrapper(name = "resourceOrService")
     @XmlElement(name = "resourceHref")
     private List<ResourceHref> resourceOrService;
 
@@ -100,6 +100,8 @@ public class Order {
     public void setSubOrders(List<OrderHref> subOrders) {
         this.subOrders = subOrders;
     }
+
+
     public String getDescription() {
         return description;
     }
@@ -181,6 +183,8 @@ public class Order {
     public void setResourceAccess(ResourceAccess resourceAccess) {
         this.resourceAccess = resourceAccess;
     }
+    
+    
 
     @Override
     public String toString() {

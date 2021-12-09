@@ -21,6 +21,8 @@ import org.solent.com504.project.model.utilities.PrintOutJson;
  *
  * @author cgallen
  */
+// see https://stackoverflow.com/questions/41821586/change-in-json-response-after-upgrade-to-json-2-25
+// USE_WRAPPER_NAME_AS_PROPERTY_NAME
 public class PrintOutJsonTest {
 
     final static Logger LOG = LogManager.getLogger(PrintOutJsonTest.class);

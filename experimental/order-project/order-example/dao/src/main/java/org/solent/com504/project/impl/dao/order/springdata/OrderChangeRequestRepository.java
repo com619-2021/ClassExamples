@@ -5,7 +5,6 @@
  */
 package org.solent.com504.project.impl.dao.order.springdata;
 
-
 import java.util.List;
 import org.solent.com504.project.model.order.dto.OrderChangeRequestEntity;
 
@@ -24,5 +23,8 @@ public interface OrderChangeRequestRepository extends JpaRepository<OrderChangeR
 
     @Query("select c from OrderChangeRequestEntity c  where c.uuid = :uuid")
     public List<OrderChangeRequestEntity> findByUuid(@Param("uuid") String uuid);
+
+    @Query("select c from OrderChangeRequestEntity c  where c.orderUuid = :orderUuid")
+    public List<OrderChangeRequestEntity> findByOrderUuid(@Param("orderUuid") String orderUuid);
 
 }

@@ -76,7 +76,11 @@ public class OrderChangeRequestRestService {
     @Transactional(readOnly = true)
     public Response getOrderChangeRequestByuuid(@PathParam("uuid") String uuid, @Context UriInfo uriInfo) {
         try {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            ReplyMessage replyMessage = orderChangeRequestService.getOrderChangeRequestByUuid(uuid);
+
+            replyMessage.setCode(Response.Status.OK.getStatusCode());
+
+            return Response.status(Response.Status.OK).entity(replyMessage).build();
 
         } catch (Exception ex) {
             LOG.error("error calling GET /orderChangeRequest/{uuid} getOrderByuuid uuid=" + uuid, ex);
@@ -100,7 +104,11 @@ public class OrderChangeRequestRestService {
     @Transactional()
     public Response deleteOrderChangeRequestByUuid(@PathParam("uuid") String uuid, @Context UriInfo uriInfo) {
         try {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            ReplyMessage replyMessage = orderChangeRequestService.deleteOrderChangeRequestByUuid(uuid);
+
+            replyMessage.setCode(Response.Status.OK.getStatusCode());
+
+            return Response.status(Response.Status.OK).entity(replyMessage).build();
 
         } catch (Exception ex) {
             LOG.error("error calling DELETE /orderChangeRequest/{uuid} getOrderByuuid uuid=" + uuid, ex);
@@ -125,7 +133,12 @@ public class OrderChangeRequestRestService {
     @Transactional
     public Response postCreateOrderChangeRequest(OrderChangeRequest orderChangeRequest, @Context UriInfo uriInfo) {
         try {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            String changeRequestorPartyUUID = orderChangeRequest.getChangeRequestor().getUuid();
+            ReplyMessage replyMessage = orderChangeRequestService.postCreateOrderChangeRequest(orderChangeRequest, changeRequestorPartyUUID);
+
+            replyMessage.setCode(Response.Status.OK.getStatusCode());
+
+            return Response.status(Response.Status.OK).entity(replyMessage).build();
 
         } catch (Exception ex) {
             LOG.error("error calling POST /orderChangeRequest postCreateOrder ", ex);
@@ -151,7 +164,11 @@ public class OrderChangeRequestRestService {
     @Transactional
     public Response putUpdateOrderChangeRequest(OrderChangeRequest orderChangeRequest, @Context UriInfo uriInfo) {
         try {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            ReplyMessage replyMessage = orderChangeRequestService.putUpdateOrderChangeRequest(orderChangeRequest);
+
+            replyMessage.setCode(Response.Status.OK.getStatusCode());
+
+            return Response.status(Response.Status.OK).entity(replyMessage).build();
 
         } catch (Exception ex) {
             LOG.error("error calling PUT /orderChangeRequest putUpdateOrder ", ex);
@@ -206,7 +223,7 @@ public class OrderChangeRequestRestService {
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Transactional(readOnly = true)
-    public Response getOrderChangeRequestByTemplate(Order orderChangeRequestSearchTemplate, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @Context UriInfo uriInfo) {
+    public Response getOrderChangeRequestByTemplate(OrderChangeRequest orderChangeRequestSearchTemplate, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @Context UriInfo uriInfo) {
 
         try {
             ReplyMessage replyMessage = orderChangeRequestService.getOrderChangeRequestByTemplate(orderChangeRequestSearchTemplate, offset, limit);

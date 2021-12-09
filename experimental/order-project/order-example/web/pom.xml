@@ -117,6 +117,13 @@
             <artifactId>jersey-media-multipart</artifactId>
             <scope>compile</scope>
         </dependency>
+        
+        <!-- may already be included but needed for jaxb -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-jaxb-annotations</artifactId>
+            <scope>compile</scope>
+        </dependency>
 
         <dependency>
             <groupId>io.swagger.core.v3</groupId>

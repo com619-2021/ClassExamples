@@ -34,6 +34,8 @@ public class OrderChangeRequestEntity {
     private String uuid;
 
     private String href;
+    
+    private String orderUuid;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -121,10 +123,20 @@ public class OrderChangeRequestEntity {
     public void setHref(String href) {
         this.href = href;
     }
+    
+     public String getOrderUuid() {
+        return orderUuid;
+    }
+
+    public void setOrderUuid(String orderUuid) {
+        this.orderUuid = orderUuid;
+    }
 
     @Override
     public String toString() {
-        return "OrderChangeRequestEntity{" + "requestDate=" + requestDate + ", approvedDate=" + approvedDate + ", status=" + status + ", changeReason=" + changeReason + ", changeRequestor=" + changeRequestor + ", responseDescription=" + responseDescription + ", id=" + id + ", uuid=" + uuid + ", href=" + href + '}';
+        return "OrderChangeRequestEntity{" + "changeRequest=" + changeRequest + ", requestDate=" + requestDate + ", approvedDate=" + approvedDate + ", status=" + status + ", changeReason=" + changeReason + ", changeRequestor=" + changeRequestor + ", responseDescription=" + responseDescription + ", id=" + id + ", uuid=" + uuid + ", href=" + href + ", orderUuid=" + orderUuid + '}';
     }
+
+
 
 }

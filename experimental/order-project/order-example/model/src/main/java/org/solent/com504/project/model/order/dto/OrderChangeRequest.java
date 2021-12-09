@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.solent.com504.project.model.party.dto.Party;
+import org.solent.com504.project.model.party.dto.PartyHref;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -21,7 +22,7 @@ public class OrderChangeRequest {
 
     private String changeReason;
 
-    private Party changeRequestor;
+    private PartyHref changeRequestor;
 
     private String responseDescription;
 
@@ -30,6 +31,8 @@ public class OrderChangeRequest {
     private String uuid;
 
     private String href;
+
+    private String orderUuid;
 
     public Long getId() {
         return id;
@@ -79,12 +82,11 @@ public class OrderChangeRequest {
         this.changeReason = changeReason;
     }
 
-    @OneToOne
-    public Party getChangeRequestor() {
+    public PartyHref getChangeRequestor() {
         return changeRequestor;
     }
 
-    public void setChangeRequestor(Party changeRequestor) {
+    public void setChangeRequestor(PartyHref changeRequestor) {
         this.changeRequestor = changeRequestor;
     }
 
@@ -110,6 +112,19 @@ public class OrderChangeRequest {
 
     public void setHref(String href) {
         this.href = href;
+    }
+
+    public String getOrderUuid() {
+        return orderUuid;
+    }
+
+    public void setOrderUuid(String orderUuid) {
+        this.orderUuid = orderUuid;
+    }
+
+    @Override
+    public String toString() {
+        return "OrderChangeRequest{" + "changeRequest=" + changeRequest + ", requestDate=" + requestDate + ", approvedDate=" + approvedDate + ", status=" + status + ", changeReason=" + changeReason + ", changeRequestor=" + changeRequestor + ", responseDescription=" + responseDescription + ", id=" + id + ", uuid=" + uuid + ", href=" + href + ", orderUuid=" + orderUuid + '}';
     }
 
 }

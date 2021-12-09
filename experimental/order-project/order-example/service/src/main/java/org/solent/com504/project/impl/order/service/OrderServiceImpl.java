@@ -7,6 +7,7 @@ package org.solent.com504.project.impl.order.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -20,9 +21,12 @@ import org.solent.com504.project.impl.dao.party.springdata.PartyRepository;
 import org.solent.com504.project.impl.dao.resource.springdata.ResourceCatalogRepository;
 import org.solent.com504.project.impl.dao.resource.springdata.ResourceRepository;
 import org.solent.com504.project.model.dto.ReplyMessage;
+import org.solent.com504.project.model.order.dto.ChangeStatus;
 import org.solent.com504.project.model.order.dto.Order;
+import org.solent.com504.project.model.order.dto.OrderChangeRequestEntity;
 import org.solent.com504.project.model.order.dto.OrderEntity;
 import org.solent.com504.project.model.order.dto.OrderMapper;
+import org.solent.com504.project.model.order.dto.OrderStatus;
 import org.solent.com504.project.model.order.service.OrderService;
 import org.solent.com504.project.model.party.dto.Party;
 import org.solent.com504.project.model.resource.dto.AbstractResourceMapper;
@@ -38,46 +42,45 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 public class OrderServiceImpl implements OrderService {
-
+    
     final static Logger LOG = LogManager.getLogger(OrderServiceImpl.class);
-
+    
     @Autowired
     private PartyRepository partyRepository = null;
-
+    
     @Autowired
     private ResourceRepository resourceRepository = null;
-
+    
     @Autowired
     private ResourceCatalogRepository resourceCatalogRepository = null;
-
+    
     @Autowired
     private OrderRepository orderRepository = null;
-
+    
     @Autowired
     private OrderChangeRequestRepository orderChangeRequestRepository = null;
-
+    
     @Override
-    @Transactional
     public ReplyMessage getOrderByUuid(String uuid) {
         ReplyMessage replyMessage = new ReplyMessage();
-
+        
         List<OrderEntity> orderList = orderRepository.findByUuid(uuid);
         if (orderList.isEmpty()) {
             throw new IllegalArgumentException("cannot find order uuid not found=" + uuid);
         }
-
+        
         OrderEntity orderEntity = orderList.get(0);
 
         //create a detached order dto for reply message
         Order detachedOrder = orderEntityToOrder(orderEntity);
-
+        
         replyMessage.setOrderList(Arrays.asList(detachedOrder));
         replyMessage.setOffset(0);
         replyMessage.setLimit(1);
         replyMessage.setTotalCount(1L);
         return replyMessage;
     }
-
+    
     @Override
     @Transactional
     public ReplyMessage deleteOrderByUuid(String uuid) {
@@ -88,17 +91,20 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.delete(orderList.get(0));
         return new ReplyMessage();
     }
-
+    
     @Override
     @Transactional
     public ReplyMessage postCreateOrder(Order order, String ownerPartyUUID) {
         order.setId(null); // may be different db id
+        order.setUuid(UUID.randomUUID().toString()); // always create a new uuid fo new order
+        order.setStatus(OrderStatus.ACKNOWLEGED); // first creation
+        
         List<Party> partyList = partyRepository.findByUuid(ownerPartyUUID);
         if (partyList.isEmpty()) {
             throw new IllegalArgumentException("cannot create order party not found ownerPartyUUID=" + ownerPartyUUID);
         }
         Party resourceOwner = partyList.get(0);
-
+        
         OrderEntity orderEntity;
         if (ResourceAccess.EXTERNAL.equals(order.getResourceAccess())) {
             orderEntity = new OrderEntity();
@@ -128,14 +134,25 @@ public class OrderServiceImpl implements OrderService {
             }
             orderEntity.setResourceOrService(newResources);
         }
-
+        
         orderEntity.setOrderOwner(resourceOwner);
-
+        
         orderEntity = orderRepository.saveAndFlush(orderEntity);
 
         //create a detached order dto for reply message
         Order detachedOrder = orderEntityToOrder(orderEntity);
-
+        
+        // now update order change requests
+        OrderChangeRequestEntity orderChangeRequestEntity = new OrderChangeRequestEntity();
+        orderChangeRequestEntity.setUuid(UUID.randomUUID().toString());
+        orderChangeRequestEntity.setChangeRequest(detachedOrder);
+        orderChangeRequestEntity.setStatus(ChangeStatus.APPROVED);
+        orderChangeRequestEntity.setChangeReason("created directly from api");
+        orderChangeRequestEntity.setRequestDate(new Date());
+        orderChangeRequestEntity.setApprovedDate(new Date());
+        orderChangeRequestEntity.setOrderUuid(orderEntity.getUuid());
+        orderChangeRequestRepository.save(orderChangeRequestEntity);
+        
         ReplyMessage replyMessage = new ReplyMessage();
         replyMessage.setOrderList(Arrays.asList(detachedOrder));
         replyMessage.setOffset(0);
@@ -143,8 +160,9 @@ public class OrderServiceImpl implements OrderService {
         replyMessage.setTotalCount(1L);
         return replyMessage;
     }
-
+    
     @Override
+    @Transactional
     public ReplyMessage putUpdateOrder(Order order) {
         if (order.getUuid() == null) {
             throw new IllegalArgumentException("order should not have null uuid order=" + order);
@@ -202,7 +220,7 @@ public class OrderServiceImpl implements OrderService {
             for (OrderEntity suborder : suborders) {
                 orderEntity.addSuborder(suborder);
             }
-
+            
             orderEntity = OrderMapper.INSTANCE.updateOrderEntityFromOrderEntity(newOrderEntity, orderEntity);
         }
         orderEntity = orderRepository.saveAndFlush(orderEntity);
@@ -210,6 +228,17 @@ public class OrderServiceImpl implements OrderService {
         //create a detached order dto for reply message
         Order detachedOrder = orderEntityToOrder(orderEntity);
 
+        // now update order change requests
+        OrderChangeRequestEntity orderChangeRequestEntity = new OrderChangeRequestEntity();
+        orderChangeRequestEntity.setUuid(UUID.randomUUID().toString());
+        orderChangeRequestEntity.setChangeRequest(detachedOrder);
+        orderChangeRequestEntity.setStatus(ChangeStatus.APPROVED);
+        orderChangeRequestEntity.setChangeReason("order updated directly from api");
+        orderChangeRequestEntity.setRequestDate(new Date());
+        orderChangeRequestEntity.setApprovedDate(new Date());
+        orderChangeRequestEntity.setOrderUuid(orderEntity.getUuid());
+        orderChangeRequestRepository.save(orderChangeRequestEntity);
+        
         ReplyMessage replyMessage = new ReplyMessage();
         replyMessage.setOrderList(Arrays.asList(detachedOrder));
         replyMessage.setOffset(0);
@@ -217,7 +246,7 @@ public class OrderServiceImpl implements OrderService {
         replyMessage.setTotalCount(1L);
         return replyMessage;
     }
-
+    
     @Override
     public ReplyMessage getOrderByTemplate(Order orderSearchTemplate, Integer offset, Integer limit) {
         // currently just gets all orders with no template
@@ -225,13 +254,13 @@ public class OrderServiceImpl implements OrderService {
         List<OrderEntity> orderEntityList = orderRepository.findAll();
         
         List<Order> orderList = new ArrayList();
-        for(OrderEntity orderEntity:orderEntityList ){
+        for (OrderEntity orderEntity : orderEntityList) {
             orderList.add(orderEntityToOrder(orderEntity));
         }
         replyMessage.setOrderList(orderList);
         return replyMessage;
     }
-
+    
     private Order orderEntityToOrder(OrderEntity orderEntity) {
         //create a detached order dto for reply message
         Order order;
@@ -242,5 +271,5 @@ public class OrderServiceImpl implements OrderService {
         }
         return order;
     }
-
+    
 }

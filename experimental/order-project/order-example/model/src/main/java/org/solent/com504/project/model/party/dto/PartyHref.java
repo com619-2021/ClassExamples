@@ -5,8 +5,6 @@
  */
 package org.solent.com504.project.model.party.dto;
 
-import org.solent.com504.project.model.order.dto.*;
-import javax.persistence.Entity;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;

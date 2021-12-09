@@ -274,6 +274,7 @@ public class ModelJaxbTest {
             Order subOrder = new Order();
             subOrder.setUuid(UUID.randomUUID().toString());
             subOrder.setHref("http://orderhref/" + subOrder.getUuid());
+            subOrder.setName("sub order name");
 
             OrderHref subOrderHref = OrderMapper.INSTANCE.orderToOrderHref(order);
             order.setSubOrders(Arrays.asList(subOrderHref));
@@ -293,7 +294,7 @@ public class ModelJaxbTest {
             orderChangeRequest.setApprovedDate(new Date());
             orderChangeRequest.setChangeReason("a great change");
             orderChangeRequest.setChangeRequest(order);
-            orderChangeRequest.setChangeRequestor(orderOwner);
+            orderChangeRequest.setChangeRequestor(orderOwnerHref);
             orderChangeRequest.setStatus(ChangeStatus.REJECTED);
             orderChangeRequest.setResponseDescription("wasnt a good idea");
             orderChangeRequest.setUuid(UUID.randomUUID().toString());

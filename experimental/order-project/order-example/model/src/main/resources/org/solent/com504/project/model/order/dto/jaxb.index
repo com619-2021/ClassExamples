@@ -2,4 +2,6 @@ ChangeStatus
 Order
 OrderChangeRequest
 OrderStatus
+OrderChangeRequestHref
+OrderHref
 

@@ -58,7 +58,7 @@ public class OrderRestService {
 
     @Autowired
     private OrderService orderService = null;
-    
+
     @Autowired
     private OrderChangeRequestService orderChangeRequestService = null;
 
@@ -77,7 +77,9 @@ public class OrderRestService {
     @Transactional(readOnly = true)
     public Response getOrderByuuid(@PathParam("uuid") String uuid, @Context UriInfo uriInfo) {
         try {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            ReplyMessage replyMessage = orderService.getOrderByUuid(uuid);
+            replyMessage.setCode(Response.Status.OK.getStatusCode());
+            return Response.status(Response.Status.OK).entity(replyMessage).build();
 
         } catch (Exception ex) {
             LOG.error("error calling GET /order/{uuid} getOrderByuuid uuid=" + uuid, ex);
@@ -101,7 +103,9 @@ public class OrderRestService {
     @Transactional()
     public Response deleteOrderByUuid(@PathParam("uuid") String uuid, @Context UriInfo uriInfo) {
         try {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            ReplyMessage replyMessage = orderService.deleteOrderByUuid(uuid);
+            replyMessage.setCode(Response.Status.OK.getStatusCode());
+            return Response.status(Response.Status.OK).entity(replyMessage).build();
 
         } catch (Exception ex) {
             LOG.error("error calling DELETE /order/{uuid} getOrderByuuid uuid=" + uuid, ex);
@@ -126,7 +130,16 @@ public class OrderRestService {
     @Transactional
     public Response postCreateOrder(Order order, @Context UriInfo uriInfo) {
         try {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            String ownerPartyUUID = order.getOrderOwner().getUuid();
+            if (order == null) {
+                throw new IllegalArgumentException("you must supply an order body");
+            }
+            if (order.getOrderOwner() == null || order.getOrderOwner().getUuid() ==null) {
+                throw new IllegalArgumentException("you must supply an order owner href uuid "+ order.getOrderOwner());
+            }
+            ReplyMessage replyMessage = orderService.postCreateOrder(order, ownerPartyUUID);
+            replyMessage.setCode(Response.Status.OK.getStatusCode());
+            return Response.status(Response.Status.OK).entity(replyMessage).build();
 
         } catch (Exception ex) {
             LOG.error("error calling POST /order postCreateOrder ", ex);
@@ -152,7 +165,9 @@ public class OrderRestService {
     @Transactional
     public Response putUpdateOrder(Order order, @Context UriInfo uriInfo) {
         try {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            ReplyMessage replyMessage = orderService.putUpdateOrder(order);
+            replyMessage.setCode(Response.Status.OK.getStatusCode());
+            return Response.status(Response.Status.OK).entity(replyMessage).build();
 
         } catch (Exception ex) {
             LOG.error("error calling PUT /order putUpdateOrder ", ex);
