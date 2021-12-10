@@ -346,7 +346,10 @@ public class OrderController {
                 throw new IllegalArgumentException("cannot find orderChangeRequest for changeRequestUUID=" + changeRequestUUID);
             }
             orderChangeRequest = replyMessage.getOrderChangeRequestList().get(0);
-            orderChangeRequest.setChangeRequest(changeOrder);
+            Order changeRequest = orderChangeRequest.getChangeRequest();
+            
+            Order updatedOrder = OrderMapper.INSTANCE.updateOrderFromOrder(changeOrder, changeRequest);
+            orderChangeRequest.setChangeRequest(updatedOrder);
             orderChangeRequest.setRequestDate(new Date()); // update the request date on change
             replyMessage = orderChangeRequestService.putUpdateOrderChangeRequest(orderChangeRequest);
             if (orderChangeRequestList.isEmpty()) {

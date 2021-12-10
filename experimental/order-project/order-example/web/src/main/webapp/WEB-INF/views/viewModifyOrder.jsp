@@ -266,7 +266,7 @@ private List<ResourceHref> resourceOrService;
                     <input type="hidden" name="action" value="submitChangeRequest">
                     <input type="hidden" name="changeRequestUUID" value="${orderChangeRequest.uuid}">
                     <input type="hidden" name="orderUuid" value="${order.uuid}"/>
-                    <button class="btn" type="submit" >Reject Change Request</button>
+                    <button class="btn" type="submit" >Submit Change Request</button>
                 </form>
             </c:if>
             <c:if test="${! allowChangeButtons}">
