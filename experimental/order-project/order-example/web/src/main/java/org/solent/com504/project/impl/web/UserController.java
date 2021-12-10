@@ -16,6 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.solent.com504.project.impl.validator.UserValidator;
 import org.solent.com504.project.model.party.dto.Address;
+import org.solent.com504.project.model.party.dto.ForeignSystem;
 import org.solent.com504.project.model.party.dto.Party;
 import org.solent.com504.project.model.party.dto.PartyRole;
 import org.solent.com504.project.model.party.service.PartyService;
@@ -424,6 +425,9 @@ public class UserController {
             @RequestParam(value = "mobile", required = false) String mobile,
             @RequestParam(value = "removeUsername", required = false) String removeUsername,
             @RequestParam(value = "addUsers", required = false) List<String> addUsers,
+            @RequestParam(value = "foreignSystemUrl", required = false) String foreignSystemUrl,
+            @RequestParam(value = "foreignSystemUsername", required = false) String foreignSystemUsername,
+            @RequestParam(value = "foreignSystemPasskey", required = false) String foreignSystemPasskey,
             Authentication authentication) {
 
         LOG.debug("viewModifyParty POST called for partyuuid=" + partyuuid);
@@ -517,6 +521,13 @@ public class UserController {
                             + " or longitude=" + longitude;
                 }
                 party.setAddress(address);
+                
+                ForeignSystem foreignSystem = new ForeignSystem();
+                foreignSystem.setPasskey(foreignSystemPasskey);
+                foreignSystem.setUrl(foreignSystemUrl);
+                foreignSystem.setUsername(foreignSystemUsername);
+                party.setForeignSystem(foreignSystem);
+
             }
 
         }

@@ -97,6 +97,17 @@
                         <td><input type="text" name="mobile" value="${party.address.mobile}" /></td>
                     </tr>
                     <tr>
+                        <td>Foreign System URL</td>
+                        <td><input type="text" name="foreignSystemUrl" value="${party.foreignSystem.url}" /></td>
+                    </tr>                    <tr>
+                        <td>Foreign System username</td>
+                        <td><input type="text" name="foreignSystemUsername" value="${party.foreignSystem.username}" /></td>
+                    </tr>
+                    <tr>
+                        <td>Foreign System passkey</td>
+                        <td><input type="password" name="foreignSystemPasskey" value="${party.foreignSystem.passkey}" /></td>
+                    </tr>
+                    <tr>
                         <td>Users</td>
                         <td><c:forEach var="user" items="${party.users}">| ${user.username} |</c:forEach></td>
                         </tr>

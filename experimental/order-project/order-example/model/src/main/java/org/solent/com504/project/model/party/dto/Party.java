@@ -46,6 +46,8 @@ public class Party {
     private String uuid = Long.toHexString(new Date().getTime());
 
     private Boolean enabled = true;
+    
+    private ForeignSystem foreignSystem = new ForeignSystem();
 
     @XmlElementWrapper(name = "users")
     @XmlElement(name = "user")
@@ -149,6 +151,17 @@ public class Party {
     public void setHref(String href) {
         this.href = href;
     }
+
+    @Embedded
+    public ForeignSystem getForeignSystem() {
+        return foreignSystem;
+    }
+
+    public void setForeignSystem(ForeignSystem foreignSystem) {
+        this.foreignSystem = foreignSystem;
+    }
+    
+    
 
     @Override
     public String toString() {

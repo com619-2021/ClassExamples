@@ -6,6 +6,7 @@
 package org.solent.com504.project.impl.order.service;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
@@ -17,6 +18,7 @@ import org.solent.com504.project.impl.dao.resource.springdata.ResourceCatalogRep
 import org.solent.com504.project.impl.dao.resource.springdata.ResourceRepository;
 import org.solent.com504.project.impl.resource.service.ResourceCatalogServiceImpl;
 import org.solent.com504.project.model.dto.ReplyMessage;
+import org.solent.com504.project.model.order.dto.ChangeStatus;
 import org.solent.com504.project.model.order.dto.Order;
 import org.solent.com504.project.model.order.dto.OrderChangeRequest;
 import org.solent.com504.project.model.order.dto.OrderChangeRequestEntity;
@@ -85,6 +87,8 @@ public class OrderChangeRequestServiceImpl implements OrderChangeRequestService 
         orderChangeRequestEntity.setUuid(UUID.randomUUID().toString());
         orderChangeRequestEntity.setHref("/rest/solent-api/order/v1/orderChangeRequest/" + orderChangeRequestEntity.getUuid());
         orderChangeRequestEntity.setChangeRequestor(resourceOwner);
+        orderChangeRequestEntity.setRequestDate(new Date());
+        orderChangeRequestEntity.setStatus(ChangeStatus.REQUESTED);
         
         orderChangeRequestEntity = orderChangeRequestRepository.save(orderChangeRequestEntity);
         List<OrderEntity> orderEntityList = orderRepository.findByUuid(orderChangeRequestEntity.getOrderUuid());

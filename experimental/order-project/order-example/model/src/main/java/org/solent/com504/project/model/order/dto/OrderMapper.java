@@ -16,7 +16,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.factory.Mappers;
 
 /**
- * maps one abstract resource into another abstract resource can be used to map values of resource entity to dto objects
+ * maps one abstract order into another abstract order can be used to map values of resource entity to dto objects
  *
  * @author cgallen
  */
@@ -41,5 +41,7 @@ public interface OrderMapper {
     PartyHref partyToHref(Party partyEntity);
 
     OrderEntity updateOrderEntityFromOrderEntity(OrderEntity newOrderEntity, @MappingTarget OrderEntity orderEntity);
+    
+    Order updateOrderFromOrder(Order orderChanges, @MappingTarget Order originalOrder);
 
 }

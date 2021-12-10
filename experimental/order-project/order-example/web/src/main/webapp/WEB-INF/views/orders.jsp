@@ -59,10 +59,10 @@
                         <td>${order.startDate}</td>
                         <td>${order.endDate}</td>
 
-                            <td>
-                                <form action="./viewModifyOrder" method="GET">
-                                    <input type="hidden" name="orderUuid" value="${order.uuid}">
-                                    <input type="hidden" name="action" value="viewOrderDetails">
+                        <td>
+                            <form action="./viewModifyOrder" method="GET">
+                                <input type="hidden" name="orderUuid" value="${order.uuid}">
+                                <input type="hidden" name="action" value="viewOrderDetails">
                                 <button class="btn" type="submit" >View Order Details</button>
                             </form> 
                         </td>
@@ -71,12 +71,19 @@
 
             </tbody>
         </table>
+        <h1>Create New Order</h1>
         <form action="./viewModifyOrder" method="POST">
             <!-- orderUuid ="" creates a new order -->
             <p>Select Owning Party</p>
             <select class="form-control" name="ownerPartyUUID" >
                 <c:forEach var="party" items="${partyList}">
                     <option value="${party.uuid}">${party.firstName}  ${party.uuid}</option>
+                </c:forEach>
+            </select>
+            <p>Select Order Type</p>
+            <select class="form-control" name="orderResourceAccess" >
+                <c:forEach var="resourceAccessValue" items="${resourceAccessValues}">
+                    <option value="${resourceAccessValue}">${resourceAccessValue}</option>
                 </c:forEach>
             </select>
 
