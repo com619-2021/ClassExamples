@@ -57,12 +57,14 @@
                                 <!-- this raw java code works !! -->
                                 <li <% if ("home".equals(request.getAttribute("selectedPage"))) {%> class="active"  <% } %> ><a href="./home">Home</a></li> 
                             <li <% if ("order".equals(request.getAttribute("selectedPage"))) {%> class="active"  <% } %> ><a href="./order">Orders</a></li> 
+                            <li <% if ("orderchange".equals(request.getAttribute("selectedPage"))) {%>  class="active"  <% }%> ><a href="./orderchange">Order Changes</a></li> 
                             <li <% if ("resource".equals(request.getAttribute("selectedPage"))) {%> class="active"  <% } %> ><a href="./resource">Resource Inventory</a></li> 
                             <li <% if ("catalog".equals(request.getAttribute("selectedPage"))) {%> class="active"  <% }%> ><a href="./catalog">Resource Catalogue</a></li> 
                             <li <% if ("about".equals(request.getAttribute("selectedPage"))) {%>  class="active"  <% } %> ><a href="./about">About</a></li> 
                             <li <% if ("contact".equals(request.getAttribute("selectedPage"))) {%>  class="active"  <% }%> ><a href="./contact">Contact</a></li> 
+
                             <!--   <li><a href="./swagger-ui/index.html" target="_blank" >ReST API</a></li>  now set using javascript-->
-                             <li><a id="swaggerLink" href="" target="_blank"  >ReST API</a></li>    
+                            <li><a id="swaggerLink" href="" target="_blank"  >ReST API</a></li>    
                                 <sec:authorize access="hasRole('ROLE_GLOBAL_ADMIN')">
                                 <li class="dropdown" >
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> Admin <span class="caret"></span></a>
@@ -95,12 +97,12 @@
             </nav>
         </header>
         <Script type="text/javascript">
-            <!-- this loads a script to dynamically set the url for swagger ui running in front of a reverse proxy in ReST API tag -->
-              window.onload = function() {
-                  var swaggerJsonLink=window.location.href.substring(0, window.location.href.indexOf('/project-web'))+'/project-web/rest/openapi.json';
-                  var swaggerUILink='./swagger-ui/index.html?url='+swaggerJsonLink; 
-                  document.getElementById('swaggerLink').href=swaggerUILink;
-                  return false;
-               };
+<!-- this loads a script to dynamically set the url for swagger ui running in front of a reverse proxy in ReST API tag -->
+            window.onload = function () {
+                var swaggerJsonLink = window.location.href.substring(0, window.location.href.indexOf('/project-web')) + '/project-web/rest/openapi.json';
+                var swaggerUILink = './swagger-ui/index.html?url=' + swaggerJsonLink;
+                document.getElementById('swaggerLink').href = swaggerUILink;
+                return false;
+            };
         </script>
         <!-- end of header.jsp -->

@@ -347,7 +347,7 @@ public class OrderController {
             }
             orderChangeRequest = replyMessage.getOrderChangeRequestList().get(0);
             Order changeRequest = orderChangeRequest.getChangeRequest();
-            
+
             Order updatedOrder = OrderMapper.INSTANCE.updateOrderFromOrder(changeOrder, changeRequest);
             orderChangeRequest.setChangeRequest(updatedOrder);
             orderChangeRequest.setRequestDate(new Date()); // update the request date on change
@@ -439,6 +439,45 @@ public class OrderController {
 
         return selectedRolesMap;
 
+    }
+
+    /* ******
+    * methods to see order change requests
+     */
+    /**
+     *
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = {"/orderchange"}, method = RequestMethod.GET)
+    public String orderchange(Model model) {
+        LOG.debug("order change called:");
+
+        // get parties
+        List<Party> partyList = partyService.findAll();
+        model.addAttribute("partyListSize", partyList.size());
+        model.addAttribute("partyList", partyList);
+
+        ReplyMessage replyMessage = orderService.getOrderByTemplate(null, null, null);
+        List<Order> orderList = replyMessage.getOrderList();
+
+        replyMessage = orderChangeRequestService.getOrderChangeRequestByTemplate(null, null, null);
+        List<OrderChangeRequest> orderChangeRequesList = replyMessage.getOrderChangeRequestList();
+
+        Integer orderListSize = orderList.size();
+        model.addAttribute("orderListSize", orderListSize);
+        model.addAttribute("orderList", orderList);
+
+        Integer orderChangeRequestListSize = orderChangeRequesList.size();
+        model.addAttribute("orderChangeRequestListSize", orderChangeRequestListSize);
+        model.addAttribute("orderChangeRequestList", orderChangeRequesList);
+
+        model.addAttribute("dateFormat", df);
+        model.addAttribute("resourceAccessValues", ResourceAccess.values());
+
+        model.addAttribute("selectedPage", "orderchange");
+        model.addAttribute("DATE_FORMAT", DATE_FORMAT);
+        return "orderchange";
     }
 
     /**

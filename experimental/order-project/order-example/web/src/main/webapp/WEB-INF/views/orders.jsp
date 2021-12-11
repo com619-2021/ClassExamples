@@ -51,7 +51,7 @@
                     <tr>
                         <td>${order.id}</td>
                         <td>${order.uuid}</td>
-                        <td>${order.href}</td>
+                        <td><a href=".${order.href}" target="_blank" >${order.href}</a></td>
                         <td>${order.name}</td>
                         <td>${order.status}</td>
                         <td>${order.resourceAccess}</td>
