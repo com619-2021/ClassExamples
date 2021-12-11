@@ -73,13 +73,12 @@ public class OrderChangeRequestRestService {
     @Path("/orderChangeRequest/{uuid}")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    // @Produces({"application/json" , "application/xml; qs=0.75"})
     @Transactional(readOnly = true)
     public Response getOrderChangeRequestByuuid(@PathParam("uuid") String uuid, @Context UriInfo uriInfo) {
         try {
             ReplyMessage replyMessage = orderChangeRequestService.getOrderChangeRequestByUuid(uuid);
-
             replyMessage.setCode(Response.Status.OK.getStatusCode());
-
             return Response.status(Response.Status.OK).entity(replyMessage).build();
 
         } catch (Exception ex) {
@@ -101,13 +100,11 @@ public class OrderChangeRequestRestService {
             })
     @DELETE
     @Path("/orderChangeRequest/{uuid}")
-    @Transactional()
+    @Transactional
     public Response deleteOrderChangeRequestByUuid(@PathParam("uuid") String uuid, @Context UriInfo uriInfo) {
         try {
             ReplyMessage replyMessage = orderChangeRequestService.deleteOrderChangeRequestByUuid(uuid);
-
             replyMessage.setCode(Response.Status.OK.getStatusCode());
-
             return Response.status(Response.Status.OK).entity(replyMessage).build();
 
         } catch (Exception ex) {
@@ -130,6 +127,7 @@ public class OrderChangeRequestRestService {
     @Path("/orderChangeRequest")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    // @Produces({"application/json" , "application/xml; qs=0.75"})
     @Transactional
     public Response postCreateOrderChangeRequest(OrderChangeRequest orderChangeRequest, @Context UriInfo uriInfo) {
         try {
@@ -161,6 +159,7 @@ public class OrderChangeRequestRestService {
     @Path("/orderChangeRequest")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    // @Produces({"application/json" , "application/xml; qs=0.75"})
     @Transactional
     public Response putUpdateOrderChangeRequest(OrderChangeRequest orderChangeRequest, @Context UriInfo uriInfo) {
         try {
@@ -193,6 +192,8 @@ public class OrderChangeRequestRestService {
     @Path("/orderChangeRequest")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    // @Produces({"application/json" , "application/xml; qs=0.75"})
+    @Transactional(readOnly = true)
     public Response getOrderChangeRequest(@QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @Context UriInfo uriInfo) {
         try {
             ReplyMessage replyMessage = orderService.getOrderByTemplate(null, offset, limit);
@@ -222,6 +223,7 @@ public class OrderChangeRequestRestService {
     @Path("/orderChangeRequestByTemplate")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    // @Produces({"application/json" , "application/xml; qs=0.75"})
     @Transactional(readOnly = true)
     public Response getOrderChangeRequestByTemplate(OrderChangeRequest orderChangeRequestSearchTemplate, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @Context UriInfo uriInfo) {
 

@@ -25,6 +25,9 @@ import javax.ws.rs.core.Application;
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 
+// see also http://scribbles.fried.se/2011/04/browser-views-in-jersey-and-fed-up.html 
+// Overcoming browsers´ strange media type preferences and creating viewable responses in Jersey 
+
 // see https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Annotations#server
 // see also https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#serverObject
 @OpenAPIDefinition(

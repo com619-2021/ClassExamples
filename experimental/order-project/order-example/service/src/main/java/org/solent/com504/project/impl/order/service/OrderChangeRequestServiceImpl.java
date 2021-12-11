@@ -28,6 +28,7 @@ import org.solent.com504.project.model.order.service.OrderChangeRequestService;
 import org.solent.com504.project.model.party.dto.Party;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -35,34 +36,38 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class OrderChangeRequestServiceImpl implements OrderChangeRequestService {
-    
+
     final static Logger LOG = LogManager.getLogger(OrderChangeRequestServiceImpl.class);
-    
+
     @Autowired
     private PartyRepository partyRepository = null;
-    
+
     @Autowired
     private ResourceRepository resourceRepository = null;
-    
+
     @Autowired
     private ResourceCatalogRepository resourceCatalogRepository = null;
-    
+
     @Autowired
     private OrderRepository orderRepository = null;
-    
+
     @Autowired
     private OrderChangeRequestRepository orderChangeRequestRepository = null;
-    
+
     @Override
     public ReplyMessage getOrderChangeRequestByUuid(String uuid) {
         ReplyMessage replyMessage = new ReplyMessage();
-        List<OrderChangeRequestEntity> requestList = orderChangeRequestRepository.findByUuid(uuid);
-        List<OrderChangeRequest> orderChangeRequestList = OrderChangeRequestMapper.INSTANCE.orderChangeRequestEntityListToOrderChangeRequestList(requestList);
+        List<OrderChangeRequestEntity> orderChangeRequestEntityList = orderChangeRequestRepository.findByUuid(uuid);
+        if (orderChangeRequestEntityList.isEmpty()) {
+            throw new IllegalArgumentException("cannot find orderChangeRequest uuid not found=" + uuid);
+        }
+        List<OrderChangeRequest> orderChangeRequestList = OrderChangeRequestMapper.INSTANCE.orderChangeRequestEntityListToOrderChangeRequestList(orderChangeRequestEntityList);
         replyMessage.setOrderChangeRequestList(orderChangeRequestList);
         return replyMessage;
     }
-    
+
     @Override
+    @Transactional
     public ReplyMessage deleteOrderChangeRequestByUuid(String uuid) {
         List<OrderChangeRequestEntity> orderChangeRequestList = orderChangeRequestRepository.findByUuid(uuid);
         if (orderChangeRequestList.isEmpty()) {
@@ -71,17 +76,18 @@ public class OrderChangeRequestServiceImpl implements OrderChangeRequestService 
         orderChangeRequestRepository.delete(orderChangeRequestList.get(0));
         return new ReplyMessage();
     }
-    
+
     @Override
+    @Transactional
     public ReplyMessage postCreateOrderChangeRequest(OrderChangeRequest orderChangeRequest, String changeRequestorPartyUUID) {
         ReplyMessage replyMessage = new ReplyMessage();
-        
+
         List<Party> partyList = partyRepository.findByUuid(changeRequestorPartyUUID);
         if (partyList.isEmpty()) {
             throw new IllegalArgumentException("cannot create orderChangeRequest party not found ownerPartyUUID=" + changeRequestorPartyUUID);
         }
         Party resourceOwner = partyList.get(0);
-        
+
         OrderChangeRequestEntity orderChangeRequestEntity = OrderChangeRequestMapper.INSTANCE.orderToOrderChangeRequestEntity(orderChangeRequest);
         orderChangeRequestEntity.setId(null); // creating new entity)
         orderChangeRequestEntity.setUuid(UUID.randomUUID().toString());
@@ -89,24 +95,29 @@ public class OrderChangeRequestServiceImpl implements OrderChangeRequestService 
         orderChangeRequestEntity.setChangeRequestor(resourceOwner);
         orderChangeRequestEntity.setRequestDate(new Date());
         orderChangeRequestEntity.setStatus(ChangeStatus.REQUESTED);
-        
+
         orderChangeRequestEntity = orderChangeRequestRepository.save(orderChangeRequestEntity);
-        List<OrderEntity> orderEntityList = orderRepository.findByUuid(orderChangeRequestEntity.getOrderUuid());
-        if (orderEntityList.isEmpty()) {
-            throw new IllegalArgumentException("order not found with uuid" + orderChangeRequestEntity.getOrderUuid());
+
+        // if external order uuid may not be found
+        if (orderChangeRequestEntity.getOrderUuid() != null) { //uninitialisedd external order
+            List<OrderEntity> orderEntityList = orderRepository.findByUuid(orderChangeRequestEntity.getOrderUuid());
+            if (orderEntityList.isEmpty()) {
+                throw new IllegalArgumentException("order not found with uuid" + orderChangeRequestEntity.getOrderUuid());
+            }
+            OrderEntity orderEntity = orderEntityList.get(0);
+            orderEntity.addOrderChangeRequest(orderChangeRequestEntity);
+            orderRepository.save(orderEntity);
         }
-        OrderEntity orderEntity = orderEntityList.get(0);
-        orderEntity.addOrderChangeRequest(orderChangeRequestEntity);
-        orderRepository.save(orderEntity);
-        
+
         OrderChangeRequest orderChangeRequestReply = OrderChangeRequestMapper.INSTANCE.orderChangeRequestEntityToOrderChangeRequest(orderChangeRequestEntity);
         List<OrderChangeRequest> orderChangeRequestList = Arrays.asList(orderChangeRequestReply);
-        
+
         replyMessage.setOrderChangeRequestList(orderChangeRequestList);
         return replyMessage;
     }
-    
+
     @Override
+    @Transactional
     public ReplyMessage putUpdateOrderChangeRequest(OrderChangeRequest orderChangeRequest) {
         orderChangeRequest.setId(null); // in case set
         ReplyMessage replyMessage = new ReplyMessage();
@@ -115,15 +126,15 @@ public class OrderChangeRequestServiceImpl implements OrderChangeRequestService 
             throw new IllegalArgumentException("cannot find orderChangeRequest uuid=" + orderChangeRequest.getUuid());
         }
         OrderChangeRequestEntity orderChangeRequestEntity = requestList.get(0);
-        
+
         orderChangeRequestEntity = OrderChangeRequestMapper.INSTANCE.updateOrderChangeRequestEntity(orderChangeRequest, orderChangeRequestEntity);
         orderChangeRequestEntity = orderChangeRequestRepository.save(orderChangeRequestEntity);
-        
+
         OrderChangeRequest orderChangeRequestReply = OrderChangeRequestMapper.INSTANCE.orderChangeRequestEntityToOrderChangeRequest(orderChangeRequestEntity);
         replyMessage.setOrderChangeRequestList(Arrays.asList(orderChangeRequestReply));
         return replyMessage;
     }
-    
+
     @Override
     public ReplyMessage getOrderChangeRequestByTemplate(OrderChangeRequest orderSearchTemplate, Integer offset, Integer limit) {
         //TODO only gets all now
@@ -133,5 +144,5 @@ public class OrderChangeRequestServiceImpl implements OrderChangeRequestService 
         replyMessage.setOrderChangeRequestList(orderChangeRequestList);
         return replyMessage;
     }
-    
+
 }

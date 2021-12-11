@@ -59,7 +59,7 @@ private List<ResourceHref> resourceOrService;
                         <c:forEach var="changeRequest" items="${order.changeRequests}">
                             <option value="${changeRequest.uuid}"
                                     <c:if test="${changeRequest.uuid == changeRequestUUID}">selected</c:if>
-                                    >Date: ${changeRequest.requestDate} Name: ${changeRequest.name}  UUID: ${changeRequest.uuid}</option>
+                                    >Date: <fmt:formatDate pattern="${DATE_FORMAT}" value="${changeRequest.requestDate}" /> Name: ${changeRequest.name}  UUID: ${changeRequest.uuid}</option>
                         </c:forEach>
                     </select>
                 </form>
@@ -79,6 +79,11 @@ private List<ResourceHref> resourceOrService;
                         <td class="col-md-3"></td>
                     </tr>
                     <tr>
+                        <td class="col-md-1">Request href</td>
+                        <td class="col-md-1"><a href=".${orderChangeRequest.href}" target="_blank" >${orderChangeRequest.href}</a></td>
+                        <td class="col-md-3"></td>
+                    </tr>
+                    <tr>
                         <td class="col-md-1">Request Status</td>
                         <td class="col-md-2">${orderChangeRequest.status}</td>
                         <td class="col-md-3"></td>
@@ -94,16 +99,13 @@ private List<ResourceHref> resourceOrService;
                     </tr>
                     <tr>
                         <td class="col-md-1">Change Reason</td>
-                        <td class="col-md-2"><input type="text" id="changeReason"  name="changeReason" value="${changeReason}" <c:if test="${changeReason == null}">disabled style="display:none"</c:if> /></td>
+                        <td class="col-md-2"><input type="text" id="changeReason"  name="changeReason" value="${changeReason}" <c:if test="${changeReason == null}">disabled </c:if> /></td>
                         <td class="col-md-3"><button class="btn btn-sm" type="button" onclick="toggleVisabilityAndDisabled('changeReason')" <c:if test="${! allowChangeButtons}">disabled style="display:none"</c:if>>change</button></td>
                         </tr>
                         <tr>
                             <td class="col-md-1">Response Description</td>
-                            <td class="col-md-2"><input type="text" id="responseDescription"  name="responseDescription" value="${responseDescription}" <c:if test="${responseDescription == null}">disabled style="display:none"</c:if> /></td>
+                            <td class="col-md-2"><input type="text" id="responseDescription"  name="responseDescription" value="${responseDescription}" <c:if test="${responseDescription == null}">disabled </c:if> /></td>
                         <td class="col-md-3"><button class="btn btn-sm" type="button" onclick="toggleVisabilityAndDisabled('responseDescription')" <c:if test="${! allowChangeButtons}">disabled style="display:none"</c:if>>change</button></td>
-                        </tr>
-
-                        </tr>
                         </tr>
                 </table>
             </div>
@@ -125,58 +127,58 @@ private List<ResourceHref> resourceOrService;
                         </thead>
                         <tbody>
                             <tr>
-                                <td class="col-md-1">order Id</td>
-                                <td class="col-md-2"><input type="text" name="orderId" value="${order.id}" readonly /></td>
+                                <td class="col-md-1">Order Id</td>
+                                <td class="col-md-2">${order.id}</td>
                             <td class="col-md-3"></td>
                         </tr>
                         <tr>
                             <td class="col-md-1">Order Uuid</td>
-                            <td class="col-md-2"><input type="text" name="orderUuid" value="${order.uuid}" readonly /></td>
+                            <td class="col-md-2">${order.uuid}</td>
                             <td class="col-md-3"></td>
                         </tr>
                         <tr>
                             <td class="col-md-1">Order Href</td>
-                            <td class="col-md-2"><input type="text" name="orderHref" value="${order.href}" readonly /></td>
+                            <td class="col-md-2"><a href=".${order.href}" target="_blank" >${order.href}</a></td>
                             <td class="col-md-3"></td>
                         </tr>
                         <tr>
                             <td class="col-md-1">Order Owner</td>
-                            <td class="col-md-2"><input type="text" name="orderHref" value="${order.orderOwner.name}" readonly /></td>
+                            <td class="col-md-2">${order.orderOwner.name}</td>
                             <td class="col-md-3"></td>
                         </tr>
                         <tr>
                             <td class="col-md-1">Order Name</td>
-                            <td class="col-md-2"><input type="text" name="orderName" value="${order.name}" readonly /></td>
+                            <td class="col-md-2">${order.name}</td>
                             <td class="col-md-3"></td>
                         </tr>
                         <tr>
                             <td class="col-md-1">Order Description</td>
-                            <td class="col-md-2"><input type="text" name="orderDescription" value="${order.description}" readonly /></td>
+                            <td class="col-md-2">${order.description}</td>
                             <td class="col-md-3"></td>
                         </tr>
                         <tr>
                             <td class="col-md-1">Order Status</td>
-                            <td class="col-md-2"><input type="text" name="orderStatus" value="${order.status}" readonly /></td>
+                            <td class="col-md-2">${order.status}</td>
                             <td class="col-md-3"></td>
                         </tr>
                         <tr>
                             <td class="col-md-1">Order Resource Access</td>
-                            <td class="col-md-2"><input type="text" name="orderStatus" value="${order.resourceAccess}" readonly /></td>
+                            <td class="col-md-2">${order.resourceAccess}</td>
                             <td class="col-md-3"></td>
                         </tr>
                         <tr>
                             <td class="col-md-1">Latest Update to Order</td>
-                            <td class="col-md-2"><input type="text" name="orderDate" value="<fmt:formatDate pattern="${DATE_FORMAT}" value="${order.orderDate}" />" readonly /></td>
+                            <td class="col-md-2"><fmt:formatDate pattern="${DATE_FORMAT}" value="${order.orderDate}" /></td>
                             <td class="col-md-3"></td>
                         </tr>
                         <tr>
                             <td class="col-md-1">Start Date of Order</td>
-                            <td class="col-md-2"><input type="text" name="startDate" value="<fmt:formatDate pattern="${DATE_FORMAT}" value="${order.startDate}" />" readonly /></td>
+                            <td class="col-md-2"><fmt:formatDate pattern="${DATE_FORMAT}" value="${order.startDate}" /></td>
                             <td class="col-md-3"></td>
                         </tr>
                         <tr>
                             <td class="col-md-1">End Date of Order</td>
-                            <td class="col-md-2"><input type="text" name="endDate" value="<fmt:formatDate pattern="${DATE_FORMAT}" value="${order.endDate}" />" readonly /></td>
+                            <td class="col-md-2"><fmt:formatDate pattern="${DATE_FORMAT}" value="${order.endDate}" /></td>
                             <td class="col-md-3"></td>
                         </tr>
 
@@ -209,7 +211,7 @@ private List<ResourceHref> resourceOrService;
                         </tr>
                         <tr>
                             <td class="col-md-1">Order Href</td>
-                            <th class="col-md-2">${changeOrder.href}</th>
+                            <th class="col-md-2"><a href=".${changeOrder.href}" target="_blank" >${changeOrder.href}</a></th>
                             <th class="col-md-3"></th>
                         </tr>
                         <tr>
@@ -221,15 +223,15 @@ private List<ResourceHref> resourceOrService;
                             <td class="col-md-1">Order Name</td>
                             <td class="col-md-2"><input type="text" id="changeOrderName" name="changeOrderName" value="${changeOrder.name}" <c:if test="${changeOrder.name == null}">disabled style="display:none"</c:if> /></td>
                             <td class="col-md-3"><button class="btn btn-sm" type="button" onclick="toggleVisabilityAndDisabled('changeOrderName')" <c:if test="${! allowChangeButtons}">disabled style="display:none"</c:if>>change</button></td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-1">Order Description</td>
-                            <td class="col-md-2"><input type="text" id="changeOrderDescription" name="changeOrderDescription" value="${changeOrder.description}" <c:if test="${changeOrder.description == null}">disabled style="display:none"</c:if> /></td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-1">Order Description</td>
+                                <td class="col-md-2"><input type="text" id="changeOrderDescription" name="changeOrderDescription" value="${changeOrder.description}" <c:if test="${changeOrder.description == null}">disabled style="display:none"</c:if> /></td>
                             <td class="col-md-3"><button class="btn btn-sm" type="button" onclick="toggleVisabilityAndDisabled('changeOrderDescription')" <c:if test="${! allowChangeButtons}">disabled style="display:none"</c:if>>change</button></td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-1">Order Status</td>
-                            <td class="col-md-2">${changeOrder.status}</td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-1">Order Status</td>
+                                <td class="col-md-2">${changeOrder.status}</td>
                             <td class="col-md-3"></td>
                         </tr>
                         <tr>
@@ -246,12 +248,12 @@ private List<ResourceHref> resourceOrService;
                             <td class="col-md-1">Start Date of Order</td>
                             <td class="col-md-2"><input type="text" id="changeOrderStartDate" name="changeOrderStartDate" value="<fmt:formatDate pattern="${DATE_FORMAT}" value="${changeOrder.startDate}" />" <c:if test="${changeOrder.startDate == null}">disabled style="display:none"</c:if> /></td>
                             <td class="col-md-3"><button class="btn btn-sm" type="button" onclick="toggleVisabilityAndDisabled('changeOrderStartDate')" <c:if test="${! allowChangeButtons}">disabled style="display:none"</c:if>>change</button></td>
-                        </tr>
-                        <tr>
-                            <td class="col-md-1">End Date of Order</td>
-                            <td class="col-md-2"><input type="text" id="changeOrderEndDate"  name="changeOrderEndDate" value="<fmt:formatDate pattern="${DATE_FORMAT}" value="${changeOrder.endDate}" />" <c:if test="${changeOrder.endDate == null}">disabled style="display:none"</c:if> /></td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-1">End Date of Order</td>
+                                <td class="col-md-2"><input type="text" id="changeOrderEndDate"  name="changeOrderEndDate" value="<fmt:formatDate pattern="${DATE_FORMAT}" value="${changeOrder.endDate}" />" <c:if test="${changeOrder.endDate == null}">disabled style="display:none"</c:if> /></td>
                             <td class="col-md-3"><button class="btn btn-sm" type="button" onclick="toggleVisabilityAndDisabled('changeOrderEndDate')" <c:if test="${! allowChangeButtons}">disabled style="display:none"</c:if>>change</button></td>
-                        </tr>
+                            </tr>
                         </tbody>
                     </table>
                 <c:if test="${allowChangeButtons}">
@@ -273,7 +275,7 @@ private List<ResourceHref> resourceOrService;
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <input type="hidden" name="action" value="acceptChangeRequest">
                 <input type="hidden" name="changeRequestUUID" value="${orderChangeRequest.uuid}">
-                  <input type="hidden" name="orderUuid" value="${order.uuid}"/>
+                <input type="hidden" name="orderUuid" value="${order.uuid}"/>
                 <button class="btn" type="submit" >Accept Change Request</button>
                 </form>
                 <form action="./viewModifyOrder" method="POST">

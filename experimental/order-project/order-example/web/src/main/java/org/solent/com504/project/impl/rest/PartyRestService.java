@@ -74,7 +74,8 @@ public class PartyRestService {
     @GET
     @Path("/party")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML}) 
+    // @Produces({"application/json" , "application/xml; qs=0.75"})
     @Transactional(readOnly = true)
     public Response getPartys(@Context UriInfo uriInfo) {
         try {
@@ -122,7 +123,8 @@ public class PartyRestService {
     @GET
     @Path("/party/{uuid}")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML}) 
+    // @Produces({"application/json" , "application/xml; qs=0.75"})
     @Transactional(readOnly = true)
     public Response getParty(@PathParam("uuid") String uuid, @Context UriInfo uriInfo) {
         try {
@@ -178,7 +180,8 @@ public class PartyRestService {
     @POST
     @Path("/party/")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML}) 
+    // @Produces({"application/json" , "application/xml; qs=0.75"})
     @Transactional
     public Response createParty(@QueryParam("partyName") String partyName,
             @Context UriInfo uriInfo) {

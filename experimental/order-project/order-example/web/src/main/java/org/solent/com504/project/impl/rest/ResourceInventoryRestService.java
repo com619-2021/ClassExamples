@@ -63,7 +63,8 @@ public class ResourceInventoryRestService {
     @GET
     @Path("/inventory/{uuid}")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML}) 
+    // @Produces({"application/json" , "application/xml; qs=0.75"})
     @Transactional(readOnly = true)
     public Response getResourceInventoryByuuid(@PathParam("uuid") String uuid, @Context UriInfo uriInfo) {
         try {
@@ -116,7 +117,8 @@ public class ResourceInventoryRestService {
     @POST
     @Path("/inventory")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML}) 
+    // @Produces({"application/json" , "application/xml; qs=0.75"})
     @Transactional
     public Response postCreateResourceInventory(Resource resource, @Context UriInfo uriInfo) {
         try {
@@ -142,7 +144,8 @@ public class ResourceInventoryRestService {
     @PUT
     @Path("/inventory")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML}) 
+    // @Produces({"application/json" , "application/xml; qs=0.75"})
     @Transactional
     public Response putUpdateResourceInventory(Resource resource, @Context UriInfo uriInfo) {
         try {
@@ -170,7 +173,8 @@ public class ResourceInventoryRestService {
     @GET
     @Path("/inventory")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML}) 
+    // @Produces({"application/json" , "application/xml; qs=0.75"})
     @Transactional(readOnly = true)
     public Response getResourceInventory(@QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @Context UriInfo uriInfo) {
 
@@ -202,7 +206,8 @@ public class ResourceInventoryRestService {
     @POST
     @Path("/getInventoryByTemplate")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML}) 
+       // @Produces({"application/json" , "application/xml; qs=0.75"})
     @Transactional(readOnly = true)
     public Response getResourceInventoryByTemplate(Resource resourceSearchTemplate, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @Context UriInfo uriInfo) {
 

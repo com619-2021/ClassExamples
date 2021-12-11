@@ -96,9 +96,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public ReplyMessage postCreateOrder(Order order, String ownerPartyUUID) {
         order.setId(null); // may be different db id
-        order.setUuid(UUID.randomUUID().toString()); // always create a new uuid fo new order
-        order.setStatus(OrderStatus.ACKNOWLEGED); // first creation
-        
+
         List<Party> partyList = partyRepository.findByUuid(ownerPartyUUID);
         if (partyList.isEmpty()) {
             throw new IllegalArgumentException("cannot create order party not found ownerPartyUUID=" + ownerPartyUUID);
@@ -106,7 +104,9 @@ public class OrderServiceImpl implements OrderService {
         Party resourceOwner = partyList.get(0);
         
         OrderEntity orderEntity;
+
         if (ResourceAccess.EXTERNAL.equals(order.getResourceAccess())) {
+            // external order creation only done AFTER order placed in foreign machine
             orderEntity = new OrderEntity();
             orderEntity.setResourceAccess(ResourceAccess.EXTERNAL);
             orderEntity.setExternalOrder(order);
@@ -116,14 +116,17 @@ public class OrderServiceImpl implements OrderService {
             // use external order uuid as uid of this order
             orderEntity.setUuid(order.getUuid());
         } else {
+            // internal order
+            order.setStatus(OrderStatus.ACKNOWLEGED); // first creation
             orderEntity = OrderMapper.INSTANCE.orderToOrderEntity(order);
             // create new uuid if this is an order on our machine
             orderEntity.setUuid(UUID.randomUUID().toString());
             orderEntity.setId(null); // may be differnt db id
             orderEntity.setResourceAccess(ResourceAccess.INTERNAL);
+            orderEntity.setHref("/rest/solent-api/order/v1/order/"+orderEntity.getUuid());
 
             // create resource references
-            // check if resources exists and inject if do
+            // check if resources exists and inject into order if do
             List<Resource> newResources = new ArrayList();
             for (Resource interimResource : orderEntity.getResourceOrService()) {
                 List<Resource> resourceList = resourceRepository.findByUuid(interimResource.getUuid());
@@ -134,9 +137,8 @@ public class OrderServiceImpl implements OrderService {
             }
             orderEntity.setResourceOrService(newResources);
         }
-        orderEntity.setHref("/rest/solent-api/order/v1/order/"+orderEntity.getUuid());
-        orderEntity.setOrderOwner(resourceOwner);
         
+        orderEntity.setOrderOwner(resourceOwner);
         orderEntity = orderRepository.saveAndFlush(orderEntity);
 
         //create a detached order dto for reply message
@@ -145,13 +147,13 @@ public class OrderServiceImpl implements OrderService {
         // now update order change requests
         OrderChangeRequestEntity orderChangeRequestEntity = new OrderChangeRequestEntity();
         orderChangeRequestEntity.setUuid(UUID.randomUUID().toString());
-        orderChangeRequestEntity.setHref("/rest/solent-api/order/v1/orderChangeRequest/"+orderEntity.getUuid());
+        orderChangeRequestEntity.setHref("/rest/solent-api/order/v1/orderChangeRequest/"+orderChangeRequestEntity.getUuid());
         orderChangeRequestEntity.setChangeRequest(detachedOrder);
         orderChangeRequestEntity.setStatus(ChangeStatus.APPROVED);
-        orderChangeRequestEntity.setChangeReason("created directly from api");
+        orderChangeRequestEntity.setChangeReason("first order creation from api");
         orderChangeRequestEntity.setRequestDate(new Date());
         orderChangeRequestEntity.setApprovedDate(new Date());
-        orderChangeRequestEntity.setOrderUuid(orderEntity.getUuid());
+        orderChangeRequestEntity.setOrderUuid(detachedOrder.getUuid());
         orderChangeRequestRepository.save(orderChangeRequestEntity);
         orderEntity.addOrderChangeRequest(orderChangeRequestEntity);
         orderEntity = orderRepository.saveAndFlush(orderEntity);
@@ -241,7 +243,7 @@ public class OrderServiceImpl implements OrderService {
         orderChangeRequestEntity.setChangeReason("order updated directly from api");
         orderChangeRequestEntity.setRequestDate(new Date());
         orderChangeRequestEntity.setApprovedDate(new Date());
-        orderChangeRequestEntity.setOrderUuid(orderEntity.getUuid());
+        orderChangeRequestEntity.setOrderUuid(detachedOrder.getUuid());
         orderChangeRequestRepository.save(orderChangeRequestEntity);
 
         orderEntity.addOrderChangeRequest(orderChangeRequestEntity);

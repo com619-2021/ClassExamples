@@ -73,7 +73,8 @@ public class OrderRestService {
     @GET
     @Path("/order/{uuid}")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML}) 
+    // @Produces({"application/json", "application/xml; qs=0.75"})
     @Transactional(readOnly = true)
     public Response getOrderByuuid(@PathParam("uuid") String uuid, @Context UriInfo uriInfo) {
         try {
@@ -100,7 +101,7 @@ public class OrderRestService {
             })
     @DELETE
     @Path("/order/{uuid}")
-    @Transactional()
+    @Transactional
     public Response deleteOrderByUuid(@PathParam("uuid") String uuid, @Context UriInfo uriInfo) {
         try {
             ReplyMessage replyMessage = orderService.deleteOrderByUuid(uuid);
@@ -126,7 +127,8 @@ public class OrderRestService {
     @POST
     @Path("/order")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML}) 
+    // @Produces({"application/json", "application/xml; qs=0.75"})
     @Transactional
     public Response postCreateOrder(Order order, @Context UriInfo uriInfo) {
         try {
@@ -134,8 +136,8 @@ public class OrderRestService {
             if (order == null) {
                 throw new IllegalArgumentException("you must supply an order body");
             }
-            if (order.getOrderOwner() == null || order.getOrderOwner().getUuid() ==null) {
-                throw new IllegalArgumentException("you must supply an order owner href uuid "+ order.getOrderOwner());
+            if (order.getOrderOwner() == null || order.getOrderOwner().getUuid() == null) {
+                throw new IllegalArgumentException("you must supply an order owner href uuid " + order.getOrderOwner());
             }
             ReplyMessage replyMessage = orderService.postCreateOrder(order, ownerPartyUUID);
             replyMessage.setCode(Response.Status.OK.getStatusCode());
@@ -161,7 +163,8 @@ public class OrderRestService {
     @PUT
     @Path("/order")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML}) 
+    // @Produces({"application/json", "application/xml; qs=0.75"})
     @Transactional
     public Response putUpdateOrder(Order order, @Context UriInfo uriInfo) {
         try {
@@ -191,7 +194,9 @@ public class OrderRestService {
     @GET
     @Path("/order")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML}) 
+    // @Produces({"application/json", "application/xml; qs=0.75"})
+    @Transactional(readOnly = true)
     public Response getOrder(@QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @Context UriInfo uriInfo) {
         try {
             ReplyMessage replyMessage = orderService.getOrderByTemplate(null, offset, limit);
@@ -220,7 +225,8 @@ public class OrderRestService {
     @POST
     @Path("/getOrderByTemplate")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML}) 
+    // @Produces({"application/json", "application/xml; qs=0.75"})
     @Transactional(readOnly = true)
     public Response getOrderByTemplate(Order orderSearchTemplate, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @Context UriInfo uriInfo) {
 

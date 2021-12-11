@@ -64,7 +64,8 @@ public class ResourceCatalogRestService {
     @GET
     @Path("/catalog/{uuid}")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML}) 
+    // @Produces({"application/json" , "application/xml; qs=0.75"})
     @Transactional(readOnly = true)
     public Response getResourceCatalogByuuid(@PathParam("uuid") String uuid, @Context UriInfo uriInfo) {
         try {
@@ -113,7 +114,8 @@ public class ResourceCatalogRestService {
     @POST
     @Path("/catalog")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML}) 
+    // @Produces({"application/json" , "application/xml; qs=0.75"})
     @Transactional
     public Response postCreateResourceCatalog(Resource resource, @Context UriInfo uriInfo) {
         try {
@@ -139,7 +141,8 @@ public class ResourceCatalogRestService {
     @PUT
     @Path("/catalog")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML}) 
+    // @Produces({"application/json" , "application/xml; qs=0.75"})
     @Transactional
     public Response putUpdateResourceCatalog(Resource resource, @Context UriInfo uriInfo) {
         try {
@@ -167,7 +170,8 @@ public class ResourceCatalogRestService {
     @GET
     @Path("/catalog")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML}) 
+    // @Produces({"application/json" , "application/xml; qs=0.75"})
     public Response getResourceCatalog(@QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @Context UriInfo uriInfo) {
         try {
             ReplyMessage replyMessage = resourceCatalogService.getResourceCatalogByTemplate(null, offset, limit);
@@ -196,7 +200,8 @@ public class ResourceCatalogRestService {
     @POST
     @Path("/getCatalogByTemplate")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML}) 
+    // @Produces({"application/json" , "application/xml; qs=0.75"})
     @Transactional(readOnly = true)
     public Response getResourceCatalogByTemplate(ResourceCatalog resourceSearchTemplate, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @Context UriInfo uriInfo) {
 

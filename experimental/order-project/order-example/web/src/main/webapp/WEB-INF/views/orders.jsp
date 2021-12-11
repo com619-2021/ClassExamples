@@ -5,6 +5,7 @@
 --%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!-- start of contact.jsp selectedPage=${selectedPage}-->
 <jsp:include page="header.jsp" />
 
@@ -55,9 +56,9 @@
                         <td>${order.name}</td>
                         <td>${order.status}</td>
                         <td>${order.resourceAccess}</td>
-                        <td>${order.orderDate}</td>
-                        <td>${order.startDate}</td>
-                        <td>${order.endDate}</td>
+                        <td><fmt:formatDate pattern="${DATE_FORMAT}" value="${order.orderDate}" /></td>
+                        <td><fmt:formatDate pattern="${DATE_FORMAT}" value="${order.startDate}" /></td>
+                        <td><fmt:formatDate pattern="${DATE_FORMAT}" value="${order.endDate}" /></td>
 
                         <td>
                             <form action="./viewModifyOrder" method="GET">

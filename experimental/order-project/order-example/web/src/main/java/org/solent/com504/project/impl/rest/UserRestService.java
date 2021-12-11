@@ -100,7 +100,8 @@ public class UserRestService {
     @GET
     @Path("/user")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML}) 
+    // @Produces({"application/json" , "application/xml; qs=0.75"})
     @Transactional(readOnly = true)
     public Response getUsers(@Context UriInfo uriInfo) {
         try {
@@ -145,7 +146,8 @@ public class UserRestService {
     @GET
     @Path("/user/{username}")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML}) 
+    // @Produces({"application/json" , "application/xml; qs=0.75"})
     public Response getUser(@PathParam("username") String username, @Context UriInfo uriInfo) {
         try {
 
@@ -193,7 +195,8 @@ public class UserRestService {
     @POST
     @Path("/user")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML}) 
+        // @Produces({"application/json" , "application/xml; qs=0.75"})
     @Transactional
     public Response createUser(@QueryParam("name") String name, 
             @QueryParam("password") String password,

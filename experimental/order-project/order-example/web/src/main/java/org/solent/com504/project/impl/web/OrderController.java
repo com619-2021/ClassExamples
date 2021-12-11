@@ -1,5 +1,6 @@
 package org.solent.com504.project.impl.web;
 
+import com.sun.tools.sjavac.Log;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.DateFormat;
@@ -140,6 +141,7 @@ public class OrderController {
         String message = "";
 
         Order order = null;
+        Order changeOrder = null;
         OrderChangeRequest orderChangeRequest = null;
 
         // find order change request and order from order change request
@@ -151,12 +153,17 @@ public class OrderController {
             }
             orderChangeRequest = replyMessage.getOrderChangeRequestList().get(0);
             orderUuid = orderChangeRequest.getOrderUuid();
-            replyMessage = orderService.getOrderByUuid(orderUuid);
-            List<Order> orderList = replyMessage.getOrderList();
-            if (orderList.isEmpty()) {
-                throw new IllegalArgumentException("cannot find order for orderUuid=" + orderUuid);
+            changeOrder = orderChangeRequest.getChangeRequest();
+            if (orderUuid != null) { // if null then this is an external order
+                replyMessage = orderService.getOrderByUuid(orderUuid);
+                List<Order> orderList = replyMessage.getOrderList();
+                if (orderList.isEmpty()) {
+                    throw new IllegalArgumentException("cannot find order for orderUuid=" + orderUuid);
+                }
+                order = orderList.get(0);
+            } else {
+                order = dummyExternalOrder();
             }
-            order = orderList.get(0);
 
         } else if ("viewOrderDetails".equals(action)) {
             // find order and order change request from order
@@ -173,13 +180,14 @@ public class OrderController {
                 throw new IllegalArgumentException("cannot find orderChangeRequest for changeRequestUUID=" + changeRequestUUID);
             }
             orderChangeRequest = replyMessage.getOrderChangeRequestList().get(0);
+            changeOrder = orderChangeRequest.getChangeRequest();
 
         } else {
             throw new IllegalArgumentException("unknown action for page action=" + action);
         }
 
         model.addAttribute("order", order);
-        model.addAttribute("changeOrder", order);
+        model.addAttribute("changeOrder", changeOrder);
         model.addAttribute("changeRequestUUID", changeRequestUUID);
         model.addAttribute("orderChangeRequest", orderChangeRequest);
 
@@ -189,10 +197,29 @@ public class OrderController {
 
         model.addAttribute("resourceAccessValues", ResourceAccess.values());
         model.addAttribute("orderStatusValues", OrderStatus.values());
-        model.addAttribute("allowChangeButtons", true);
+        if (ChangeStatus.APPROVED == orderChangeRequest.getStatus() || ChangeStatus.REJECTED == orderChangeRequest.getStatus()) {
+            model.addAttribute("allowChangeButtons", false);
+        } else {
+            model.addAttribute("allowChangeButtons", true);
+        }
         model.addAttribute("selectedPage", "order");
         model.addAttribute("DATE_FORMAT", DATE_FORMAT);
         return "viewModifyOrder";
+    }
+
+    private Order dummyExternalOrder() {
+        Order order = new Order();
+        order.setHref(null);
+        order.setId(null);
+        order.setUuid("EXTERNAL UNDEFINED");
+        order.setHref("EXTERNAL UNDEFINED");
+        order.setResourceOrService(new ArrayList());
+        order.setOrderDate(new Date());
+        order.setStartDate(new Date());
+        order.setEndDate(new Date(order.getStartDate().getTime() + 24 * 60 * 60 * 1000)); // plus 24 hours
+        order.setResourceAccess(ResourceAccess.EXTERNAL);
+        order.setStatus(OrderStatus.PENDING_PLACEMENT);
+        return order;
     }
 
     @RequestMapping(value = {"/viewModifyOrder"}, method = RequestMethod.POST)
@@ -223,6 +250,7 @@ public class OrderController {
         // populate change order
         Order changeOrder = new Order();
         try {
+            changeOrder.setResourceAccess(null);
             if (changeOrderName != null) {
                 changeOrder.setName(changeOrderName);
             }
@@ -239,56 +267,60 @@ public class OrderController {
             }
             if (changeOrderEndDate != null) {
                 Date endDate = df.parse(changeOrderEndDate);
-                changeOrder.setStartDate(endDate);
+                changeOrder.setEndDate(endDate);
             }
-
+            LOG.debug("viewModifyOrder update change request with:" + changeOrder);
         } catch (Exception ex) {
             errorMessage = "problem reading order change request: " + ex.getMessage();
             LOG.error("problem reading order change request: ", ex);
         }
 
-        Order order = new Order();
-        OrderChangeRequest orderChangeRequest = new OrderChangeRequest();
+        Order order;
+        OrderChangeRequest orderChangeRequest;
 
         if ("addNewOrder".equals(action)) {
-            ResourceAccess raccess = ResourceAccess.valueOf(orderResourceAccess);
-            order.setResourceAccess(raccess);
-            if (ResourceAccess.EXTERNAL == raccess) {
+            Party party = partyService.findByUuid(ownerPartyUUID);
+            if (party == null) {
+                throw new IllegalArgumentException("unknown party for ownerPartyUUID=" + ownerPartyUUID);
+            }
+            PartyHref orderOwner = PartyMapper.INSTANCE.partyToHref(party);
 
-                // external order not placed until change requested
-                Party party = partyService.findByUuid(ownerPartyUUID);
-                if (party == null) {
-                    throw new IllegalArgumentException("unknown party for ownerPartyUUID=" + ownerPartyUUID);
-                }
-                PartyHref orderOwner = PartyMapper.INSTANCE.partyToHref(party);
-                order = new Order();
-                order.setOrderDate(new Date());
-                order.setStartDate(new Date());
-                order.setEndDate(new Date(order.getStartDate().getTime() + 24 * 60 * 60 * 1000)); // plus 24 hours
-                order.setResourceAccess(ResourceAccess.EXTERNAL);
-                order.setOrderOwner(orderOwner); //. new OrderChangeRequest()
+            // check if external or internal resource access
+            ResourceAccess raccess = ResourceAccess.valueOf(orderResourceAccess);
+            if (ResourceAccess.EXTERNAL == raccess) {
+                // external order only for display
+                order = dummyExternalOrder();
+                order.setOrderOwner(orderOwner); // used to contact external machine
+                String changeRequestorPartyUUID = orderOwner.getUuid(); // should be the initiator of this action 
                 orderChangeRequest = new OrderChangeRequest();
                 orderChangeRequest.setChangeRequest(order);
                 orderChangeRequest.setChangeReason("new external order");
+                // external order not placed until change requested
                 orderChangeRequest.setStatus(ChangeStatus.PENDING_EXTERNAL);
-                message = "new order external order template created";
+                replyMessage = orderChangeRequestService.postCreateOrderChangeRequest(orderChangeRequest, changeRequestorPartyUUID);
+                List<OrderChangeRequest> orderChangeRequestList = replyMessage.getOrderChangeRequestList();
+                orderChangeRequest = replyMessage.getOrderChangeRequestList().get(0);
+                changeOrder = orderChangeRequest.getChangeRequest();
+                message = "New external order change request created. You must now fill in the request and submit order";
             } else {
                 // internal order
                 order = new Order();
                 order.setOrderDate(new Date());
                 order.setStartDate(new Date());
                 order.setEndDate(new Date(order.getStartDate().getTime() + 24 * 60 * 60 * 1000)); // plus 24 hours
+                order.setResourceAccess(ResourceAccess.INTERNAL);
+                order.setOrderOwner(orderOwner);
                 replyMessage = orderService.postCreateOrder(order, ownerPartyUUID);
                 order = replyMessage.getOrderList().get(0);
                 changeRequestUUID = order.getChangeRequests().get(0).getUuid();
-
                 replyMessage = orderChangeRequestService.getOrderChangeRequestByUuid(changeRequestUUID);
                 List<OrderChangeRequest> orderChangeRequestList = replyMessage.getOrderChangeRequestList();
                 if (orderChangeRequestList.isEmpty()) {
                     throw new IllegalArgumentException("cannot find orderChangeRequest for changeRequestUUID=" + changeRequestUUID);
                 }
                 orderChangeRequest = replyMessage.getOrderChangeRequestList().get(0);
-                message = "new order internal order created";
+                changeOrder = orderChangeRequest.getChangeRequest();
+                message = "new internal order created";
             }
 
         } else if ("synchroniseOrder".equals(action)) {
@@ -300,27 +332,45 @@ public class OrderController {
             }
             order = replyMessage.getOrderList().get(0);
 
+            replyMessage = orderChangeRequestService.getOrderChangeRequestByUuid(changeRequestUUID);
+            List<OrderChangeRequest> orderChangeRequestList = replyMessage.getOrderChangeRequestList();
+            if (orderChangeRequestList.isEmpty()) {
+                throw new IllegalArgumentException("cannot find orderChangeRequest for changeRequestUUID=" + changeRequestUUID);
+            }
+            orderChangeRequest = replyMessage.getOrderChangeRequestList().get(0);
+            changeOrder = orderChangeRequest.getChangeRequest();
+
             message = "order synchronised";
 
         } else if ("newChangeRequest".equals(action)) {
 
+            // create new change request for order
+            //find order
             replyMessage = orderService.getOrderByUuid(orderUuid);
             List<Order> orderList = replyMessage.getOrderList();
             if (orderList.isEmpty()) {
                 throw new IllegalArgumentException("cannot find order for orderUuid=" + orderUuid);
             }
             order = replyMessage.getOrderList().get(0);
+
+            // create new chagne request object
             orderChangeRequest = new OrderChangeRequest();
             orderChangeRequest.setStatus(ChangeStatus.REQUESTED);
             orderChangeRequest.setChangeRequest(order);
             orderChangeRequest.setOrderUuid(orderUuid);
+
+            // find order owner
             String changeRequestorPartyUUID = order.getOrderOwner().getUuid(); //todo change to session user
+
+            // create a new change request
             replyMessage = orderChangeRequestService.postCreateOrderChangeRequest(orderChangeRequest, changeRequestorPartyUUID);
             List<OrderChangeRequest> orderChangeRequestList = replyMessage.getOrderChangeRequestList();
             if (orderChangeRequestList.isEmpty()) {
                 throw new IllegalArgumentException("change request not created");
             }
-            changeRequestUUID = replyMessage.getOrderChangeRequestList().get(0).getUuid();
+            orderChangeRequest = replyMessage.getOrderChangeRequestList().get(0);
+            changeRequestUUID = orderChangeRequest.getUuid();
+            changeOrder = orderChangeRequest.getChangeRequest();
 
             // get updated order
             replyMessage = orderService.getOrderByUuid(orderUuid);
@@ -330,26 +380,31 @@ public class OrderController {
             }
             order = replyMessage.getOrderList().get(0);
 
-            // get updated order change request
-            replyMessage = orderChangeRequestService.getOrderChangeRequestByUuid(changeRequestUUID);
-            orderChangeRequestList = replyMessage.getOrderChangeRequestList();
-            if (orderChangeRequestList.isEmpty()) {
-                throw new IllegalArgumentException("cannot find orderChangeRequest for changeRequestUUID=" + changeRequestUUID);
-            }
-            orderChangeRequest = replyMessage.getOrderChangeRequestList().get(0);
             message = "new change request created";
 
         } else if ("updateChangeRequest".equals(action)) {
+            // get the original change request
             replyMessage = orderChangeRequestService.getOrderChangeRequestByUuid(changeRequestUUID);
             List<OrderChangeRequest> orderChangeRequestList = replyMessage.getOrderChangeRequestList();
             if (orderChangeRequestList.isEmpty()) {
                 throw new IllegalArgumentException("cannot find orderChangeRequest for changeRequestUUID=" + changeRequestUUID);
             }
             orderChangeRequest = replyMessage.getOrderChangeRequestList().get(0);
-            Order changeRequest = orderChangeRequest.getChangeRequest();
 
-            Order updatedOrder = OrderMapper.INSTANCE.updateOrderFromOrder(changeOrder, changeRequest);
+            // get the original changeRequestOrder
+            Order changeRequestOrder = orderChangeRequest.getChangeRequest();
+
+            LOG.debug("************ changeRequestOrder=" + changeRequestOrder);
+            LOG.debug("************ changeOrder=" + changeOrder);
+
+            // update the order with the new date from the inputs
+            Order updatedOrder = OrderMapper.INSTANCE.updateOrderFromOrder(changeOrder, changeRequestOrder);
             orderChangeRequest.setChangeRequest(updatedOrder);
+            changeOrder = updatedOrder; // push this back to jsp model
+
+            LOG.debug("************ updatedOrder=" + updatedOrder);
+
+            // save the new change request
             orderChangeRequest.setRequestDate(new Date()); // update the request date on change
             replyMessage = orderChangeRequestService.putUpdateOrderChangeRequest(orderChangeRequest);
             if (orderChangeRequestList.isEmpty()) {
@@ -357,34 +412,61 @@ public class OrderController {
             }
             orderChangeRequest = replyMessage.getOrderChangeRequestList().get(0);
 
-            replyMessage = orderService.getOrderByUuid(orderUuid);
-            List<Order> orderList = replyMessage.getOrderList();
-            if (orderList.isEmpty()) {
-                throw new IllegalArgumentException("cannot find order for orderUuid=" + orderUuid);
+            // change request for external order
+            if (ResourceAccess.EXTERNAL == changeOrder.getResourceAccess()) {
+                order = dummyExternalOrder();
+            } else { // change request for internal order
+                orderUuid = orderChangeRequest.getOrderUuid();
+                replyMessage = orderService.getOrderByUuid(orderUuid);
+                List<Order> orderList = replyMessage.getOrderList();
+                if (orderList.isEmpty()) {
+                    throw new IllegalArgumentException("cannot find order for orderUuid=" + orderUuid);
+                }
+                order = orderList.get(0);
             }
-            order = orderList.get(0);
 
             message = "change request updated";
 
         } else if ("submitChangeRequest".equals(action)) {
-            replyMessage = orderService.getOrderByUuid(orderUuid);
-            List<Order> orderList = replyMessage.getOrderList();
-            if (orderList.isEmpty()) {
-                throw new IllegalArgumentException("cannot find order for orderUuid=" + orderUuid);
-            }
-            order = replyMessage.getOrderList().get(0);
-            Order updatedOrder = OrderMapper.INSTANCE.updateOrderFromOrder(changeOrder, order);
 
-            replyMessage = orderService.putUpdateOrder(updatedOrder);
-            orderList = replyMessage.getOrderList();
-            order = replyMessage.getOrderList().get(0);
+            replyMessage = orderChangeRequestService.getOrderChangeRequestByUuid(changeRequestUUID);
+            List<OrderChangeRequest> orderChangeRequestList = replyMessage.getOrderChangeRequestList();
+            if (orderChangeRequestList.isEmpty()) {
+                throw new IllegalArgumentException("cannot find orderChangeRequest for changeRequestUUID=" + changeRequestUUID);
+            }
+            orderChangeRequest = replyMessage.getOrderChangeRequestList().get(0);
+
+            if (orderChangeRequest.getOrderUuid() == null || ResourceAccess.EXTERNAL == orderChangeRequest.getChangeRequest().getResourceAccess()) {
+                // external
+                order = this.dummyExternalOrder();
+
+            } else { // internal
+                replyMessage = orderService.getOrderByUuid(orderChangeRequest.getOrderUuid());
+                List<Order> orderList = replyMessage.getOrderList();
+                if (orderList.isEmpty()) {
+                    throw new IllegalArgumentException("cannot find order for orderUuid=" + orderUuid);
+                }
+                order = replyMessage.getOrderList().get(0);
+
+                Order updatedOrder = OrderMapper.INSTANCE.updateOrderFromOrder(changeOrder, order);
+                replyMessage = orderService.putUpdateOrder(updatedOrder);
+                orderList = replyMessage.getOrderList();
+                order = replyMessage.getOrderList().get(0);
+            }
+
+            changeOrder = orderChangeRequest.getChangeRequest();
+
             message = "change request submitted";
 
         } else if ("acceptChangeRequest".equals(action)) {
             message = "change request accepted";
+            order = new Order();
+            orderChangeRequest = new OrderChangeRequest();
 
         } else if ("rejectChangeRequest".equals(action)) {
             message = "change request rejected";
+            order = new Order();
+            orderChangeRequest = new OrderChangeRequest();
 
         } else {
             throw new IllegalArgumentException("unknown action for page action=" + action);
@@ -413,33 +495,6 @@ public class OrderController {
         return "viewModifyOrder";
     }
 
-    private Map<String, String> selectedRolesMap(User user) {
-
-        List<String> availableRoles = userService.getAvailableUserRoleNames();
-
-        List<String> selectedRoles = new ArrayList();
-        for (Role role : user.getRoles()) {
-            selectedRoles.add(role.getName());
-            LOG.debug("user " + user.toString()
-                    + "roles from database:" + role.getName());
-        }
-
-        Map<String, String> selectedRolesMap = new LinkedHashMap();
-        for (String availableRole : availableRoles) {
-            if (selectedRoles.contains(availableRole)) {
-                selectedRolesMap.put(availableRole, "checked");
-                LOG.debug("availableRole " + availableRole
-                        + " user " + user.toString() + " available role:checked");
-            } else {
-                selectedRolesMap.put(availableRole, "");
-                LOG.debug("availableRole " + availableRole
-                        + " user " + user.toString() + " available role:not checked");
-            }
-        }
-
-        return selectedRolesMap;
-
-    }
 
     /* ******
     * methods to see order change requests
@@ -478,6 +533,34 @@ public class OrderController {
         model.addAttribute("selectedPage", "orderchange");
         model.addAttribute("DATE_FORMAT", DATE_FORMAT);
         return "orderchange";
+    }
+
+    private Map<String, String> selectedRolesMap(User user) {
+
+        List<String> availableRoles = userService.getAvailableUserRoleNames();
+
+        List<String> selectedRoles = new ArrayList();
+        for (Role role : user.getRoles()) {
+            selectedRoles.add(role.getName());
+            LOG.debug("user " + user.toString()
+                    + "roles from database:" + role.getName());
+        }
+
+        Map<String, String> selectedRolesMap = new LinkedHashMap();
+        for (String availableRole : availableRoles) {
+            if (selectedRoles.contains(availableRole)) {
+                selectedRolesMap.put(availableRole, "checked");
+                LOG.debug("availableRole " + availableRole
+                        + " user " + user.toString() + " available role:checked");
+            } else {
+                selectedRolesMap.put(availableRole, "");
+                LOG.debug("availableRole " + availableRole
+                        + " user " + user.toString() + " available role:not checked");
+            }
+        }
+
+        return selectedRolesMap;
+
     }
 
     /**

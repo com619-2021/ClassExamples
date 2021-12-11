@@ -5,11 +5,13 @@
 --%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<!-- start of contact.jsp selectedPage=${selectedPage}-->
+<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<!-- start of orderchange.jsp selectedPage=${selectedPage}-->
 <jsp:include page="header.jsp" />
 
 <!-- Begin page content -->
-<main role="main" class="container">    <div>
+<main role="main" class="container">
+    <div>
         <h1>Order Changes</h1>
         <p>showing ${orderChangeRequestListSize} order changes: </p>
         <table class="table">
@@ -44,7 +46,7 @@
                         <td>${orderChangeRequest.changeReason}</td>
                         <td>
                             <form action="./viewModifyOrder" method="GET">
-                                <input type="hidden" name="changeRequestUUID" value="${changeRequest.uuid}">
+                                <input type="hidden" name="changeRequestUUID" value="${orderChangeRequest.uuid}">
                                 <input type="hidden" name="action" value="viewChangeRequestUUID">
                                 <button class="btn" type="submit" >View Change Request</button>
                             </form> 
