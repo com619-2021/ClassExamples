@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -127,7 +128,7 @@ public class OrderServiceImpl implements OrderService {
 
             // create resource references
             // check if resources exists and inject into order if do
-            List<Resource> newResources = new ArrayList();
+            Set<Resource> newResources = new LinkedHashSet();
             for (Resource interimResource : orderEntity.getResourceOrService()) {
                 List<Resource> resourceList = resourceRepository.findByUuid(interimResource.getUuid());
                 if (resourceList.isEmpty()) {
@@ -198,7 +199,7 @@ public class OrderServiceImpl implements OrderService {
 
             // create resource references
             // check if resources exists and inject if do
-            List<Resource> newResources = new ArrayList();
+            Set<Resource> newResources = new LinkedHashSet();
             for (Resource interimResource : newOrderEntity.getResourceOrService()) {
                 List<Resource> resourceList = resourceRepository.findByUuid(interimResource.getUuid());
                 if (resourceList.isEmpty()) {

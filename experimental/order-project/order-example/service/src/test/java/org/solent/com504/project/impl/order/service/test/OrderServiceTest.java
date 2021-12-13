@@ -8,8 +8,10 @@ package org.solent.com504.project.impl.order.service.test;
 import org.solent.com504.project.impl.resource.service.test.*;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import org.solent.com504.project.impl.service.test.*;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import javax.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
@@ -111,7 +113,7 @@ public class OrderServiceTest {
         List<ResourceHref> resourceOrService = new ArrayList();
         resourceOrService.add(resourceHref);
 
-        order.setResourceOrService(resourceOrService);
+        order.setResourceOrService(new LinkedHashSet(resourceOrService));
         replyMessage = orderService.postCreateOrder(order, party1.getUuid());
 
         String jsonOut = PrintOutJson.getJson(replyMessage);
@@ -134,7 +136,7 @@ public class OrderServiceTest {
         updateOrder.setDescription("updated order description");
         updateOrder.setEndDate(new Date(new Date().getTime() + 1000 * 60 * 24));
         updateOrder.setStatus(OrderStatus.IN_PROGRESS);
-        List resourceOrService2 = updateOrder.getResourceOrService();
+        Set resourceOrService2 = updateOrder.getResourceOrService();
         resourceOrService2.add(resourceHref2);
         updateOrder.setResourceOrService(resourceOrService2);
 

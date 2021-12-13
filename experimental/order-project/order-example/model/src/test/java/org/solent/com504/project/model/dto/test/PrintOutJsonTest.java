@@ -7,7 +7,9 @@ package org.solent.com504.project.model.dto.test;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -49,7 +51,7 @@ public class PrintOutJsonTest {
         order.setParentOrder(parentOrderHref);
         
         
-        List<OrderHref> subOrders = Arrays.asList(parentOrderHref, parentOrderHref);
+        Set<OrderHref> subOrders = new LinkedHashSet(Arrays.asList(parentOrderHref, parentOrderHref));
         
         
         order.setSubOrders(subOrders);

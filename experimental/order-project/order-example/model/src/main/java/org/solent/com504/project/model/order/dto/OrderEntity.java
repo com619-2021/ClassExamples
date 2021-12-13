@@ -50,7 +50,7 @@ public class OrderEntity {
 
     private OrderEntity parentOrder;
 
-    private List<Resource> resourceOrService = new ArrayList<Resource>();
+    private Set<Resource> resourceOrService = new HashSet<Resource>();
 
     private OrderStatus status;
 
@@ -189,11 +189,11 @@ public class OrderEntity {
     }
 
     @OneToMany
-    public List<Resource> getResourceOrService() {
+    public Set<Resource> getResourceOrService() {
         return resourceOrService;
     }
 
-    public void setResourceOrService(List<Resource> resourceOrService) {
+    public void setResourceOrService(Set<Resource> resourceOrService) {
         this.resourceOrService = resourceOrService;
     }
 

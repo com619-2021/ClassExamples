@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -16,8 +17,11 @@ import javax.annotation.PostConstruct;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.solent.com504.project.impl.dao.order.springdata.OrderChangeRequestRepository;
 import org.solent.com504.project.impl.dao.order.springdata.OrderRepository;
 import org.solent.com504.project.impl.dao.party.springdata.PartyRepository;
+import org.solent.com504.project.impl.dao.resource.springdata.ResourceCatalogRepository;
+import org.solent.com504.project.impl.dao.resource.springdata.ResourceRepository;
 import org.solent.com504.project.impl.dao.user.springdata.RoleRepository;
 import org.solent.com504.project.impl.dao.user.springdata.UserRepository;
 import org.solent.com504.project.model.order.dto.Order;
@@ -51,6 +55,7 @@ public class DBInitialise {
 
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private RoleRepository roleRepository;
 
@@ -61,7 +66,29 @@ public class DBInitialise {
     private OrderRepository orderRepository;
 
     @Autowired
+    ResourceRepository resourceRepository = null;
+
+    @Autowired
+    ResourceCatalogRepository resourceCatalogRepository = null;
+
+    @Autowired
+    OrderChangeRequestRepository orderChangeRequestRepository = null;
+
+    @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    public void resetDatabase() {
+
+        orderChangeRequestRepository.deleteAll();
+        orderRepository.deleteAll();
+        resourceRepository.deleteAll();
+        resourceCatalogRepository.deleteAll();
+        partyRepository.deleteAll();
+        userRepository.deleteAll();
+        roleRepository.deleteAll();
+        init();
+
+    }
 
     @PostConstruct
     public void init() {
@@ -132,7 +159,6 @@ public class DBInitialise {
 //            OrderEntity orderEntity = OrderMapper.INSTANCE.orderToOrderEntity(mockOrder);
 //            orderRepository.save(orderEntity);
 //        }
-
     }
 
     //TODO REMOVE
@@ -164,7 +190,7 @@ public class DBInitialise {
         tmporder.setResourceAccess(ResourceAccess.EXTERNAL);
         OrderHref parent = new OrderHref();
         tmporder.setParentOrder(parent);
-        tmporder.setSubOrders(Arrays.asList(parent, parent));
+        tmporder.setSubOrders(new LinkedHashSet(Arrays.asList(parent, parent)));
 
         OrderChangeRequestHref changehref1 = new OrderChangeRequestHref();
         changehref1.setUuid(UUID.randomUUID().toString());

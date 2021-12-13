@@ -29,16 +29,16 @@
         <link href="./resources/css/navbar.css" rel="stylesheet">
         <script>
             function refreshParent() {
-                window.opener.location.href ='./viewModifyOrder?action=viewChangeRequestUUID&changeRequestUUID=${changeRequestUUID}' ;
+                window.opener.location.href = './viewModifyOrder?action=viewChangeRequestUUID&changeRequestUUID=${changeRequestUUID}';
             }
-            
+
             function refreshParent2() {
                 window.opener.location.reload(true);
             }
         </script>
     </head>
     <body onunload="javascript:refreshParent()">
-    <!--<body>-->
+        <!--<body>-->
         <main role="main" class="container">
             <div>
                 <h1>Select Resources to update change request ${changeRequestUUID}</h1>
@@ -91,7 +91,10 @@
                     <input  type="hidden" name="changeRequestUUID"" value="${changeRequestUUID}" />
                     <button class="btn" type="submit" >Add Selected Resources</button>
                 </form>
-            </div>
+            </div><BR>
+            <button class="btn" type="button" 
+                    onclick="refreshParent(); window.open('', '_self', ''); window.close();">Close</button>
+
         </main>
     </body>
 </html>

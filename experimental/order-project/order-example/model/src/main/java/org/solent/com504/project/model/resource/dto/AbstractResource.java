@@ -1,6 +1,7 @@
 package org.solent.com504.project.model.resource.dto;
 
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -123,11 +124,38 @@ public abstract class  AbstractResource {
     public void setDescription(String description) {
         this.description = description;
     }
+    
 
     @Override
     public String toString() {
         return "Resource{" + "id=" + id + ", href=" + href + ", uuid=" + uuid + ", name=" + name + ", characteristics=" + characteristics + ", resourceOwner=" + resourceOwner + ", resourceController=" + resourceController + ", resourceTypeName=" + resourceTypeName + ", description=" + description + '}';
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 11 * hash + Objects.hashCode(this.uuid);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AbstractResource other = (AbstractResource) obj;
+        if (!Objects.equals(this.uuid, other.uuid)) {
+            return false;
+        }
+        return true;
+    }
+    
     
     
     

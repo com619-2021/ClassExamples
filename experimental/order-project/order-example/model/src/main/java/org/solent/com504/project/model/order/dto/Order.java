@@ -3,6 +3,7 @@ package org.solent.com504.project.model.order.dto;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -30,7 +31,7 @@ public class Order {
 
     @XmlElementWrapper(name = "subOrders")
     @XmlElement(name = "orderHref")
-    private List<OrderHref> subOrders;
+    private Set<OrderHref> subOrders;
 
     private String description;
 
@@ -50,7 +51,7 @@ public class Order {
 
     @XmlElementWrapper(name = "resourceOrService")
     @XmlElement(name = "resourceHref")
-    private List<ResourceHref> resourceOrService;
+    private Set<ResourceHref> resourceOrService;
 
     private OrderStatus status;
 
@@ -93,11 +94,11 @@ public class Order {
 // see https://stackoverflow.com/questions/59598383/swagger-recursively-resolving-dependencies-for-type-infinite-loop
 // https://github.com/springfox/springfox/issues/621 Cycles in Java classes cause infinite loop in ModelAttributeParameterExpander
 
-    public List<OrderHref> getSubOrders() {
+    public Set<OrderHref> getSubOrders() {
         return subOrders;
     }
 
-    public void setSubOrders(List<OrderHref> subOrders) {
+    public void setSubOrders(Set<OrderHref> subOrders) {
         this.subOrders = subOrders;
     }
 
@@ -160,11 +161,11 @@ public class Order {
         this.parentOrder = parentOrder;
     }
 
-    public List<ResourceHref> getResourceOrService() {
+    public Set<ResourceHref> getResourceOrService() {
         return resourceOrService;
     }
 
-    public void setResourceOrService(List<ResourceHref> resourceOrService) {
+    public void setResourceOrService(Set<ResourceHref> resourceOrService) {
         this.resourceOrService = resourceOrService;
     }
 

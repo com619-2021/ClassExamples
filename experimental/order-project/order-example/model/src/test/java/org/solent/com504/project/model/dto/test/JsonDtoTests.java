@@ -10,7 +10,9 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Test;
@@ -45,7 +47,7 @@ public class JsonDtoTests {
     public void testJsonMessages() throws JsonProcessingException {
         Order order = new Order();
         OrderHref orderHref = new OrderHref();
-        List<OrderHref> subOrders = Arrays.asList(orderHref);
+        Set<OrderHref> subOrders = new LinkedHashSet(Arrays.asList(orderHref));
         order.setSubOrders(subOrders);
         
         order.setParentOrder(orderHref);

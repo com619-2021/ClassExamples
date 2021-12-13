@@ -12,8 +12,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.solent.com504.project.impl.user.service.DBInitialise;
 import org.solent.com504.project.impl.validator.UserValidator;
 import org.solent.com504.project.model.party.dto.Address;
 import org.solent.com504.project.model.party.dto.ForeignSystem;
@@ -57,6 +59,17 @@ public class UserController {
 
     @Autowired
     private SecurityService securityService;
+    
+    @Autowired
+    private DBInitialise dbInitialise;
+
+    @RequestMapping(value = "/reset", method = RequestMethod.GET)
+    @Transactional
+    public String reset(Model model,HttpSession session) {
+        session.invalidate(); 
+        dbInitialise.resetDatabase();
+        return "redirect:/home";
+    }
 
     @RequestMapping(value = "/registration", method = RequestMethod.GET)
     public String registration(Model model) {
@@ -521,7 +534,7 @@ public class UserController {
                             + " or longitude=" + longitude;
                 }
                 party.setAddress(address);
-                
+
                 ForeignSystem foreignSystem = new ForeignSystem();
                 foreignSystem.setPasskey(foreignSystemPasskey);
                 foreignSystem.setUrl(foreignSystemUrl);

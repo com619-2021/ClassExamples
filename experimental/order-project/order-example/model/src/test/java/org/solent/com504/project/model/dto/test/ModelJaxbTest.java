@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -253,8 +254,7 @@ public class ModelJaxbTest {
             resource.setName("testResource");
             
             List<AbstractResource> resourceList = Arrays.asList(resource);
-            List<ResourceHref> resourceOrService = AbstractResourceMapper.INSTANCE.abstractResourceListToResourceHrefList(resourceList)
-            ;
+            Set<ResourceHref> resourceOrService = new LinkedHashSet(AbstractResourceMapper.INSTANCE.abstractResourceListToResourceHrefList(resourceList));
             order.setResourceOrService(resourceOrService);
 
             Party orderOwner = new Party();
@@ -277,7 +277,7 @@ public class ModelJaxbTest {
             subOrder.setName("sub order name");
 
             OrderHref subOrderHref = OrderMapper.INSTANCE.orderToOrderHref(order);
-            order.setSubOrders(Arrays.asList(subOrderHref));
+            order.setSubOrders(new LinkedHashSet(Arrays.asList(subOrderHref)));
 
             Order parentOrder = new Order();
             parentOrder.setUuid(UUID.randomUUID().toString());

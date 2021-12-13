@@ -12,9 +12,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
@@ -215,7 +217,7 @@ public class OrderController {
         order.setId(null);
         order.setUuid("EXTERNAL UNDEFINED");
         order.setHref("EXTERNAL UNDEFINED");
-        order.setResourceOrService(new ArrayList());
+        order.setResourceOrService(new LinkedHashSet());
         order.setOrderDate(new Date());
         order.setStartDate(new Date());
         order.setEndDate(new Date(order.getStartDate().getTime() + 24 * 60 * 60 * 1000)); // plus 24 hours
@@ -322,6 +324,7 @@ public class OrderController {
                 order.setOrderOwner(orderOwner);
                 replyMessage = orderService.postCreateOrder(order, ownerPartyUUID);
                 order = replyMessage.getOrderList().get(0);
+
                 changeRequestUUID = order.getChangeRequests().get(0).getUuid();
                 replyMessage = orderChangeRequestService.getOrderChangeRequestByUuid(changeRequestUUID);
                 List<OrderChangeRequest> orderChangeRequestList = replyMessage.getOrderChangeRequestList();
@@ -441,7 +444,7 @@ public class OrderController {
 
             message = "change request updated";
 
-        } else if ("submitChangeRequest".equals(action)) {
+        } else if ("submitChangeRequest".equals(action) || "acceptChangeRequest".equals(action)) {
 
             replyMessage = orderChangeRequestService.getOrderChangeRequestByUuid(changeRequestUUID);
             List<OrderChangeRequest> orderChangeRequestList = replyMessage.getOrderChangeRequestList();
@@ -466,21 +469,39 @@ public class OrderController {
                 replyMessage = orderService.putUpdateOrder(updatedOrder);
                 orderList = replyMessage.getOrderList();
                 order = replyMessage.getOrderList().get(0);
+
+                orderChangeRequest.setApprovedDate(new Date());
+                orderChangeRequest.setStatus(ChangeStatus.APPROVED);
             }
 
             changeOrder = orderChangeRequest.getChangeRequest();
 
-            message = "change request submitted";
-
-        } else if ("acceptChangeRequest".equals(action)) {
-            message = "change request accepted";
-            order = new Order();
-            orderChangeRequest = new OrderChangeRequest();
+            if ("acceptChangeRequest".equals(action)) {
+                message = "change request submitted";
+            } else {
+                message = "change request submitted";
+            }
 
         } else if ("rejectChangeRequest".equals(action)) {
-            message = "change request rejected";
-            order = new Order();
-            orderChangeRequest = new OrderChangeRequest();
+
+            replyMessage = orderChangeRequestService.getOrderChangeRequestByUuid(changeRequestUUID);
+            List<OrderChangeRequest> orderChangeRequestList = replyMessage.getOrderChangeRequestList();
+            if (orderChangeRequestList.isEmpty()) {
+                throw new IllegalArgumentException("cannot find orderChangeRequest for changeRequestUUID=" + changeRequestUUID);
+            }
+            orderChangeRequest = replyMessage.getOrderChangeRequestList().get(0);
+            orderChangeRequest.setApprovedDate(new Date());
+            orderChangeRequest.setStatus(ChangeStatus.REJECTED);
+            orderChangeRequestService.putUpdateOrderChangeRequest(orderChangeRequest);
+            changeOrder = orderChangeRequest.getChangeRequest();
+
+            replyMessage = orderService.getOrderByUuid(orderChangeRequest.getOrderUuid());
+            List<Order> orderList = replyMessage.getOrderList();
+            if (orderList.isEmpty()) {
+                throw new IllegalArgumentException("cannot find order for orderUuid=" + orderUuid);
+            }
+            order = replyMessage.getOrderList().get(0);
+
         } else if ("deleteChangeRequestResources".equals(action)) {
 
             replyMessage = orderChangeRequestService.getOrderChangeRequestByUuid(changeRequestUUID);
@@ -494,7 +515,7 @@ public class OrderController {
             if (removeChangeRequestResources != null) {
                 // iterate and remove change requests
                 for (String removeResource : removeChangeRequestResources) {
-                    List<ResourceHref> resourceOrService = changeOrder.getResourceOrService();
+                    Set<ResourceHref> resourceOrService = changeOrder.getResourceOrService();
                     Iterator<ResourceHref> serviceIterator = resourceOrService.iterator();
                     while (serviceIterator.hasNext()) {
                         ResourceHref rHref = serviceIterator.next();

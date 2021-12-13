@@ -75,6 +75,7 @@
                                     <ul class="dropdown-menu">
                                         <li><a href="./users">Manage Users</a></li>
                                         <li><a href="./partys">Manage Partys</a></li>
+                                        <li><a style="color:red;" href="./reset">RESET DATABASE</a></li>
                                     </ul>
                                 </li>
                             </sec:authorize>

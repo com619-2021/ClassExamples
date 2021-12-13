@@ -100,12 +100,12 @@ private List<ResourceHref> resourceOrService;
                     </tr>
                     <tr>
                         <td class="col-md-1">Change Reason</td>
-                        <td class="col-md-2"><input form="form1" type="text" id="changeReason"  name="changeReason" value="${changeReason}" <c:if test="${changeReason == null}">disabled </c:if> /></td>
+                        <td class="col-md-2"><input form="form3" type="text" id="changeReason"  name="changeReason" value="${changeReason}" <c:if test="${changeReason == null}">disabled </c:if> /></td>
                         <td class="col-md-3"><button class="btn btn-sm" type="button" onclick="toggleVisabilityAndDisabled('changeReason')" <c:if test="${! allowChangeButtons}">disabled style="display:none"</c:if>>change</button></td>
                         </tr>
                         <tr>
                             <td class="col-md-1">Response Description</td>
-                            <td class="col-md-2"><input form="form1" type="text" id="responseDescription"  name="responseDescription" value="${responseDescription}" <c:if test="${responseDescription == null}">disabled </c:if> /></td>
+                            <td class="col-md-2"><input form="form3" type="text" id="responseDescription"  name="responseDescription" value="${responseDescription}" <c:if test="${responseDescription == null}">disabled </c:if> /></td>
                         <td class="col-md-3"><button class="btn btn-sm" type="button" onclick="toggleVisabilityAndDisabled('responseDescription')" <c:if test="${! allowChangeButtons}">disabled style="display:none"</c:if>>change</button></td>
                         </tr>
                 </table>
@@ -146,7 +146,7 @@ private List<ResourceHref> resourceOrService;
         <h3 class="sub-header">Change Request Values</h3>
         <h4 class="sub-header">Change Order Resources</h4>
 
-        <form  action="./viewModifyOrder" method="POST">
+        <form form="form2" action="./viewModifyOrder" method="POST">
             <div class="table-responsive">
                 <table class="table table-striped">
                     <thead>
@@ -267,7 +267,7 @@ private List<ResourceHref> resourceOrService;
     <div class="col-xs-6">
 
         <h4>Change Order Details</h4>
-        <form form="form1" action="./viewModifyOrder" method="POST">
+        <form form="form3" action="./viewModifyOrder" method="POST">
             <div class="table-responsive">
                 <table class="table table-striped"  >
                     <thead>
@@ -300,12 +300,12 @@ private List<ResourceHref> resourceOrService;
                         </tr>
                         <tr>
                             <td class="col-md-1">Order Name</td>
-                            <td class="col-md-2"><input form="form1" type="text" id="changeOrderName" name="changeOrderName" value="${changeOrder.name}" <c:if test="${changeOrder.name == null}">disabled style="display:none"</c:if> /></td>
+                            <td class="col-md-2"><input  type="text" id="changeOrderName" name="changeOrderName" value="${changeOrder.name}" <c:if test="${changeOrder.name == null}">disabled style="display:none"</c:if> /></td>
                             <td class="col-md-3"><button class="btn btn-sm" type="button" onclick="toggleVisabilityAndDisabled('changeOrderName')" <c:if test="${! allowChangeButtons}">disabled style="display:none"</c:if>>change</button></td>
                             </tr>
                             <tr>
                                 <td class="col-md-1">Order Description</td>
-                                <td class="col-md-2"><input form="form1" type="text" id="changeOrderDescription" name="changeOrderDescription" value="${changeOrder.description}" <c:if test="${changeOrder.description == null}">disabled style="display:none"</c:if> /></td>
+                                <td class="col-md-2"><input type="text" id="changeOrderDescription" name="changeOrderDescription" value="${changeOrder.description}" <c:if test="${changeOrder.description == null}">disabled style="display:none"</c:if> /></td>
                             <td class="col-md-3"><button class="btn btn-sm" type="button" onclick="toggleVisabilityAndDisabled('changeOrderDescription')" <c:if test="${! allowChangeButtons}">disabled style="display:none"</c:if>>change</button></td>
                             </tr>
                             <tr>
@@ -328,7 +328,7 @@ private List<ResourceHref> resourceOrService;
                             <td class="col-md-2">
                                 <div class="form-group">
                                     <div class="input-group date" id="datetimepicker1" >
-                                        <input form="form1"  class="form-control" name="changeOrderStartDate" id="changeOrderStartDate" type="text" value="<fmt:formatDate pattern='${DATE_FORMAT}' value='${changeOrder.startDate}' />"  />
+                                        <input class="form-control" name="changeOrderStartDate" id="changeOrderStartDate" type="text" value="<fmt:formatDate pattern='${DATE_FORMAT}' value='${changeOrder.startDate}' />"  />
                                         <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                         </span>
@@ -350,7 +350,7 @@ private List<ResourceHref> resourceOrService;
                                 <td class="col-md-2">
                                     <div class="form-group">
                                         <div class="input-group date" id="datetimepicker2" >
-                                            <input form="form1"  class="form-control" name="changeOrderEndDate" id="changeOrderEndDate" type="text" value="<fmt:formatDate pattern='${DATE_FORMAT}' value='${changeOrder.endDate}' />"  />
+                                            <input class="form-control" name="changeOrderEndDate" id="changeOrderEndDate" type="text" value="<fmt:formatDate pattern='${DATE_FORMAT}' value='${changeOrder.endDate}' />"  />
                                         <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                         </span>
@@ -372,11 +372,11 @@ private List<ResourceHref> resourceOrService;
                 </div>
 
             <c:if test="${allowChangeButtons}">
-                <input form="form1"  type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                <input form="form1" type="hidden" name="action" value="updateChangeRequest">
-                <input form="form1"  type="hidden" name="changeRequestUUID" value="${orderChangeRequest.uuid}">
-                <input form="form1" type="hidden" name="orderUuid" value="${order.uuid}"/>
-                <input form="form1" type="hidden" name="changeOrderResourceAccess" value="${changeOrder.resourceAccess}"/>
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                <input type="hidden" name="action" value="updateChangeRequest">
+                <input type="hidden" name="changeRequestUUID" value="${orderChangeRequest.uuid}">
+                <input type="hidden" name="orderUuid" value="${order.uuid}"/>
+                <input type="hidden" name="changeOrderResourceAccess" value="${changeOrder.resourceAccess}"/>
                 <button class="btn" type="submit" >Update Change Request</button>
             </form>
 
@@ -390,11 +390,11 @@ private List<ResourceHref> resourceOrService;
             </form>
         </c:if>
         <c:if test="${! allowChangeButtons}">
-            <input form="form1" type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-            <input form="form1" type="hidden" name="action" value="acceptChangeRequest">
-            <input form="form1" type="hidden" name="changeRequestUUID" value="${orderChangeRequest.uuid}">
-            <input form="form1" type="hidden" name="orderUuid" value="${order.uuid}"/>
-            <button form="form1" class="btn" type="submit" >Accept Change Request</button>
+            <input  type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            <input  type="hidden" name="action" value="acceptChangeRequest">
+            <input  type="hidden" name="changeRequestUUID" value="${orderChangeRequest.uuid}">
+            <input  type="hidden" name="orderUuid" value="${order.uuid}"/>
+            <button  class="btn" type="submit" >Accept Change Request</button>
             </form>
             <form action="./viewModifyOrder" method="POST">
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
