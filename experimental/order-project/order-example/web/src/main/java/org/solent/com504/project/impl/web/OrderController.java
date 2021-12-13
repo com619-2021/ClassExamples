@@ -568,6 +568,7 @@ public class OrderController {
         if("updateOrderChangeRequest".equals(action) ){
             for(String addResource : addResources){
                 LOG.debug("**** adding resource "+addResource);
+                // todo find and update the order change
             }
         }
         ReplyMessage reply = resourceService.getResourceByTemplate(null, 0, 20);
