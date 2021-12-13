@@ -36,10 +36,12 @@ import org.solent.com504.project.model.party.dto.PartyHref;
 import org.solent.com504.project.model.party.dto.PartyMapper;
 import org.solent.com504.project.model.party.dto.PartyRole;
 import org.solent.com504.project.model.party.service.PartyService;
+import org.solent.com504.project.model.resource.dto.AbstractResourceMapper;
 import org.solent.com504.project.model.resource.dto.Characteristic;
 import org.solent.com504.project.model.resource.dto.Resource;
 import org.solent.com504.project.model.resource.dto.ResourceAccess;
 import org.solent.com504.project.model.resource.dto.ResourceCatalog;
+import org.solent.com504.project.model.resource.dto.ResourceHref;
 import org.solent.com504.project.model.resource.service.ResourceCatalogService;
 import org.solent.com504.project.model.resource.service.ResourceInventoryService;
 import org.solent.com504.project.model.user.dto.Role;
@@ -144,7 +146,7 @@ public class OrderController {
         Order changeOrder = null;
         OrderChangeRequest orderChangeRequest = null;
 
-        // find order change request and order from order change request
+        // find changerequestOrder change request and changerequestOrder from changerequestOrder change request
         if ("viewChangeRequestUUID".equals(action)) {
             ReplyMessage replyMessage = orderChangeRequestService.getOrderChangeRequestByUuid(changeRequestUUID);
             List<OrderChangeRequest> orderChangeRequestList = replyMessage.getOrderChangeRequestList();
@@ -154,7 +156,7 @@ public class OrderController {
             orderChangeRequest = replyMessage.getOrderChangeRequestList().get(0);
             orderUuid = orderChangeRequest.getOrderUuid();
             changeOrder = orderChangeRequest.getChangeRequest();
-            if (orderUuid != null) { // if null then this is an external order
+            if (orderUuid != null) { // if null then this is an external changerequestOrder
                 replyMessage = orderService.getOrderByUuid(orderUuid);
                 List<Order> orderList = replyMessage.getOrderList();
                 if (orderList.isEmpty()) {
@@ -166,7 +168,7 @@ public class OrderController {
             }
 
         } else if ("viewOrderDetails".equals(action)) {
-            // find order and order change request from order
+            // find changerequestOrder and changerequestOrder change request from changerequestOrder
             ReplyMessage replyMessage = orderService.getOrderByUuid(orderUuid);
             List<Order> orderList = replyMessage.getOrderList();
             if (orderList.isEmpty()) {
@@ -229,7 +231,7 @@ public class OrderController {
             @RequestParam(value = "orderResourceAccess", required = false) String orderResourceAccess,
             @RequestParam(value = "ownerPartyUUID", required = false) String ownerPartyUUID,
             @RequestParam(value = "changeRequestUUID", required = false) String changeRequestUUID,
-            // fields for changing an order
+            // fields for changing an changerequestOrder
             @RequestParam(value = "changeOrderName", required = false) String changeOrderName,
             @RequestParam(value = "changeOrderDescription", required = false) String changeOrderDescription,
             @RequestParam(value = "changeOrderOrderDate", required = false) String changeOrderOrderDate,
@@ -240,7 +242,7 @@ public class OrderController {
             @RequestParam(value = "responseDescription", required = false) String responseDescription,
             // fields for changing a service
             @RequestParam(value = "resourceOrServiceUuid", required = false) List<String> resourceOrServiceUuid,
-            // fields for changing parent order
+            // fields for changing parent changerequestOrder
             @RequestParam(value = "changeOrderParentOrderUuid", required = false) String changeOrderParentOrderUuid,
             @RequestParam(value = "subOrderUuid", required = false) List<String> changeOrderSubOrderUuid,
             @RequestParam(value = "changeOrderResourceAccess", required = false) String changeOrderResourceAccess,
@@ -251,7 +253,7 @@ public class OrderController {
         String message = "";
         ReplyMessage replyMessage = null;
 
-        // populate change order
+        // populate change changerequestOrder
         Order changeOrder = new Order();
         try {
             if (changeOrderResourceAccess != null) {
@@ -295,14 +297,14 @@ public class OrderController {
             // check if external or internal resource access
             ResourceAccess raccess = ResourceAccess.valueOf(orderResourceAccess);
             if (ResourceAccess.EXTERNAL == raccess) {
-                // external order only for display
+                // external changerequestOrder only for display
                 order = dummyExternalOrder();
                 order.setOrderOwner(orderOwner); // used to contact external machine
                 String changeRequestorPartyUUID = orderOwner.getUuid(); // should be the initiator of this action 
                 orderChangeRequest = new OrderChangeRequest();
                 orderChangeRequest.setChangeRequest(order);
                 orderChangeRequest.setChangeReason("new external order");
-                // external order not placed until change requested
+                // external changerequestOrder not placed until change requested
                 orderChangeRequest.setStatus(ChangeStatus.PENDING_EXTERNAL);
                 replyMessage = orderChangeRequestService.postCreateOrderChangeRequest(orderChangeRequest, changeRequestorPartyUUID);
                 List<OrderChangeRequest> orderChangeRequestList = replyMessage.getOrderChangeRequestList();
@@ -310,7 +312,7 @@ public class OrderController {
                 changeOrder = orderChangeRequest.getChangeRequest();
                 message = "New external order change request created. You must now fill in the request and submit order";
             } else {
-                // internal order
+                // internal changerequestOrder
                 order = new Order();
                 order.setOrderDate(new Date());
                 order.setStartDate(new Date());
@@ -331,7 +333,7 @@ public class OrderController {
             }
 
         } else if ("synchroniseOrder".equals(action)) {
-            // get updated order
+            // get updated changerequestOrder
             replyMessage = orderService.getOrderByUuid(orderUuid);
             List<Order> orderList = replyMessage.getOrderList();
             if (orderList.isEmpty()) {
@@ -351,8 +353,8 @@ public class OrderController {
 
         } else if ("newChangeRequest".equals(action)) {
 
-            // create new change request for order
-            //find order
+            // create new change request for changerequestOrder
+            //find changerequestOrder
             replyMessage = orderService.getOrderByUuid(orderUuid);
             List<Order> orderList = replyMessage.getOrderList();
             if (orderList.isEmpty()) {
@@ -366,7 +368,7 @@ public class OrderController {
             orderChangeRequest.setChangeRequest(order);
             orderChangeRequest.setOrderUuid(orderUuid);
 
-            // find order owner
+            // find changerequestOrder owner
             String changeRequestorPartyUUID = order.getOrderOwner().getUuid(); //todo change to session user
 
             // create a new change request
@@ -379,7 +381,7 @@ public class OrderController {
             changeRequestUUID = orderChangeRequest.getUuid();
             changeOrder = orderChangeRequest.getChangeRequest();
 
-            // get updated order
+            // get updated changerequestOrder
             replyMessage = orderService.getOrderByUuid(orderUuid);
             orderList = replyMessage.getOrderList();
             if (orderList.isEmpty()) {
@@ -408,7 +410,7 @@ public class OrderController {
             LOG.debug("************ changeRequestOrder=" + changeRequestOrder);
             LOG.debug("************ changeOrder=" + changeOrder);
 
-            // update the order with the new date from the inputs
+            // update the changerequestOrder with the new date from the inputs
             Order updatedOrder = OrderMapper.INSTANCE.updateOrderFromOrder(changeOrder, changeRequestOrder);
             orderChangeRequest.setChangeRequest(updatedOrder);
             changeOrder = updatedOrder; // push this back to jsp model
@@ -423,10 +425,10 @@ public class OrderController {
             }
             orderChangeRequest = replyMessage.getOrderChangeRequestList().get(0);
 
-            // change request for external order
+            // change request for external changerequestOrder
             if (ResourceAccess.EXTERNAL == changeOrder.getResourceAccess()) {
                 order = dummyExternalOrder();
-            } else { // change request for internal order
+            } else { // change request for internal changerequestOrder
                 orderUuid = orderChangeRequest.getOrderUuid();
                 replyMessage = orderService.getOrderByUuid(orderUuid);
                 List<Order> orderList = replyMessage.getOrderList();
@@ -508,7 +510,7 @@ public class OrderController {
 
 
     /* ******
-    * methods to see order change requests
+    * methods to see changerequestOrder change requests
      */
     /**
      *
@@ -547,9 +549,10 @@ public class OrderController {
     }
 
     // ***************************
-    // Methods to add remove resources from order change request
+    // Methods to add remove resources from changerequestOrder change request
     // ***************************
     @RequestMapping(value = {"/resourceselect"}, method = {RequestMethod.POST, RequestMethod.GET})
+    @Transactional
     public String resourceselect(Model model,
             @RequestParam(value = "action", required = true) String action,
             @RequestParam(value = "orderResourceAccess", required = false) String orderResourceAccess,
@@ -558,28 +561,56 @@ public class OrderController {
             @RequestParam(value = "addResources", required = false) List<String> addResources,
             Authentication authentication) {
 
-        LOG.debug("resourceselect called: action="+action);
-        
-        if(addResources==null){
-            LOG.debug("**** add resources=null");
+        LOG.debug("resourceselect called: action=" + action);
+
+        if (addResources == null) {
+            LOG.debug("**** addResources==null");
             addResources = new ArrayList();
         }
-        
-        if("updateOrderChangeRequest".equals(action) ){
-            for(String addResource : addResources){
-                LOG.debug("**** adding resource "+addResource);
-                // todo find and update the order change
-            }
+
+        ReplyMessage replyMessage = orderChangeRequestService.getOrderChangeRequestByUuid(changeRequestUUID);
+        List<OrderChangeRequest> orderChangeRequestList = replyMessage.getOrderChangeRequestList();
+        if (orderChangeRequestList.isEmpty()) {
+            throw new IllegalArgumentException("cannot find orderChangeRequest for changeRequestUUID=" + changeRequestUUID);
         }
+        OrderChangeRequest orderChangeRequest = replyMessage.getOrderChangeRequestList().get(0);
+        Order changerequestOrder = orderChangeRequest.getChangeRequest();
+
+        // check if external or internal resource access
+        ResourceAccess raccess = changerequestOrder.getResourceAccess();
+        if (ResourceAccess.EXTERNAL == raccess) {
+            LOG.debug("resourceselect updateing External " + action);
+        }
+
+        if ("updateOrderChangeRequest".equals(action)) {
+            LOG.debug("**** processing addResource.size " + addResources.size());
+            for (String addResource : addResources) {
+                LOG.debug("**** adding resource " + addResource);
+                replyMessage = resourceService.getResourceByuuid(addResource);
+                List<Resource> resourceList = replyMessage.getResourceList();
+                if (resourceList.isEmpty()) {
+                    LOG.debug("**** resource not found uuid=" + addResource);
+                } else {
+                    Resource resource = resourceList.get(0);
+                    ResourceHref resourceHref = AbstractResourceMapper.INSTANCE.abstractResourceToResourceHref(resource);
+                    LOG.debug("**** adding resourceHref " + resourceHref);
+                    changerequestOrder.getResourceOrService().add(resourceHref);
+                }
+            }
+            LOG.debug("**** saving changerequestorder " + changerequestOrder);
+            LOG.debug("**** saving orderChangeRequest " + orderChangeRequest);
+            replyMessage = orderChangeRequestService.putUpdateOrderChangeRequest(orderChangeRequest);
+        }
+
         ReplyMessage reply = resourceService.getResourceByTemplate(null, 0, 20);
         List<Resource> resourceList = reply.getResourceList();
 
         model.addAttribute("abstractResourceListSize", resourceList.size());
         model.addAttribute("abstractResourceList", resourceList);
-        
+
         model.addAttribute("orderResourceAccess", orderResourceAccess);
-        model.addAttribute("ownerPartyUUID",ownerPartyUUID);
-        model.addAttribute("changeRequestUUID",changeRequestUUID);
+        model.addAttribute("ownerPartyUUID", ownerPartyUUID);
+        model.addAttribute("changeRequestUUID", changeRequestUUID);
         model.addAttribute("addResources", addResources);
 
         model.addAttribute("DATE_FORMAT", DATE_FORMAT);

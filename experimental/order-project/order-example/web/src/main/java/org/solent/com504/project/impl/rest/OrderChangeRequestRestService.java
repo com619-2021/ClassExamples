@@ -196,7 +196,7 @@ public class OrderChangeRequestRestService {
     @Transactional(readOnly = true)
     public Response getOrderChangeRequest(@QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @Context UriInfo uriInfo) {
         try {
-            ReplyMessage replyMessage = orderService.getOrderByTemplate(null, offset, limit);
+            ReplyMessage replyMessage = orderChangeRequestService.getOrderChangeRequestByTemplate(null,null,null);
             replyMessage.setCode(Response.Status.OK.getStatusCode());
             return Response.status(Response.Status.OK).entity(replyMessage).build();
         } catch (Exception ex) {

@@ -135,7 +135,9 @@ public class OrderChangeRequestServiceImpl implements OrderChangeRequestService 
         OrderChangeRequestEntity orderChangeRequestEntity = requestList.get(0);
 
         orderChangeRequestEntity = OrderChangeRequestMapper.INSTANCE.updateOrderChangeRequestEntity(orderChangeRequest, orderChangeRequestEntity);
+        LOG.debug("**** dao saving orderChangeRequestEntity: "+ orderChangeRequestEntity);
         orderChangeRequestEntity = orderChangeRequestRepository.save(orderChangeRequestEntity);
+        LOG.debug("**** dao saved orderChangeRequestEntity: "+ orderChangeRequestEntity);
 
         OrderChangeRequest orderChangeRequestReply = OrderChangeRequestMapper.INSTANCE.orderChangeRequestEntityToOrderChangeRequest(orderChangeRequestEntity);
         replyMessage.setOrderChangeRequestList(Arrays.asList(orderChangeRequestReply));
