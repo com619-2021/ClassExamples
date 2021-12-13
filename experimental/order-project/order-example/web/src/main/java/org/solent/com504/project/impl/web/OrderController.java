@@ -246,6 +246,7 @@ public class OrderController {
             @RequestParam(value = "changeOrderParentOrderUuid", required = false) String changeOrderParentOrderUuid,
             @RequestParam(value = "subOrderUuid", required = false) List<String> changeOrderSubOrderUuid,
             @RequestParam(value = "changeOrderResourceAccess", required = false) String changeOrderResourceAccess,
+            @RequestParam(value = "removeChangeRequestResources", required = false) List<String> removeChangeRequestResources,
             Authentication authentication) {
 
         LOG.debug("/viewModifyOrder: action=" + action + " orderUuid:" + orderUuid + " changeRequestUUID:" + changeRequestUUID);
@@ -480,6 +481,46 @@ public class OrderController {
             message = "change request rejected";
             order = new Order();
             orderChangeRequest = new OrderChangeRequest();
+        } else if ("deleteChangeRequestResources".equals(action)) {
+
+            replyMessage = orderChangeRequestService.getOrderChangeRequestByUuid(changeRequestUUID);
+            List<OrderChangeRequest> orderChangeRequestList = replyMessage.getOrderChangeRequestList();
+            if (orderChangeRequestList.isEmpty()) {
+                throw new IllegalArgumentException("cannot find orderChangeRequest for changeRequestUUID=" + changeRequestUUID);
+            }
+            orderChangeRequest = replyMessage.getOrderChangeRequestList().get(0);
+            changeOrder = orderChangeRequest.getChangeRequest();
+
+            if (removeChangeRequestResources != null) {
+                // iterate and remove change requests
+                for (String removeResource : removeChangeRequestResources) {
+                    List<ResourceHref> resourceOrService = changeOrder.getResourceOrService();
+                    Iterator<ResourceHref> serviceIterator = resourceOrService.iterator();
+                    while (serviceIterator.hasNext()) {
+                        ResourceHref rHref = serviceIterator.next();
+                        if (removeResource.equals(rHref.getUuid())) {
+                            serviceIterator.remove();
+                        }
+                    }
+                }
+            }
+            replyMessage = orderChangeRequestService.putUpdateOrderChangeRequest(orderChangeRequest);
+            orderChangeRequest = replyMessage.getOrderChangeRequestList().get(0);
+
+            if (orderChangeRequest.getOrderUuid() == null || ResourceAccess.EXTERNAL == orderChangeRequest.getChangeRequest().getResourceAccess()) {
+                // external
+                order = this.dummyExternalOrder();
+
+            } else { // internal
+                replyMessage = orderService.getOrderByUuid(orderChangeRequest.getOrderUuid());
+                List<Order> orderList = replyMessage.getOrderList();
+                if (orderList.isEmpty()) {
+                    throw new IllegalArgumentException("cannot find order for orderUuid=" + orderUuid);
+                }
+                order = replyMessage.getOrderList().get(0);
+            }
+
+            message = "removed change request resources";
 
         } else {
             throw new IllegalArgumentException("unknown action for page action=" + action);
@@ -518,7 +559,8 @@ public class OrderController {
      * @return
      */
     @RequestMapping(value = {"/orderchange"}, method = RequestMethod.GET)
-    public String orderchange(Model model) {
+    public String orderchange(Model model
+    ) {
         LOG.debug("order change called:");
 
         // get parties
@@ -559,7 +601,8 @@ public class OrderController {
             @RequestParam(value = "ownerPartyUUID", required = false) String ownerPartyUUID,
             @RequestParam(value = "changeRequestUUID", required = false) String changeRequestUUID,
             @RequestParam(value = "addResources", required = false) List<String> addResources,
-            Authentication authentication) {
+            Authentication authentication
+    ) {
 
         LOG.debug("resourceselect called: action=" + action);
 

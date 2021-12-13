@@ -29,15 +29,19 @@
         <link href="./resources/css/navbar.css" rel="stylesheet">
         <script>
             function refreshParent() {
+                window.opener.location.href ='./viewModifyOrder?action=viewChangeRequestUUID&changeRequestUUID=${changeRequestUUID}' ;
+            }
+            
+            function refreshParent2() {
                 window.opener.location.reload(true);
             }
         </script>
     </head>
-    <!--<body onunload="javascript:refreshParent()">-->
-    <body>
+    <body onunload="javascript:refreshParent()">
+    <!--<body>-->
         <main role="main" class="container">
             <div>
-                <h1>Select Resources</h1>
+                <h1>Select Resources to update change request ${changeRequestUUID}</h1>
                 <p>showing ${abstractResourceListSize} resources: </p>
                 <form  action="./resourceselect" method="POST">
                     <table class="table">

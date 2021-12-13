@@ -146,7 +146,7 @@ private List<ResourceHref> resourceOrService;
         <h3 class="sub-header">Change Request Values</h3>
         <h4 class="sub-header">Change Order Resources</h4>
 
-        <form form="form2" action="./viewModifyOrder" method="POST">
+        <form  action="./viewModifyOrder" method="POST">
             <div class="table-responsive">
                 <table class="table table-striped">
                     <thead>
@@ -163,17 +163,17 @@ private List<ResourceHref> resourceOrService;
                                 <td class="col-md-1">${resourceHref.name}</td>
                                 <td class="col-md-2">${resourceHref.uuid}</td>
                                 <td class="col-md-3"><a href="<c:if test="${! fn:startsWith(resourceHref.href , 'http')}">.</c:if>${resourceHref.href}" target="_blank" >${resourceHref.href}</a></td>
-                                <td class="col-md-4">Remove <input type="checkbox"  name="removeResources" value="${resourceHref.uuid}"></td>  
+                                <td class="col-md-4">Remove <input type="checkbox"  name="removeChangeRequestResources" value="${resourceHref.uuid}"></td>  
                             </tr>
                         </c:forEach>
                     </tbody>
                 </table>
             </div>
-            <input form="form2"  type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-            <input form="form2" type="hidden" name="action" value="deleteChangeRequestResources">
-            <input form="form2"  type="hidden" name="changeRequestUUID" value="${orderChangeRequest.uuid}">
-            <input form="form2" type="hidden" name="orderUuid" value="${order.uuid}"/>
-            <input form="form2" type="hidden" name="changeOrderResourceAccess" value="${changeOrder.resourceAccess}"/>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            <input type="hidden" name="action" value="deleteChangeRequestResources">
+            <input type="hidden" name="changeRequestUUID" value="${orderChangeRequest.uuid}">
+            <input type="hidden" name="orderUuid" value="${order.uuid}"/>
+            <input type="hidden" name="changeOrderResourceAccess" value="${changeOrder.resourceAccess}"/>
             <c:if test="${allowChangeButtons}">
                 <button class="btn" type="submit" >Delete Selected Resources</button>
             </c:if>
@@ -181,7 +181,7 @@ private List<ResourceHref> resourceOrService;
         <c:if test="${allowChangeButtons}">
             <input class="btn" type="button" name="s1" value="Add Resources" 
                    onClick="window.open('resourceselect?action=viewResources&changeRequestUUID=${orderChangeRequest.uuid}&changeOrderResourceAccess=${changeOrder.resourceAccess}&orderOwnerUuid=${order.orderOwner.uuid}',
-                               'mywindow', 'width=600,  height=400,toolbar=no,resizable=yes,menubar=yes')" />
+                                   'mywindow', 'width=600,  height=400,toolbar=no,resizable=yes,menubar=yes')" />
         </c:if>
 
 
