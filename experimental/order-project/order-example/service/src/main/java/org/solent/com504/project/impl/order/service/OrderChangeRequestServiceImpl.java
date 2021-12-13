@@ -94,7 +94,14 @@ public class OrderChangeRequestServiceImpl implements OrderChangeRequestService 
         orderChangeRequestEntity.setHref("/rest/solent-api/order/v1/orderChangeRequest/" + orderChangeRequestEntity.getUuid());
         orderChangeRequestEntity.setChangeRequestor(resourceOwner);
         orderChangeRequestEntity.setRequestDate(new Date());
-        orderChangeRequestEntity.setStatus(ChangeStatus.REQUESTED);
+        
+        // handle our requests to others
+        if(ChangeStatus.PENDING_EXTERNAL == orderChangeRequest.getStatus()){
+            orderChangeRequestEntity.setStatus(ChangeStatus.PENDING_EXTERNAL);
+        } else {
+            orderChangeRequestEntity.setStatus(ChangeStatus.REQUESTED);
+        }
+        
 
         orderChangeRequestEntity = orderChangeRequestRepository.save(orderChangeRequestEntity);
 

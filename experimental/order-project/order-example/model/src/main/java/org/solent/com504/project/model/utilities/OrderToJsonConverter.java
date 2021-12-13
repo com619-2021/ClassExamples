@@ -8,6 +8,7 @@ package org.solent.com504.project.model.utilities;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
@@ -27,6 +28,8 @@ public class OrderToJsonConverter implements AttributeConverter<Order, String> {
             return null;
         }
         try {
+            // dont want to persist any change requests in foreign order
+            attribute.setChangeRequests(new ArrayList());
             return mapper.writeValueAsString(attribute);
         } catch (JsonProcessingException e) {
             e.printStackTrace();

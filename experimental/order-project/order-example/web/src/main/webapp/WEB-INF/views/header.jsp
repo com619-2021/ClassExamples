@@ -29,6 +29,10 @@
 
         <!-- Custom styles for this template -->
         <link href="./resources/css/navbar.css" rel="stylesheet">
+        
+         <!-- Custom styles for date time picker https://getdatepicker.com/4/Installing/#manual -->
+        <link  href="./resources/css/bootstrap-datetimepicker.min.css" rel="stylesheet"/>
+        <script type="text/javascript" src="./resources/js/jquery.min.js"></script>
 
     </head>
 

@@ -215,7 +215,7 @@ public class OrderEntity {
 
     // this avoids having to create tables for the external order
     // but at the expense of not being able to search on characterists 
-    @Column(name = "externalorder", length = 1000)
+    @Column(name = "externalorder", length = 10000)
     @Convert(converter = OrderToJsonConverter.class)
     public Order getExternalOrder() {
         return externalOrder;

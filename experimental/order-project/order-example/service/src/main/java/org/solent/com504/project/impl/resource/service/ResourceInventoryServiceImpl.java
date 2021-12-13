@@ -116,6 +116,7 @@ public class ResourceInventoryServiceImpl implements ResourceInventoryService {
         Long t = new Date().getTime();
         resource.setName("update resource name " + t);
         resource.setId(null);
+        resource.setUuid(UUID.randomUUID().toString());
 
         ReplyMessage replyMessage = postCreateResource(resource, ownerPartyUUID);
         return replyMessage;

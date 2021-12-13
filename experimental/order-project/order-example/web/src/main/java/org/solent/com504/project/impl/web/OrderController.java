@@ -67,7 +67,7 @@ public class OrderController {
 
     final static Logger LOG = LogManager.getLogger(OrderController.class);
 
-    final static String DATE_FORMAT = "yyyy-MM-dd HH:mm a z";
+    final static String DATE_FORMAT = "dd/MM/yyyy HH:mm";  // 15/12/2021 17:16 matches date time picker
     final static DateFormat df = new SimpleDateFormat(DATE_FORMAT);
 
     {
@@ -235,11 +235,15 @@ public class OrderController {
             @RequestParam(value = "changeOrderOrderDate", required = false) String changeOrderOrderDate,
             @RequestParam(value = "changeOrderStartDate", required = false) String changeOrderStartDate,
             @RequestParam(value = "changeOrderEndDate", required = false) String changeOrderEndDate,
+            // changing change request
+            @RequestParam(value = "changeReason", required = false) String changeReason,
+            @RequestParam(value = "responseDescription", required = false) String responseDescription,
             // fields for changing a service
             @RequestParam(value = "resourceOrServiceUuid", required = false) List<String> resourceOrServiceUuid,
             // fields for changing parent order
             @RequestParam(value = "changeOrderParentOrderUuid", required = false) String changeOrderParentOrderUuid,
             @RequestParam(value = "subOrderUuid", required = false) List<String> changeOrderSubOrderUuid,
+            @RequestParam(value = "changeOrderResourceAccess", required = false) String changeOrderResourceAccess,
             Authentication authentication) {
 
         LOG.debug("/viewModifyOrder: action=" + action + " orderUuid:" + orderUuid + " changeRequestUUID:" + changeRequestUUID);
@@ -250,7 +254,10 @@ public class OrderController {
         // populate change order
         Order changeOrder = new Order();
         try {
-            changeOrder.setResourceAccess(null);
+            if (changeOrderResourceAccess != null) {
+                ResourceAccess resaccess = ResourceAccess.valueOf(changeOrderResourceAccess);
+                changeOrder.setResourceAccess(resaccess);
+            }
             if (changeOrderName != null) {
                 changeOrder.setName(changeOrderName);
             }
@@ -391,6 +398,10 @@ public class OrderController {
             }
             orderChangeRequest = replyMessage.getOrderChangeRequestList().get(0);
 
+            // update change request fields
+            orderChangeRequest.setChangeRequest(changeOrder);
+            orderChangeRequest.setResponseDescription(responseDescription);
+
             // get the original changeRequestOrder
             Order changeRequestOrder = orderChangeRequest.getChangeRequest();
 
@@ -527,12 +538,51 @@ public class OrderController {
         model.addAttribute("orderChangeRequestListSize", orderChangeRequestListSize);
         model.addAttribute("orderChangeRequestList", orderChangeRequesList);
 
-        model.addAttribute("dateFormat", df);
+        model.addAttribute("dateFormat", df); //TODO remove
         model.addAttribute("resourceAccessValues", ResourceAccess.values());
 
         model.addAttribute("selectedPage", "orderchange");
         model.addAttribute("DATE_FORMAT", DATE_FORMAT);
         return "orderchange";
+    }
+
+    // ***************************
+    // Methods to add remove resources from order change request
+    // ***************************
+    @RequestMapping(value = {"/resourceselect"}, method = {RequestMethod.POST, RequestMethod.GET})
+    public String resourceselect(Model model,
+            @RequestParam(value = "action", required = true) String action,
+            @RequestParam(value = "orderResourceAccess", required = false) String orderResourceAccess,
+            @RequestParam(value = "ownerPartyUUID", required = false) String ownerPartyUUID,
+            @RequestParam(value = "changeRequestUUID", required = false) String changeRequestUUID,
+            @RequestParam(value = "addResources", required = false) List<String> addResources,
+            Authentication authentication) {
+
+        LOG.debug("resourceselect called: action="+action);
+        
+        if(addResources==null){
+            LOG.debug("**** add resources=null");
+            addResources = new ArrayList();
+        }
+        
+        if("updateOrderChangeRequest".equals(action) ){
+            for(String addResource : addResources){
+                LOG.debug("**** adding resource "+addResource);
+            }
+        }
+        ReplyMessage reply = resourceService.getResourceByTemplate(null, 0, 20);
+        List<Resource> resourceList = reply.getResourceList();
+
+        model.addAttribute("abstractResourceListSize", resourceList.size());
+        model.addAttribute("abstractResourceList", resourceList);
+        
+        model.addAttribute("orderResourceAccess", orderResourceAccess);
+        model.addAttribute("ownerPartyUUID",ownerPartyUUID);
+        model.addAttribute("changeRequestUUID",changeRequestUUID);
+        model.addAttribute("addResources", addResources);
+
+        model.addAttribute("DATE_FORMAT", DATE_FORMAT);
+        return "resourceselect";
     }
 
     private Map<String, String> selectedRolesMap(User user) {

@@ -19,7 +19,8 @@
     <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>-->
 <script src="./resources/js/jquery.min.js"></script>
 <script src="./resources/js/bootstrap.min.js"></script>
-
+<script type="text/javascript" src="./resources/js/moment-with-locales.min.js"></script>
+<script type="text/javascript" src="./resources/js/bootstrap-datetimepicker.min.js"></script>
 </body>
 </html>
 <!-- end of footer.jsp -->
